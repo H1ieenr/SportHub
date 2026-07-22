@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+	  <Nullable>enable</Nullable>  
+    <RootNamespace>demo_project.api.host</RootNamespace>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..</DockerfileContext>
+    <UserSecretsId>20fbb81e-b1ea-4797-9d2f-8bd9f835fd98</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+	  <PackageReference Include="MassTransit.RabbitMQ" Version="8.3.6" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.15" />
+	  <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\1.demo_project.repository\1.demo_project.repository.csproj" />
+    <ProjectReference Include="..\2.demo_project.domain\2.demo_project.domain.csproj" />
+    <ProjectReference Include="..\3.demo_project.app\3.demo_project.app.csproj" />
+    <ProjectReference Include="..\4.demo_project.app.contracts\4.demo_project.app.contracts.csproj" />
+    <ProjectReference Include="..\5.demo_project.api\5.demo_project.api.csproj" />
+  </ItemGroup>
+
+</Project>
