@@ -16,7 +16,7 @@ namespace Shared.Persistence
             _context = context;
             _dbSet = context.Set<T>();
         }
-        public virtual async Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        public virtual async Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default)
                                  => await _dbSet.FindAsync(new object[] { id }, cancellationToken);
         public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default) => await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
 
@@ -66,6 +66,6 @@ namespace Shared.Persistence
 
         public virtual void DeleteRange(IEnumerable<T> entities) => _dbSet.RemoveRange(entities);
 
-        public virtual async Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken) > 0;
+        //public virtual async Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken) > 0;
     }
 }

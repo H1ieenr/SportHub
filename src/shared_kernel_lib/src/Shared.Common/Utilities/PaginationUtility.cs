@@ -12,7 +12,7 @@ namespace Shared.Common
 
         public PagedResult(IEnumerable<T> results, int count, int pageNumber, int pageSize)
         {
-            results = results;
+            this.results = results;
             total_count = count;
             page_number = pageNumber;
             page_size = pageSize;
@@ -22,7 +22,7 @@ namespace Shared.Common
         public PagedResult<TDestination> MapTo<TDestination>(Func<T, TDestination> mapFunc)
         {
             var newResults = results.Select(mapFunc);
-            return new PagedResult<TDestination>(newResults, total_count, page_number, page_number);
+            return new PagedResult<TDestination>(newResults, total_count, page_number, page_size);
         }
     }
 

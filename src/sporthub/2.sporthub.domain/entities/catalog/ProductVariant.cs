@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace SportHub.Domain;
+namespace sporthub.domain;
 
 public class ProductVariant : AuditableEntity
 {

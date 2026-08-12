@@ -2,9 +2,9 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SportHub.Domain;
+using sporthub.domain;
 
-namespace SportHub.Repository.Configurations;
+namespace sporthub.repository;
 
 public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {

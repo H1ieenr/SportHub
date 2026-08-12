@@ -9,6 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\0.sporthub.shared\0.sporthub.shared.csproj" />
     <ProjectReference Include="..\2.sporthub.domain\2.sporthub.domain.csproj" />
+    <ProjectReference Include="..\..\shared_kernel_lib\src\Shared.Persistence\Shared.Persistence.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">

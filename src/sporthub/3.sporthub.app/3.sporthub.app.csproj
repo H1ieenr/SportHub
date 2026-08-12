@@ -11,4 +11,9 @@
     <ProjectReference Include="..\2.sporthub.domain\2.sporthub.domain.csproj" />
     <ProjectReference Include="..\4.sporthub.app.contracts\4.sporthub.app.contracts.csproj" />
   </ItemGroup>
+   <ItemGroup>
+     <PackageReference Include="AutoMapper" Version="12.0.1" />
+     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="10.0.10" />
+   </ItemGroup>
 </Project>

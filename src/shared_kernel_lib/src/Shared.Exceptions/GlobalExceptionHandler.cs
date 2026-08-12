@@ -13,10 +13,7 @@ namespace Shared.Exceptions
         {
             _env = env;
         }
-        public async ValueTask<bool> TryHandleAsync(
-            HttpContext httpContext,
-            Exception exception,
-            CancellationToken cancellationToken)
+        public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             var statusCode = HttpStatusCode.InternalServerError;
             var caption = "Lỗi hệ thống";

@@ -1,13 +1,14 @@
-namespace sporthub.domain;
 
-public enum UserStatus
+namespace sporthub.app.contracts
+{
+public enum UserStatusDTO
 {
     Active = 1,
     Locked = 2,
     Inactive = 3
 }
 
-public enum ProductStatus
+public enum ProductStatusDTO
 {
     Draft = 1,
     Active = 2,
@@ -15,14 +16,14 @@ public enum ProductStatus
     Discontinued = 4
 }
 
-public enum CartStatus
+public enum CartStatusDTO
 {
     Active = 1,
     Converted = 2,
     Abandoned = 3
 }
 
-public enum OrderStatus
+public enum OrderStatusDTO
 {
     Pending = 1,
     Confirmed = 2,
@@ -33,7 +34,7 @@ public enum OrderStatus
     Returned = 7
 }
 
-public enum PaymentStatus
+public enum PaymentStatusDTO
 {
     Unpaid = 1,
     Paid = 2,
@@ -41,7 +42,7 @@ public enum PaymentStatus
     Refunded = 4
 }
 
-public enum PaymentMethod
+public enum PaymentMethodDTO
 {
     CashOnDelivery = 1,
     Cash = 2,
@@ -50,11 +51,12 @@ public enum PaymentMethod
     Momo = 5
 }
 
-public enum InventoryTransactionType
+public enum InventoryTransactionTypeDTO
 {
     Import = 1,
     Sale = 2,
     Return = 3,
     Adjustment = 4,
     CancelOrder = 5
+}
 }

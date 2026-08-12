@@ -4,7 +4,7 @@ namespace Shared.Persistence
 {
     public interface IGenericRepository<T> where T : class
     {
-        Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<T?> GetByIdAsync(long id, CancellationToken cancellationToken = default);
         Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
         
         Task<IEnumerable<T>> FindAsync(
@@ -19,6 +19,6 @@ namespace Shared.Persistence
         void UpdateRange(IEnumerable<T> entities);
         void Delete(T entity);
         void DeleteRange(IEnumerable<T> entities);
-        Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default);
+        //Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

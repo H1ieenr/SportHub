@@ -32,7 +32,7 @@ namespace Shared.Common
 
         protected IActionResult ProcessResult<T>(OperationResult<T> result)
         {
-            if (result.IsSuccess) return Ok(result);
+            if (result.is_success) return Ok(result);
             return BadRequest(result);
         }
     }
