@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using SportHub.Domain;
+using sporthub.domain;
 
-namespace SportHub.Repository;
+namespace sporthub.repository;
 
 public class SportHubDbContext(DbContextOptions<SportHubDbContext> options) : DbContext(options)
 {

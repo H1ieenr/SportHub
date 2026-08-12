@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SportHub.Domain;
+using sporthub.domain;
 
-namespace SportHub.Repository.Configurations;
+namespace sporthub.repository;
 
 public class CartConfiguration : IEntityTypeConfiguration<Cart>
 {

@@ -22,10 +22,10 @@ namespace Shared.Common
         public static OperationResult<T> Deleted(string message = "Xóa thành công") 
             => new() { is_success = true, message = message, operation_type = OperationType.Delete };
         public static OperationResult<T> Nodata(T data, string message = "Không có dữ liệu! ") 
-            => new() { is_success = false, data = data, message = message, Code = "NOT_FOUND", operation_type = OperationType.InternalError };
+            => new() { is_success = false, data = data, message = message, code = "NOT_FOUND", operation_type = OperationType.InternalError };
     
         public static OperationResult<T> Failure(string message = "Có lỗi xảy ra! ", string? code = null, List<string>? errors = null) 
-            => new() { is_success = false, message = message, code = code, Errors = errors ?? new(), operation_type = OperationType.InternalError };
+            => new() { is_success = false, message = message, code = code, errors = errors ?? new(), operation_type = OperationType.InternalError };
     
     }
 }

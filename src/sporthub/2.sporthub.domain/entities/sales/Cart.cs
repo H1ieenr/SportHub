@@ -1,4 +1,4 @@
-namespace SportHub.Domain;
+namespace sporthub.domain;
 
 public class Cart : AuditableEntity
 {

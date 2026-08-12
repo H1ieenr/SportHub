@@ -1,0 +1,23 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Shared.Persistence;
+
+namespace sporthub.repository
+{
+    public static class RepositoryServiceExtension
+    {
+        public static IServiceCollection AddSportHubRepository(this IServiceCollection services, IConfiguration configuration)
+        {
+            var connectionString = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException(
+                    "Connection string 'SportHubDatabase' was not found.");
+
+            services.AddDbContext<SportHubDbContext>(options => options.UseSqlServer(connectionString));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(SportHubGenericRepository<>));
+            services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+
+            return services;
+        }
+    }
+}

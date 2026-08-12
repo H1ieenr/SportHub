@@ -9,6 +9,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
   </ItemGroup>
   <ItemGroup>
@@ -17,5 +21,6 @@
     <ProjectReference Include="..\3.sporthub.app\3.sporthub.app.csproj" />
     <ProjectReference Include="..\4.sporthub.app.contracts\4.sporthub.app.contracts.csproj" />
     <ProjectReference Include="..\5.sporthub.api\5.sporthub.api.csproj" />
+    <ProjectReference Include="..\..\shared_kernel_lib\src\Shared.Auth\Shared.Auth.csproj" />
   </ItemGroup>
 </Project>

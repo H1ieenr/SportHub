@@ -1,10 +1,17 @@
+using sporthub.repository;
+using sporthub.app;
+using Shared.Auth;
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+
 builder.Services.AddOpenApi();
+builder.Services.AddSportHubRepository(builder.Configuration);
+builder.Services.AddAppService(builder.Configuration);
+builder.Services.AddSharedAuthentication(builder.Configuration);
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -13,6 +20,9 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseExceptionHandler();
+
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 
