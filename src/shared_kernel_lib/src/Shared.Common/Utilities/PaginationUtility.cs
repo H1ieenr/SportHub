@@ -31,7 +31,7 @@ namespace Shared.Common
         private const int MaxPageSize = 100;
         public int page_number { get; set; } = 1;
         private int _pageSize = 10;
-        public int page_number
+        public int page_size
         {
             get => _pageSize;
             set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;

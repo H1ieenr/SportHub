@@ -25,20 +25,17 @@ namespace sporthub.app.contracts
     {
         public string access_token { get; set; } = "";
         public string refresh_token { get; set; } = "";
-        public DateTimeOffset access_token_expires_at { get; set; }
-        public UserProfileDTO user { get; set; } = new();
+        public DateTime access_token_expires_at { get; set; }
+        public UsersDTO user { get; set; } = new();
     };
     #endregion
-
-    #region User
-    public class UserProfileDTO
+    public class RefreshTokenRequestDTO
     {
-        public long id { get; set; }
-        public string email { get; set; } = "";
-        public string name { get; set; } = "";
-        public string phone { get; set; } = "";
-        public string avatar_url { get; set; } = "";
-        public UserStatusDTO status {get; set;}
-    };
-    #endregion
+        public string refresh_token { get; set; } = "";
+    }
+
+    public class LogoutRequestDTO
+    {
+        public string refresh_token { get; set; } = "";
+    }
 }

@@ -12,8 +12,8 @@ using sporthub.repository;
 namespace sporthub.repository.context.migrations
 {
     [DbContext(typeof(SportHubDbContext))]
-    [Migration("20260812070714_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260814100826_InitialCreate_3")]
+    partial class InitialCreate_3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace sporthub.repository.context.migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SportHub.Domain.Address", b =>
+            modelBuilder.Entity("sporthub.domain.Address", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -42,14 +42,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("district")
                         .IsRequired()
@@ -79,8 +79,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("user_id")
                         .HasColumnType("bigint");
@@ -97,7 +97,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("addresses", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Brand", b =>
+            modelBuilder.Entity("sporthub.domain.Brand", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -108,14 +108,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(1000)
@@ -141,8 +141,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -152,7 +152,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("brands", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Cart", b =>
+            modelBuilder.Entity("sporthub.domain.Cart", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -163,14 +163,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("status")
                         .HasColumnType("int");
@@ -178,8 +178,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("user_id")
                         .HasColumnType("bigint");
@@ -191,7 +191,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("carts", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.CartItem", b =>
+            modelBuilder.Entity("sporthub.domain.CartItem", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -205,14 +205,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("product_variant_id")
                         .HasColumnType("bigint");
@@ -227,8 +227,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -240,7 +240,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("cart_items", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Category", b =>
+            modelBuilder.Entity("sporthub.domain.Category", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -251,14 +251,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(1000)
@@ -290,8 +290,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -303,7 +303,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("categories", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.InventoryItem", b =>
+            modelBuilder.Entity("sporthub.domain.InventoryItem", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -314,14 +314,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("product_variant_id")
                         .HasColumnType("bigint");
@@ -338,8 +338,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -349,7 +349,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("inventory_items", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.InventoryTransaction", b =>
+            modelBuilder.Entity("sporthub.domain.InventoryTransaction", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -363,14 +363,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long?>("created_by_user_id")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("inventory_item_id")
                         .HasColumnType("bigint");
@@ -395,8 +395,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -409,7 +409,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("inventory_transactions", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Order", b =>
+            modelBuilder.Entity("sporthub.domain.Order", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -420,8 +420,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("customer_name")
                         .IsRequired()
@@ -436,8 +436,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("discount_amount")
                         .HasPrecision(18, 2)
@@ -480,8 +480,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("user_id")
                         .HasColumnType("bigint");
@@ -498,7 +498,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("orders", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.OrderItem", b =>
+            modelBuilder.Entity("sporthub.domain.OrderItem", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -509,14 +509,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("discount_amount")
                         .HasPrecision(18, 2)
@@ -552,8 +552,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("variant_name")
                         .IsRequired()
@@ -569,7 +569,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("order_items", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Payment", b =>
+            modelBuilder.Entity("sporthub.domain.Payment", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -584,14 +584,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("method")
                         .HasColumnType("int");
@@ -599,8 +599,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("order_id")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("paid_at")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("paid_at")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("raw_response")
                         .HasColumnType("nvarchar(max)");
@@ -615,8 +615,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -629,7 +629,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("payments", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Product", b =>
+            modelBuilder.Entity("sporthub.domain.Product", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -650,14 +650,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasColumnType("nvarchar(max)");
@@ -681,8 +681,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -696,7 +696,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("products", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.ProductImage", b =>
+            modelBuilder.Entity("sporthub.domain.ProductImage", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -707,14 +707,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("display_order")
                         .HasColumnType("int");
@@ -736,8 +736,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -748,7 +748,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("product_images", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.ProductVariant", b =>
+            modelBuilder.Entity("sporthub.domain.ProductVariant", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -763,14 +763,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("is_active")
                         .HasColumnType("bit");
@@ -795,8 +795,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("value_json")
                         .HasColumnType("nvarchar(max)");
@@ -814,7 +814,7 @@ namespace sporthub.repository.context.migrations
                         });
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Roles", b =>
+            modelBuilder.Entity("sporthub.domain.RefreshTokens", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -825,14 +825,77 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("device_name")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("expires_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ip_address")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<long?>("replaced_by_token_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("revoked_at")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("token_hash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<long>("updated_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("user_id")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("replaced_by_token_id");
+
+                    b.HasIndex("token_hash")
+                        .IsUnique();
+
+                    b.HasIndex("user_id", "expires_at");
+
+                    b.ToTable("refresh_tokens", (string)null);
+                });
+
+            modelBuilder.Entity("sporthub.domain.Roles", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("id"));
+
+                    b.Property<long>("created_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("deleted_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("description")
                         .HasMaxLength(500)
@@ -846,8 +909,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -855,9 +918,41 @@ namespace sporthub.repository.context.migrations
                         .IsUnique();
 
                     b.ToTable("roles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1L,
+                            created_by = 0L,
+                            created_date = new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local),
+                            deleted_by = 0L,
+                            description = "Quản trị toàn hệ thống",
+                            name = "Admin",
+                            updated_by = 0L
+                        },
+                        new
+                        {
+                            id = 2L,
+                            created_by = 0L,
+                            created_date = new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local),
+                            deleted_by = 0L,
+                            description = "Nhân viên vận hành",
+                            name = "Staff",
+                            updated_by = 0L
+                        },
+                        new
+                        {
+                            id = 3L,
+                            created_by = 0L,
+                            created_date = new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local),
+                            deleted_by = 0L,
+                            description = "Khách hàng",
+                            name = "Customer",
+                            updated_by = 0L
+                        });
                 });
 
-            modelBuilder.Entity("SportHub.Domain.UserRole", b =>
+            modelBuilder.Entity("sporthub.domain.UserRole", b =>
                 {
                     b.Property<long>("user_id")
                         .HasColumnType("bigint");
@@ -872,7 +967,7 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("user_roles", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Users", b =>
+            modelBuilder.Entity("sporthub.domain.Users", b =>
                 {
                     b.Property<long>("id")
                         .ValueGeneratedOnAdd()
@@ -888,14 +983,14 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset>("created_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<long>("deleted_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("deleted_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("email")
                         .IsRequired()
@@ -923,8 +1018,8 @@ namespace sporthub.repository.context.migrations
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
-                    b.Property<DateTimeOffset?>("updated_date")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("id");
 
@@ -937,10 +1032,10 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Address", b =>
+            modelBuilder.Entity("sporthub.domain.Address", b =>
                 {
-                    b.HasOne("SportHub.Domain.Users", "user")
-                        .WithMany("Addresses")
+                    b.HasOne("sporthub.domain.Users", "user")
+                        .WithMany("addresses")
                         .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -948,9 +1043,9 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Cart", b =>
+            modelBuilder.Entity("sporthub.domain.Cart", b =>
                 {
-                    b.HasOne("SportHub.Domain.Users", "user")
+                    b.HasOne("sporthub.domain.Users", "user")
                         .WithMany()
                         .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -959,15 +1054,15 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.CartItem", b =>
+            modelBuilder.Entity("sporthub.domain.CartItem", b =>
                 {
-                    b.HasOne("SportHub.Domain.Cart", "cart")
+                    b.HasOne("sporthub.domain.Cart", "cart")
                         .WithMany("items")
                         .HasForeignKey("cart_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SportHub.Domain.ProductVariant", "product_variant")
+                    b.HasOne("sporthub.domain.ProductVariant", "product_variant")
                         .WithMany()
                         .HasForeignKey("product_variant_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -978,9 +1073,9 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("product_variant");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Category", b =>
+            modelBuilder.Entity("sporthub.domain.Category", b =>
                 {
-                    b.HasOne("SportHub.Domain.Category", "parent")
+                    b.HasOne("sporthub.domain.Category", "parent")
                         .WithMany("children")
                         .HasForeignKey("parent_id")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -988,25 +1083,25 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("parent");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.InventoryItem", b =>
+            modelBuilder.Entity("sporthub.domain.InventoryItem", b =>
                 {
-                    b.HasOne("SportHub.Domain.ProductVariant", "product_variant")
+                    b.HasOne("sporthub.domain.ProductVariant", "product_variant")
                         .WithOne("inventory")
-                        .HasForeignKey("SportHub.Domain.InventoryItem", "product_variant_id")
+                        .HasForeignKey("sporthub.domain.InventoryItem", "product_variant_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("product_variant");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.InventoryTransaction", b =>
+            modelBuilder.Entity("sporthub.domain.InventoryTransaction", b =>
                 {
-                    b.HasOne("SportHub.Domain.Users", null)
+                    b.HasOne("sporthub.domain.Users", null)
                         .WithMany()
                         .HasForeignKey("created_by_user_id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("SportHub.Domain.InventoryItem", "inventory_item")
+                    b.HasOne("sporthub.domain.InventoryItem", "inventory_item")
                         .WithMany("transactions")
                         .HasForeignKey("inventory_item_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1015,9 +1110,9 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("inventory_item");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Order", b =>
+            modelBuilder.Entity("sporthub.domain.Order", b =>
                 {
-                    b.HasOne("SportHub.Domain.Users", "user")
+                    b.HasOne("sporthub.domain.Users", "user")
                         .WithMany()
                         .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1026,15 +1121,15 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.OrderItem", b =>
+            modelBuilder.Entity("sporthub.domain.OrderItem", b =>
                 {
-                    b.HasOne("SportHub.Domain.Order", "order")
+                    b.HasOne("sporthub.domain.Order", "order")
                         .WithMany("items")
                         .HasForeignKey("order_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SportHub.Domain.ProductVariant", "product_variant")
+                    b.HasOne("sporthub.domain.ProductVariant", "product_variant")
                         .WithMany()
                         .HasForeignKey("product_variant_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1045,9 +1140,9 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("product_variant");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Payment", b =>
+            modelBuilder.Entity("sporthub.domain.Payment", b =>
                 {
-                    b.HasOne("SportHub.Domain.Order", "order")
+                    b.HasOne("sporthub.domain.Order", "order")
                         .WithMany("payments")
                         .HasForeignKey("order_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1056,14 +1151,14 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("order");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Product", b =>
+            modelBuilder.Entity("sporthub.domain.Product", b =>
                 {
-                    b.HasOne("SportHub.Domain.Brand", "brand")
+                    b.HasOne("sporthub.domain.Brand", "brand")
                         .WithMany("products")
                         .HasForeignKey("brand_id")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("SportHub.Domain.Category", "category")
+                    b.HasOne("sporthub.domain.Category", "category")
                         .WithMany("products")
                         .HasForeignKey("category_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1074,15 +1169,15 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("category");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.ProductImage", b =>
+            modelBuilder.Entity("sporthub.domain.ProductImage", b =>
                 {
-                    b.HasOne("SportHub.Domain.Product", "product")
+                    b.HasOne("sporthub.domain.Product", "product")
                         .WithMany("images")
                         .HasForeignKey("product_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("SportHub.Domain.ProductVariant", "product_variant")
+                    b.HasOne("sporthub.domain.ProductVariant", "product_variant")
                         .WithMany("Images")
                         .HasForeignKey("product_variant_id")
                         .OnDelete(DeleteBehavior.Restrict);
@@ -1092,9 +1187,9 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("product_variant");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.ProductVariant", b =>
+            modelBuilder.Entity("sporthub.domain.ProductVariant", b =>
                 {
-                    b.HasOne("SportHub.Domain.Product", "product")
+                    b.HasOne("sporthub.domain.Product", "product")
                         .WithMany("variants")
                         .HasForeignKey("product_id")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1103,78 +1198,98 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("product");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.UserRole", b =>
+            modelBuilder.Entity("sporthub.domain.RefreshTokens", b =>
                 {
-                    b.HasOne("SportHub.Domain.Roles", "role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("role_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                    b.HasOne("sporthub.domain.RefreshTokens", "replaced_by_token")
+                        .WithMany()
+                        .HasForeignKey("replaced_by_token_id")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("SportHub.Domain.Users", "user")
-                        .WithMany("UserRoles")
+                    b.HasOne("sporthub.domain.Users", "user")
+                        .WithMany("refresh_tokens")
                         .HasForeignKey("user_id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("role");
+                    b.Navigation("replaced_by_token");
 
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Brand", b =>
+            modelBuilder.Entity("sporthub.domain.UserRole", b =>
+                {
+                    b.HasOne("sporthub.domain.Roles", "roles")
+                        .WithMany("user_roles")
+                        .HasForeignKey("role_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("sporthub.domain.Users", "users")
+                        .WithMany("user_roles")
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("roles");
+
+                    b.Navigation("users");
+                });
+
+            modelBuilder.Entity("sporthub.domain.Brand", b =>
                 {
                     b.Navigation("products");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Cart", b =>
+            modelBuilder.Entity("sporthub.domain.Cart", b =>
                 {
                     b.Navigation("items");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Category", b =>
+            modelBuilder.Entity("sporthub.domain.Category", b =>
                 {
                     b.Navigation("children");
 
                     b.Navigation("products");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.InventoryItem", b =>
+            modelBuilder.Entity("sporthub.domain.InventoryItem", b =>
                 {
                     b.Navigation("transactions");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Order", b =>
+            modelBuilder.Entity("sporthub.domain.Order", b =>
                 {
                     b.Navigation("items");
 
                     b.Navigation("payments");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Product", b =>
+            modelBuilder.Entity("sporthub.domain.Product", b =>
                 {
                     b.Navigation("images");
 
                     b.Navigation("variants");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.ProductVariant", b =>
+            modelBuilder.Entity("sporthub.domain.ProductVariant", b =>
                 {
                     b.Navigation("Images");
 
                     b.Navigation("inventory");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Roles", b =>
+            modelBuilder.Entity("sporthub.domain.Roles", b =>
                 {
-                    b.Navigation("UserRoles");
+                    b.Navigation("user_roles");
                 });
 
-            modelBuilder.Entity("SportHub.Domain.Users", b =>
+            modelBuilder.Entity("sporthub.domain.Users", b =>
                 {
-                    b.Navigation("Addresses");
+                    b.Navigation("addresses");
 
-                    b.Navigation("UserRoles");
+                    b.Navigation("refresh_tokens");
+
+                    b.Navigation("user_roles");
                 });
 #pragma warning restore 612, 618
         }

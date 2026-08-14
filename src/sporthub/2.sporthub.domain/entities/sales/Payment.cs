@@ -8,7 +8,7 @@ public class Payment : AuditableEntity
     public decimal amount { get; set; }
     public PaymentStatus status { get; set; } = PaymentStatus.Unpaid;
     public string? transaction_code { get; set; }
-    public DateTimeOffset? paid_at { get; set; }
+    public DateTime? paid_at { get; set; }
     public string? raw_response { get; set; }
 
     public Order order { get; set; } = null!;

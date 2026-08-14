@@ -43,13 +43,13 @@ public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
         builder.ToTable("user_roles");
         builder.HasKey(x => new { x.user_id, x.role_id });
 
-        builder.HasOne(x => x.user)
-            .WithMany(x => x.UserRoles)
+        builder.HasOne(x => x.users)
+            .WithMany(x => x.user_roles)
             .HasForeignKey(x => x.user_id)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(x => x.role)
-            .WithMany(x => x.UserRoles)
+        builder.HasOne(x => x.roles)
+            .WithMany(x => x.user_roles)
             .HasForeignKey(x => x.role_id)
             .OnDelete(DeleteBehavior.Restrict);
     }
@@ -70,10 +70,35 @@ public class AddressConfiguration : IEntityTypeConfiguration<Address>
         builder.Property(x => x.addressLine).HasColumnName("address_line").HasMaxLength(500).IsRequired();
 
         builder.HasOne(x => x.user)
-            .WithMany(x => x.Addresses)
+            .WithMany(x => x.addresses)
             .HasForeignKey(x => x.user_id)
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasIndex(x => new { x.user_id, x.is_default });
+    }
+}
+
+public class RefreshTokensConfiguration : IEntityTypeConfiguration<RefreshTokens>
+{
+    public void Configure(EntityTypeBuilder<RefreshTokens> builder)
+    {
+        builder.ToTable("refresh_tokens");
+        builder.ConfigureAuditableEntity();
+
+        builder.Property(x => x.token_hash).HasMaxLength(128).IsRequired();
+        builder.Property(x => x.device_name).HasMaxLength(200);
+        builder.Property(x => x.ip_address).HasMaxLength(45);
+        builder.HasIndex(x => x.token_hash).IsUnique();
+        builder.HasIndex(x => new { x.user_id, x.expires_at });
+
+        builder.HasOne(x => x.user)
+            .WithMany(x => x.refresh_tokens)
+            .HasForeignKey(x => x.user_id)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.replaced_by_token)
+            .WithMany()
+            .HasForeignKey(x => x.replaced_by_token_id)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
