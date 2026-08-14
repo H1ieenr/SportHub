@@ -22,5 +22,7 @@
     <ProjectReference Include="..\4.sporthub.app.contracts\4.sporthub.app.contracts.csproj" />
     <ProjectReference Include="..\5.sporthub.api\5.sporthub.api.csproj" />
     <ProjectReference Include="..\..\shared_kernel_lib\src\Shared.Auth\Shared.Auth.csproj" />
+    <ProjectReference Include="..\..\shared_kernel_lib\src\Shared.Exceptions\Shared.Exceptions.csproj" />
+    <ProjectReference Include="..\..\shared_kernel_lib\src\Shared.Common\Shared.Common.csproj" />
   </ItemGroup>
 </Project>

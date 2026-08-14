@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shared.Persistence;
-
+using sporthub.domain;
 namespace sporthub.repository
 {
     public static class RepositoryServiceExtension
@@ -15,8 +15,10 @@ namespace sporthub.repository
 
             services.AddDbContext<SportHubDbContext>(options => options.UseSqlServer(connectionString));
             services.AddScoped(typeof(IGenericRepository<>), typeof(SportHubGenericRepository<>));
-            services.AddScoped(typeof(IUnitOfWork<>), typeof(UnitOfWork<>));
+            services.AddScoped<IUnitOfWork<SportHubDbContext>, SportHubUnitOfWork>();
+            services.AddScoped<ISportHubUnitOfWork, SportHubUnitOfWork>();
 
+            services.AddIdentityRepository();
             return services;
         }
     }

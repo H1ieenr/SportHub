@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace sporthub.domain
 {
-    public interface IUsersRepository
+    public interface IRolesRepository
     {
-        
+        Task<Roles?> GetByNameAsync(string name, CancellationToken cancellationToken = default);
     }
 }

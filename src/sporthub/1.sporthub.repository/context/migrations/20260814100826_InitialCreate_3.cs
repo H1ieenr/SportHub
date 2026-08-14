@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace sporthub.repository.context.migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialCreate_3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,11 +24,11 @@ namespace sporthub.repository.context.migrations
                     logo_url = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
                     description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -47,11 +49,11 @@ namespace sporthub.repository.context.migrations
                     parent_id = table.Column<long>(type: "bigint", nullable: true),
                     display_order = table.Column<int>(type: "int", nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -73,11 +75,11 @@ namespace sporthub.repository.context.migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -97,11 +99,11 @@ namespace sporthub.repository.context.migrations
                     phone = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     avatar_url = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     status = table.Column<int>(type: "int", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -123,11 +125,11 @@ namespace sporthub.repository.context.migrations
                     base_price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     status = table.Column<int>(type: "int", nullable: false),
                     is_featured = table.Column<bool>(type: "bit", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -161,11 +163,11 @@ namespace sporthub.repository.context.migrations
                     ward = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     address_line = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     is_default = table.Column<bool>(type: "bit", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -187,11 +189,11 @@ namespace sporthub.repository.context.migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     user_id = table.Column<long>(type: "bigint", nullable: false),
                     status = table.Column<int>(type: "int", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -224,11 +226,11 @@ namespace sporthub.repository.context.migrations
                     payment_status = table.Column<int>(type: "int", nullable: false),
                     payment_method = table.Column<int>(type: "int", nullable: false),
                     note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -236,6 +238,43 @@ namespace sporthub.repository.context.migrations
                     table.PrimaryKey("PK_orders", x => x.id);
                     table.ForeignKey(
                         name: "FK_orders_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "refresh_tokens",
+                columns: table => new
+                {
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<long>(type: "bigint", nullable: false),
+                    token_hash = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    expires_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    revoked_at = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    replaced_by_token_id = table.Column<long>(type: "bigint", nullable: true),
+                    device_name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    ip_address = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    created_by = table.Column<long>(type: "bigint", nullable: false),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    updated_by = table.Column<long>(type: "bigint", nullable: false),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    deleted_by = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_refresh_tokens", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_refresh_tokens_refresh_tokens_replaced_by_token_id",
+                        column: x => x.replaced_by_token_id,
+                        principalTable: "refresh_tokens",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_refresh_tokens_users_user_id",
                         column: x => x.user_id,
                         principalTable: "users",
                         principalColumn: "id",
@@ -279,11 +318,11 @@ namespace sporthub.repository.context.migrations
                     sale_price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     is_active = table.Column<bool>(type: "bit", nullable: false),
                     value_json = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -309,13 +348,13 @@ namespace sporthub.repository.context.migrations
                     amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     status = table.Column<int>(type: "int", nullable: false),
                     transaction_code = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
-                    paid_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    paid_at = table.Column<DateTime>(type: "datetime2", nullable: true),
                     raw_response = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -339,11 +378,11 @@ namespace sporthub.repository.context.migrations
                     product_variant_id = table.Column<long>(type: "bigint", nullable: false),
                     quantity = table.Column<int>(type: "int", nullable: false),
                     unit_price = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -373,11 +412,11 @@ namespace sporthub.repository.context.migrations
                     quantity_on_hand = table.Column<int>(type: "int", nullable: false),
                     reserved_quantity = table.Column<int>(type: "int", nullable: false),
                     reorder_level = table.Column<int>(type: "int", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -406,11 +445,11 @@ namespace sporthub.repository.context.migrations
                     quantity = table.Column<int>(type: "int", nullable: false),
                     discount_amount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     line_total = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -441,11 +480,11 @@ namespace sporthub.repository.context.migrations
                     image_url = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     display_order = table.Column<int>(type: "int", nullable: false),
                     is_primary = table.Column<bool>(type: "bit", nullable: false),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -478,11 +517,11 @@ namespace sporthub.repository.context.migrations
                     reference_id = table.Column<long>(type: "bigint", nullable: true),
                     note = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     created_by_user_id = table.Column<long>(type: "bigint", nullable: true),
-                    created_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    created_date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     created_by = table.Column<long>(type: "bigint", nullable: false),
-                    updated_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     updated_by = table.Column<long>(type: "bigint", nullable: false),
-                    deleted_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    deleted_date = table.Column<DateTime>(type: "datetime2", nullable: true),
                     deleted_by = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
@@ -500,6 +539,16 @@ namespace sporthub.repository.context.migrations
                         principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "roles",
+                columns: new[] { "id", "created_by", "created_date", "deleted_by", "deleted_date", "description", "name", "updated_by", "updated_date" },
+                values: new object[,]
+                {
+                    { 1L, 0L, new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local), 0L, null, "Quản trị toàn hệ thống", "Admin", 0L, null },
+                    { 2L, 0L, new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local), 0L, null, "Nhân viên vận hành", "Staff", 0L, null },
+                    { 3L, 0L, new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local), 0L, null, "Khách hàng", "Customer", 0L, null }
                 });
 
             migrationBuilder.CreateIndex(
@@ -637,6 +686,22 @@ namespace sporthub.repository.context.migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_refresh_tokens_replaced_by_token_id",
+                table: "refresh_tokens",
+                column: "replaced_by_token_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_refresh_tokens_token_hash",
+                table: "refresh_tokens",
+                column: "token_hash",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_refresh_tokens_user_id_expires_at",
+                table: "refresh_tokens",
+                columns: new[] { "user_id", "expires_at" });
+
+            migrationBuilder.CreateIndex(
                 name: "IX_roles_name",
                 table: "roles",
                 column: "name",
@@ -680,6 +745,9 @@ namespace sporthub.repository.context.migrations
 
             migrationBuilder.DropTable(
                 name: "product_images");
+
+            migrationBuilder.DropTable(
+                name: "refresh_tokens");
 
             migrationBuilder.DropTable(
                 name: "user_roles");

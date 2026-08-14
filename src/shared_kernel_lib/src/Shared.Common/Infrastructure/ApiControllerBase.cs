@@ -10,7 +10,7 @@ namespace Shared.Common
     {
         //private ISender? _sender;
         //protected ISender Sender => _sender ??= HttpContext.RequestServices.GetRequiredService<ISender>();
-        
+
         protected string user_id
         {
             get
@@ -32,8 +32,31 @@ namespace Shared.Common
 
         protected IActionResult ProcessResult<T>(OperationResult<T> result)
         {
-            if (result.is_success) return Ok(result);
-            return BadRequest(result);
+            if (result.is_success)
+            {
+                return Ok(result);
+            }
+
+            return result.code switch
+            {
+                "UNAUTHORIZED" or "INVALID_CREDENTIALS" =>
+                    Unauthorized(result),
+
+                "FORBIDDEN" =>
+                    Forbid(),
+
+                "NOT_FOUND" =>
+                    NotFound(result),
+
+                "CONFLICT" =>
+                    Conflict(result),
+
+                "VALIDATION_ERROR" =>
+                    BadRequest(result),
+
+                _ =>
+                    BadRequest(result)
+            };
         }
     }
 }

@@ -6,5 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
+  <ItemGroup>
+    <ProjectReference Include="..\..\shared_kernel_lib\src\Shared.Exceptions\Shared.Exceptions.csproj" />
+  </ItemGroup>
 </Project>

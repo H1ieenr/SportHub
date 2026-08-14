@@ -1,10 +1,20 @@
+using System;
+
 namespace sporthub.domain;
 
 public class UserRole
 {
-    public long user_id { get; set; }
-    public long role_id { get; set; }
+    public long user_id { get; private set; }
+    public long role_id { get; private set; }
 
-    public Users user { get; set; } = null!;
-    public Roles role { get; set; } = null!;
+    public Users users { get; private set; } = null!;
+    public Roles roles { get; private set; } = null!;
+
+    private UserRole() { } // Dành cho EF Core
+
+    public UserRole(long userId, long roleId)
+    {
+        user_id = userId;
+        role_id = roleId;
+    }
 }
