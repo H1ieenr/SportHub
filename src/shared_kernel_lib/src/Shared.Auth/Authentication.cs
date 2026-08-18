@@ -35,7 +35,8 @@ namespace Shared.Auth
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings["Issuer"],
-                    ValidAudience = jwtSettings["Audience"],
+                    // ValidAudience = jwtSettings["Audience"],
+                    ValidAudiences = new[] { jwtSettings["CustomerAudience"], jwtSettings["AdminAudience"] },
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
 
                     ClockSkew = TimeSpan.Zero
@@ -58,7 +59,16 @@ namespace Shared.Auth
                     }
                 };
             });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                   policy.RequireAssertion(ctx =>
+                     ctx.User.HasClaim(c => c.Type == "aud" && c.Value == jwtSettings["AdminAudience"])));
 
+                options.AddPolicy("CustomerOnly", policy =>
+                      policy.RequireAssertion(ctx =>
+                        ctx.User.HasClaim(c => c.Type == "aud" && c.Value == jwtSettings["CustomerAudience"])));
+            });
             return services;
         }
     }

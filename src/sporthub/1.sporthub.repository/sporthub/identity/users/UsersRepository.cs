@@ -30,7 +30,12 @@ namespace sporthub.repository
         }
         public Task CreateAsync(Users user, CancellationToken cancellationToken = default)
         {
-            return _context.Users.AddAsync(user, cancellationToken).AsTask();
+            return AddAsync(user);
+        }
+        public Task UpdateAsync(Users user, CancellationToken cancellationToken = default)
+        {
+            Update(user);
+            return Task.CompletedTask;
         }
     }
 }

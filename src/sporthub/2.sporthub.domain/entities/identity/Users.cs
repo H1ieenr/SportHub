@@ -17,19 +17,19 @@ public class Users : AuditableEntity
     private readonly List<Address> _addresses = new();
     public IReadOnlyCollection<Address> addresses => _addresses;
     private readonly List<RefreshTokens> _refreshTokens = new();
-    public IReadOnlyCollection<RefreshTokens> refresh_tokens =>_refreshTokens;
+    public IReadOnlyCollection<RefreshTokens> refresh_tokens => _refreshTokens;
 
-    // Constructor
     private Users() { }
 
-    // Static Factory Method
-    public static Users Create(string email, string passwordHash, string name, string phone, string avatarUrl = "")
+    #region Static Factory Method
+    public static Users Create(string email, string passwordHash, string name, string phone, 
+            string avatarUrl = "", long user_id = 0)
     {
-        // if (string.IsNullOrWhiteSpace(email))
-        //     throw new ValidationException("Email không được để trống.");
+        if (string.IsNullOrWhiteSpace(email))
+            throw new ValidationException("Email không được để trống.");
 
-        // if (string.IsNullOrWhiteSpace(passwordHash))
-        //     throw new ValidationException("Mật khẩu không được để trống.");
+        if (string.IsNullOrWhiteSpace(passwordHash))
+            throw new ValidationException("Mật khẩu không được để trống.");
 
         return new Users
         {
@@ -38,60 +38,51 @@ public class Users : AuditableEntity
             name = name.Trim(),
             phone = phone?.Trim() ?? string.Empty,
             status = UserStatus.Active,
-            avatar_url = avatarUrl
+            avatar_url = avatarUrl,
+            created_by = user_id,
         };
     }
-
-    // ────────── 5. CÁC DOMAIN METHODS (HÀNH VI NGHIỆP VỤ) ──────────
-
-    /// <summary>
-    /// Cập nhật thông tin cá nhân
-    /// </summary>
-    public void UpdateProfile(string name, string phone)
+    #region Update 
+    public void Update(string name, string phone, string avatarUrl = "")
     {
-        // if (string.IsNullOrWhiteSpace(name))
-        //     throw new ValidationException("Tên người dùng không được để trống.");
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ValidationException("Tên người dùng không được để trống.");
 
         this.name = name.Trim();
         this.phone = phone?.Trim() ?? string.Empty;
     }
-
-    /// <summary>
-    /// Cập nhật ảnh đại diện
-    /// </summary>
+    #endregion
+    #region Update Avatar
     public void UpdateAvatar(string avatarUrl)
     {
-        // if (string.IsNullOrWhiteSpace(avatarUrl))
-        //     throw new ValidationException("Đường dẫn ảnh đại diện không hợp lệ.");
-
+        if (string.IsNullOrWhiteSpace(avatarUrl))
+            throw new ValidationException("Đường dẫn ảnh đại diện không hợp lệ.");
         avatar_url = avatarUrl;
     }
-
-    /// <summary>
-    /// Thêm Role cho User (Tự rào chắn chống thêm trùng)
-    /// </summary>
+    #endregion
+    #region Add Role
     public void AddRole(long roleId)
     {
         if (_userRoles.Any(r => r.role_id == roleId))
-            return; 
+            return;
 
         _userRoles.Add(new UserRole(id, roleId));
     }
-
-    /// <summary>
-    /// Thêm Refresh Token khi Login
-    /// </summary>
-    public void AddRefreshToken(string token, DateTime expiresAt)
+    #endregion
+    #region Change Password
+    public void ChangePassword(string newPasswordHash)
     {
-        _refreshTokens.Add(new RefreshTokens(id, token, expiresAt));
+        if (string.IsNullOrWhiteSpace(newPasswordHash))
+            throw new ValidationException("Mật khẩu mới không hợp lệ.");
+
+        password_hash = newPasswordHash;
     }
-
-    /// <summary>
-    /// Đổi trạng thái tài khoản (Khóa/Kích hoạt)
-    /// </summary>
-
+    #endregion
+    #region Change Status
     public void ChangeStatus(UserStatus newStatus)
     {
         status = newStatus;
     }
+    #endregion
+    #endregion
 }

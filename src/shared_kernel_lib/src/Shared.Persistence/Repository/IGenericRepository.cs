@@ -13,7 +13,7 @@ namespace Shared.Persistence
             string includeProperties = "",
             CancellationToken cancellationToken = default);
 
-        Task AddAsync(T entity);
+        Task AddAsync(T entity, CancellationToken cancellationToken = default);
         Task AddRangeAsync(IEnumerable<T> entities);
         void Update(T entity);
         void UpdateRange(IEnumerable<T> entities);
