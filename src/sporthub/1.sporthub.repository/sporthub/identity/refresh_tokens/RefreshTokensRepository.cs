@@ -19,7 +19,7 @@ namespace sporthub.repository
 
         public Task<RefreshTokens?> GetActiveByTokenHashAsync(string tokenHash, CancellationToken cancellationToken = default)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
 
             return _context.RefreshTokens.Include(x => x.user)
                                          .ThenInclude(x => x.user_roles)

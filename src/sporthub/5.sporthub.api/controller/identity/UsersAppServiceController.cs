@@ -10,7 +10,6 @@ using Shared.Common;
 
 namespace sporthub.api
 {
-    [ApiController]
     [Route("api/v1/sporthub/users")]
     [Authorize]
     public class UsersAppServiceController : ApiControllerBase
@@ -24,8 +23,7 @@ namespace sporthub.api
         [HttpGet("get-by-id")]
         public async Task<IActionResult> GetByIdAsync([FromQuery] GetByIdAsyncRquestDTO model, CancellationToken cancellationToken)
         {
-            var result = await _usersAppService.GetByIdAsync(model, cancellationToken);
-            return ProcessResult(result);
+            return await HandleAsync(model, _usersAppService.GetByIdAsync, cancellationToken);
         }
     }
 }

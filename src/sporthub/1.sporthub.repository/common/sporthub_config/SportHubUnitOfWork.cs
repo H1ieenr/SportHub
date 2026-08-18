@@ -4,13 +4,9 @@ namespace sporthub.repository
 {
     public class SportHubUnitOfWork : UnitOfWork<SportHubDbContext>, ISportHubUnitOfWork
     {
-        public SportHubUnitOfWork(SportHubDbContext context)
-            : base(context)
+        public SportHubUnitOfWork(SportHubDbContext context, ICurrentUserService currentUserService)
+            : base(context, currentUserService)
         {
         }
-        // public override Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default)
-        // {
-        //     return base.SaveChangesAsync(cancellationToken);
-        // }
     }
 }

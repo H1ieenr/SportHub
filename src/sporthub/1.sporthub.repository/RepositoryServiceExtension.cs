@@ -17,8 +17,11 @@ namespace sporthub.repository
             services.AddScoped(typeof(IGenericRepository<>), typeof(SportHubGenericRepository<>));
             services.AddScoped<IUnitOfWork<SportHubDbContext>, SportHubUnitOfWork>();
             services.AddScoped<ISportHubUnitOfWork, SportHubUnitOfWork>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
 
             services.AddIdentityRepository();
+            services.AddCatalogRepository();
             return services;
         }
     }

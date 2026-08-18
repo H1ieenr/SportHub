@@ -12,5 +12,6 @@ namespace sporthub.domain
         Task<bool> ExistsByEmailAsync(string email, CancellationToken cancellationToken = default);
         Task<bool> ExistsByPhoneAsync(string phone, CancellationToken cancellationToken = default);
         Task CreateAsync(Users user, CancellationToken cancellationToken = default);
+        Task UpdateAsync(Users user, CancellationToken cancellationToken = default);
     }
 }

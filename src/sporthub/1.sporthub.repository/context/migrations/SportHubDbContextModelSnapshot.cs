@@ -819,6 +819,10 @@ namespace sporthub.repository.context.migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("id"));
 
+                    b.Property<string>("audience")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<long>("created_by")
                         .HasColumnType("bigint");
 
@@ -915,38 +919,6 @@ namespace sporthub.repository.context.migrations
                         .IsUnique();
 
                     b.ToTable("roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            id = 1L,
-                            created_by = 0L,
-                            created_date = new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local),
-                            deleted_by = 0L,
-                            description = "Quản trị toàn hệ thống",
-                            name = "Admin",
-                            updated_by = 0L
-                        },
-                        new
-                        {
-                            id = 2L,
-                            created_by = 0L,
-                            created_date = new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local),
-                            deleted_by = 0L,
-                            description = "Nhân viên vận hành",
-                            name = "Staff",
-                            updated_by = 0L
-                        },
-                        new
-                        {
-                            id = 3L,
-                            created_by = 0L,
-                            created_date = new DateTime(2026, 8, 13, 7, 0, 0, 0, DateTimeKind.Local),
-                            deleted_by = 0L,
-                            description = "Khách hàng",
-                            name = "Customer",
-                            updated_by = 0L
-                        });
                 });
 
             modelBuilder.Entity("sporthub.domain.UserRole", b =>
