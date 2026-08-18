@@ -26,7 +26,7 @@ namespace Shared.Common
         }
     }
 
-    public class PaginationParams
+    public class PaginationParams : BaseRequestDTO
     {
         private const int MaxPageSize = 100;
         public int page_number { get; set; } = 1;

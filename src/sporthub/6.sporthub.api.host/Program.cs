@@ -1,10 +1,16 @@
 using sporthub.repository;
 using sporthub.app;
 using sporthub.domain;
+using sporthub.api;
+
 using Shared.Auth;
-using Microsoft.AspNetCore.Identity;
 using Shared.Exceptions;
+using Shared.Common;
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -15,13 +21,12 @@ builder.Services.AddOpenApi();
 builder.Services.AddSportHubRepository(builder.Configuration);
 builder.Services.AddAppService(builder.Configuration);
 builder.Services.AddSharedAuthentication(builder.Configuration);
+builder.Services.AddAuthorizeAppService(builder.Configuration);
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddHttpContextAccessor();
-
-
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using sporthub.domain;
 
 namespace Shared.Persistence
 {
@@ -8,14 +9,45 @@ namespace Shared.Persistence
         private readonly TContext _context;
         private bool _disposed;
         private IDbContextTransaction? _currentTransaction;
-        public UnitOfWork(TContext context)
+        private readonly ICurrentUserService _currentUserService;
+        public UnitOfWork(TContext context, ICurrentUserService currentUserService)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
+            _currentUserService = currentUserService;
         }
 
         public TContext Context => _context;
         public bool HasActiveTransaction => _currentTransaction != null;
-        public virtual async Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken) > 0;
+        public virtual async Task<bool> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyAuditInfo();
+            return await _context.SaveChangesAsync(cancellationToken) > 0;
+        }
+
+        private void ApplyAuditInfo()
+        {
+            var userId = _currentUserService.UserId ?? 0;
+            var now = DateTime.Now;
+
+            foreach (var entry in _context.ChangeTracker.Entries<AuditableEntity>())
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Added:
+                        entry.Entity.SetCreatedInfo(userId, now);
+                        break;
+
+                    case EntityState.Modified:
+                        entry.Entity.SetUpdatedInfo(userId, now);
+                        break;
+
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Modified;
+                        entry.Entity.SetDeletedInfo(userId, now);
+                        break;
+                }
+            }
+        }
 
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
@@ -27,6 +59,7 @@ namespace Shared.Persistence
         {
             try
             {
+                ApplyAuditInfo();
                 await _context.SaveChangesAsync(cancellationToken);
 
                 if (_currentTransaction != null)

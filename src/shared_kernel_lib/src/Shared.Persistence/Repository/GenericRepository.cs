@@ -50,7 +50,8 @@ namespace Shared.Persistence
             return await query.AsNoTracking().ToListAsync(cancellationToken);
         }
 
-        public virtual async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
+        public virtual async Task AddAsync(T entity, CancellationToken cancellationToken = default)
+    => await _dbSet.AddAsync(entity, cancellationToken);
 
         public virtual async Task AddRangeAsync(IEnumerable<T> entities) => await _dbSet.AddRangeAsync(entities);
 

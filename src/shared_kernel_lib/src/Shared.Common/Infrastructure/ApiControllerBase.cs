@@ -11,14 +11,15 @@ namespace Shared.Common
         //private ISender? _sender;
         //protected ISender Sender => _sender ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
-        protected string user_id
+        protected long user_id
         {
             get
             {
-                return User.FindFirstValue(ClaimTypes.NameIdentifier)
+                var raw = User.FindFirstValue(ClaimTypes.NameIdentifier)
                     ?? User.FindFirstValue("id")
-                    ?? User.FindFirstValue(ClaimTypes.Sid)
-                    ?? string.Empty;
+                    ?? User.FindFirstValue(ClaimTypes.Sid);
+
+                return long.TryParse(raw, out var id) ? id : 0;
             }
         }
 
@@ -57,6 +58,16 @@ namespace Shared.Common
                 _ =>
                     BadRequest(result)
             };
+        }
+        protected async Task<IActionResult> HandleAsync<TRequest, TResult>(
+            TRequest model,
+            Func<TRequest, CancellationToken, Task<OperationResult<TResult>>> handler,
+            CancellationToken cancellationToken)
+            where TRequest : BaseRequestDTO
+        {
+            BindRequestContext(model);
+            var result = await handler(model, cancellationToken);
+            return ProcessResult(result);
         }
     }
 }
