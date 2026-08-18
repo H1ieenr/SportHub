@@ -6,6 +6,7 @@ public class RefreshTokens : AuditableEntity
 {
     public long user_id { get; private set; }
     public string token_hash { get; private set; }
+    public string audience { get; private set; }
     public DateTime expires_at { get; private set; }
     public DateTime? revoked_at { get; private set; }
     public long? replaced_by_token_id { get; private set; }
@@ -17,10 +18,17 @@ public class RefreshTokens : AuditableEntity
 
     public RefreshTokens() { }
 
-    public RefreshTokens(long userId, string tokenHash, DateTime expiresAt)
+    #region Static Factory Method
+    public RefreshTokens(long userId, string audience, string tokenHash, DateTime expiresAt)
     {
         user_id = userId;
+        this.audience = audience;
         token_hash = tokenHash;
         expires_at = expiresAt;
     }
+    public void UpdateRevokedAt(DateTime revokedAt)
+    {
+        this.revoked_at = revokedAt;
+    }
+    #endregion
 }

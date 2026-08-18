@@ -9,4 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\sporthub\2.sporthub.domain\2.sporthub.domain.csproj" />
+  </ItemGroup>
 </Project>

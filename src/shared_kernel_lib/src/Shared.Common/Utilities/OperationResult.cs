@@ -8,7 +8,7 @@ namespace Shared.Common
         public T? data { get; set; }
         public OperationType operation_type { get; set; }
         public List<string> errors { get; set; } = new();
-        public DateTime timestamp { get; set; } = DateTime.UtcNow;
+        public DateTime timestamp { get; set; } = DateTime.Now;
 
         public static OperationResult<T> Success(T data, string message = "Thành công") 
             => new() { is_success = true, data = data, message = message, operation_type = OperationType.Read };

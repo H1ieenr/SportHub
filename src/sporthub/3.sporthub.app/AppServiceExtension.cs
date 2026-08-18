@@ -11,7 +11,7 @@ namespace sporthub.app
 
             //services.AddAutoMapper(typeof(BaseMapperProfile));
             services.AddIdentityAppService(configuration);
-
+            services.AddCatalogAppService();
             return services;
         }
     }

@@ -26,8 +26,13 @@ namespace Shared.Exceptions
     {
         public ValidationException(string message, List<string> errors, string code = "VALIDATION_ERROR")
             : base(message, code, HttpStatusCode.BadRequest, errors) { }
-    }
 
+        public ValidationException(string message, string code = "VALIDATION_ERROR")
+        : this(message, new List<string> { message }, code)
+        {
+        }
+    }
+    
     public class BadRequestException : BaseException
     {
         public BadRequestException(string message, string code = "BAD_REQUEST")

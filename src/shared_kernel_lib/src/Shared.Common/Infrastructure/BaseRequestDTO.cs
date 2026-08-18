@@ -2,7 +2,7 @@ namespace Shared.Common
 {
     public class BaseRequestDTO
     {
-        public string user_id { get; set; } = string.Empty;
+        public long user_id { get; set; } = 0;
         public long? lang_id { get; set; }
     }
 }

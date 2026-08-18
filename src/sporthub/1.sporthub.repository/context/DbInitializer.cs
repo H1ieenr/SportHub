@@ -9,17 +9,25 @@ namespace sporthub.repository
 {
     public static class DbInitializer
     {
-        public static async Task SeedAsync(SportHubDbContext context, IPasswordHasher<Users> passwordHasher) 
+        public static async Task SeedAsync(SportHubDbContext context, IPasswordHasher<Users> passwordHasher)
         {
-            // Nếu đã có Data rồi thì bỏ qua
             if (await context.Users.AnyAsync<Users>()) return;
+            if (await context.Roles.AnyAsync<Roles>()) return;
+
+            var roles = new List<Roles>
+        {
+            Roles.Create("Admin", "Quản trị toàn hệ thống"),
+            Roles.Create("Staff", "Nhân viên vận hành"),
+            Roles.Create("Customer", "Khách hàng")
+        };
 
             var defaultPasswordHash = passwordHasher.HashPassword(null!, "123");
 
-            // Dùng Factory Method của Domain để khởi tạo
             var admin = Users.Create("admin@sporthub.com", defaultPasswordHash, "SportHub Admin", "0900000001");
             admin.AddRole(1); // Role Admin
 
+            await context.Roles.AddRangeAsync(roles);
+            await context.SaveChangesAsync();
             await context.Users.AddAsync(admin);
             await context.SaveChangesAsync();
         }
