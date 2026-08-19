@@ -1,0 +1,30 @@
+<div class="login-page">
+  <form class="login-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <h1 class="login-card__title">SportHub Admin</h1>
+    <p class="login-card__subtitle">Đăng nhập để tiếp tục</p>
+
+    @if (errorMessage(); as msg) {
+      <div class="login-card__error">{{ msg }}</div>
+    }
+
+    <div class="form-field">
+      <label for="email">Email</label>
+      <input id="email" type="email" formControlName="email" placeholder="admin@sporthub.com" />
+      @if (form.get('email')?.invalid && form.get('email')?.touched) {
+        <span class="form-field__error">Email không hợp lệ.</span>
+      }
+    </div>
+
+    <div class="form-field">
+      <label for="password">Mật khẩu</label>
+      <input id="password" type="password" formControlName="password" placeholder="••••••••" />
+      @if (form.get('password')?.invalid && form.get('password')?.touched) {
+        <span class="form-field__error">Mật khẩu tối thiểu 3 ký tự.</span>
+      }
+    </div>
+
+    <button type="submit" class="login-card__submit" [disabled]="loading()">
+      {{ loading() ? 'Đang đăng nhập...' : 'Đăng nhập' }}
+    </button>
+  </form>
+</div>

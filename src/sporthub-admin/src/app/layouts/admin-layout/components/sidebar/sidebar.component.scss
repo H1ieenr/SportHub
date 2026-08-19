@@ -1,0 +1,46 @@
+.sidebar {
+  height: 100%;
+  background: #1a1d29;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+
+  &__logo {
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  &__nav {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 0;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    color: #a3a8b8;
+    text-decoration: none;
+    font-size: 14px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #fff;
+    }
+
+    &--active {
+      background: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+      border-right: 3px solid #60a5fa;
+    }
+  }
+
+  &__icon {
+    width: 20px;
+    text-align: center;
+  }
+}
