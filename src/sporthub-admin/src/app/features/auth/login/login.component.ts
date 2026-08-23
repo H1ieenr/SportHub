@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../core/auth/auth.service';
+import { AlertService } from '../../../core/common/alert/alert.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ export class LoginComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  private alertService = inject(AlertService);
 
   loading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -36,14 +38,22 @@ export class LoginComponent {
       next: (res) => {
         this.loading.set(false);
         if (res.is_success) {
+          this.alertService.success(
+            res.message || 'Đăng nhập thành công.'
+          );
+
           this.router.navigate(['/dashboard']);
         } else {
-          this.errorMessage.set(res.message || 'Đăng nhập thất bại.');
+          this.alertService.error(
+            res.message || 'Đăng nhập thất bại.'
+          );
         }
       },
       error: (err) => {
         this.loading.set(false);
-        this.errorMessage.set(err.error?.message || 'Có lỗi xảy ra, vui lòng thử lại.');
+        this.alertService.error(
+          err.error?.message || 'Có lỗi xảy ra, vui lòng thử lại.'
+        );
       },
     });
   }

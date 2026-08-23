@@ -1,8 +1,9 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, finalize } from 'rxjs';
 import { OperationResult } from '../models/api-response.model';
+import { environment } from '../../../environments/environment';
 
 export interface LoginRequest {
     email: string;
@@ -17,7 +18,10 @@ export interface LoginResponse {
         id: number;
         email: string;
         name: string;
+        phone: string;
         roles: string[];
+        avatar_url: string;
+        status: boolean;
     };
 }
 
@@ -27,7 +31,7 @@ const USER_KEY = 'sporthub_admin_user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-    private readonly apiUrl = '/api/admin/auth';
+    private readonly apiUrl = `${environment.apiUrl}/sporthub`;
 
     private _currentUser = signal<LoginResponse['user'] | null>(this.loadUserFromStorage());
     currentUser = computed(() => this._currentUser());
@@ -37,7 +41,7 @@ export class AuthService {
 
     login(request: LoginRequest): Observable<OperationResult<LoginResponse>> {
         return this.http
-            .post<OperationResult<LoginResponse>>(`${this.apiUrl}/login`, request)
+            .post<OperationResult<LoginResponse>>(`${this.apiUrl}/admin/auth/login`, request)
             .pipe(
                 tap((res) => {
                     if (res.is_success) {
@@ -47,12 +51,15 @@ export class AuthService {
             );
     }
 
-    logout(): void {
-        localStorage.removeItem(ACCESS_TOKEN_KEY);
-        localStorage.removeItem(REFRESH_TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
-        this._currentUser.set(null);
-        this.router.navigate(['/login']);
+    logout(): Observable<OperationResult<boolean>> {
+        return this.http
+            .post<OperationResult<boolean>>(
+                `${this.apiUrl}/auth/logout`,
+                { refresh_token: this.getRefreshToken() }
+            )
+            .pipe(
+                finalize(() => this.clearSession())
+            );
     }
 
     getAccessToken(): string | null {
@@ -71,11 +78,19 @@ export class AuthService {
         localStorage.setItem(ACCESS_TOKEN_KEY, data.access_token);
         localStorage.setItem(REFRESH_TOKEN_KEY, data.refresh_token);
         localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        console.log(this._currentUser)
         this._currentUser.set(data.user);
     }
 
     private loadUserFromStorage(): LoginResponse['user'] | null {
         const raw = localStorage.getItem(USER_KEY);
         return raw ? JSON.parse(raw) : null;
+    }
+
+    private clearSession(): void {
+        localStorage.removeItem(ACCESS_TOKEN_KEY);
+        localStorage.removeItem(REFRESH_TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+        this._currentUser.set(null);
     }
 }
