@@ -4,22 +4,27 @@
     <p class="login-card__subtitle">Đăng nhập để tiếp tục</p>
 
     @if (errorMessage(); as msg) {
-      <div class="login-card__error">{{ msg }}</div>
+    <div class="login-card__error">{{ msg }}</div>
     }
 
     <div class="form-field">
       <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" placeholder="admin@sporthub.com" />
-      @if (form.get('email')?.invalid && form.get('email')?.touched) {
-        <span class="form-field__error">Email không hợp lệ.</span>
+      <input id="email" type="email" formControlName="email" placeholder="Nhập email" autocomplete="username" />
+      @if (form.get('email')?.hasError('required') && form.get('email')?.touched) {
+      <span class="form-field__error">Email là bắt buộc.</span>
+      } @else if (form.get('email')?.hasError('email') && form.get('email')?.touched) {
+      <span class="form-field__error">Email không đúng định dạng.</span>
       }
     </div>
 
     <div class="form-field">
       <label for="password">Mật khẩu</label>
-      <input id="password" type="password" formControlName="password" placeholder="••••••••" />
-      @if (form.get('password')?.invalid && form.get('password')?.touched) {
-        <span class="form-field__error">Mật khẩu tối thiểu 3 ký tự.</span>
+      <input id="password" type="password" formControlName="password" placeholder="••••••••"
+        autocomplete="current-password" />
+      @if (form.get('password')?.hasError('required') && form.get('password')?.touched) {
+      <span class="form-field__error">Mật khẩu là bắt buộc.</span>
+      } @else if (form.get('password')?.hasError('minlength') && form.get('password')?.touched) {
+      <span class="form-field__error">Mật khẩu tối thiểu 3 ký tự.</span>
       }
     </div>
 

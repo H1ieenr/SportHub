@@ -1,0 +1,18 @@
+@if (alertService.alert(); as alert) {
+  <div
+    class="alert alert-dismissible fade show"
+    [class.alert-success]="alert.type === 'success'"
+    [class.alert-danger]="alert.type === 'danger'"
+    [class.alert-warning]="alert.type === 'warning'"
+    role="alert"
+  >
+    {{ alert.message }}
+
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="alertService.clear()"
+    ></button>
+  </div>
+}
