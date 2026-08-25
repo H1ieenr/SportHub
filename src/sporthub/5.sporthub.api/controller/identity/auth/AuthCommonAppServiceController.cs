@@ -26,6 +26,7 @@ namespace sporthub.api
             return await HandleAsync(model, _authCommonAppService.LogoutAsync, cancellationToken);
         }
         [HttpPost("refresh-token")]
+        [AllowAnonymous]
         public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequestDTO model, CancellationToken cancellationToken)
         {
             return await HandleAsync(model, _authCommonAppService.RefreshTokenAsync, cancellationToken);
