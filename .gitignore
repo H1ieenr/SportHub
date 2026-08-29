@@ -12,7 +12,7 @@
 # ==========================================
 
 # 1. Bỏ qua tất cả các file .json trong dự án
-*.json
+#*.json
 
 # User-specific files
 *.rsuser
