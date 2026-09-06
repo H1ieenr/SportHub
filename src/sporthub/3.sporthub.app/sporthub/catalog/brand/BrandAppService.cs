@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Identity;
 using sporthub.app.contracts;
 using sporthub.domain;
 using Shared.Common;
 using AutoMapper;
 using Shared.Exceptions;
-using System;
 
 namespace sporthub.app
 {
@@ -12,11 +10,13 @@ namespace sporthub.app
     {
         private readonly IBrandRepository _brandRepository;
         private readonly ISportHubUnitOfWork _unitOfWork;
+        private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
-        public BrandAppService(IBrandRepository brandRepository, ISportHubUnitOfWork unitOfWork, IMapper mapper)
+        public BrandAppService(IBrandRepository brandRepository, ISportHubUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, IMapper mapper)
         {
             _brandRepository = brandRepository;
             _unitOfWork = unitOfWork;
+            _cloudinaryService = cloudinaryService;
             _mapper = mapper;
         }
         #region admin
@@ -25,11 +25,17 @@ namespace sporthub.app
             if (await _brandRepository.ExistsBySlugAsync(model.slug, null, cancellationToken))
                 throw new ConflictException("Slug đã tồn tại.");
 
-            Brand brand = Brand.Create(model.name, model.slug, model.logo_url, model.description);
+            Brand brand = Brand.Create(model.name, model.slug, model.description);
 
             await _brandRepository.CreateAsync(brand);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Brand/{brand.id}");
+            if (resultUpload.IsSuccess)
+            {
+                brand.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
             BrandDTO dto = _mapper.Map<BrandDTO>(brand);
             return OperationResult<BrandDTO>.Success(dto);
         }
@@ -42,7 +48,21 @@ namespace sporthub.app
             if (await _brandRepository.ExistsBySlugAsync(model.slug, model.id, cancellationToken))
                 throw new ConflictException("Slug đã tồn tại.");
 
-            brand.Update(model.name, model.slug, model.logo_url, model.description);
+            if (model.file_logo != null)
+            {
+                var resultDelete = await _cloudinaryService.DeleteImageAsync(brand.logo_public_id);
+
+                if (resultDelete)
+                {
+                    var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Brand/{brand.id}");
+                    if (resultUpload.IsSuccess)
+                    {
+                        brand.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
+                    }
+                }
+            }
+
+            brand.Update(model.name, model.slug, model.description);
 
             _brandRepository.UpdateAsync(brand);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
