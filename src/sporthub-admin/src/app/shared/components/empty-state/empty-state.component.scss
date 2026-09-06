@@ -1,0 +1,19 @@
+.app-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 48px 0;
+
+  &__icon {
+    font-size: 40px;
+    color: #d9d9d9;
+  }
+
+  &__text {
+    margin: 0;
+    color: #8c8c8c;
+    font-size: 14px;
+  }
+}

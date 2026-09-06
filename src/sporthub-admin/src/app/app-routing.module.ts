@@ -30,7 +30,7 @@ const routes: Routes = [
       },
       {
         path: 'brand',
-        loadComponent: () => import('./features/brand/brand-list/brand-list.component').then((c) => c.BrandComponent)
+        loadComponent: () => import('./features/catalog/brand/brand-list/brand-list.component').then((c) => c.BrandListComponent)
       },
       // {
       //   path: 'color',

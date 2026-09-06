@@ -1,0 +1,23 @@
+@if (totalPages() > 0) {
+  <div class="app-pagination">
+    <span class="app-pagination__range">{{ rangeText() }}</span>
+
+    <nav>
+      <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" [class.disabled]="!hasPreviousPage()">
+          <a class="page-link" (click)="onPrevious()">Trước</a>
+        </li>
+
+        @for (page of pages(); track page) {
+          <li class="page-item" [class.active]="page === pageNumber()">
+            <a class="page-link" (click)="onGoTo(page)">{{ page }}</a>
+          </li>
+        }
+
+        <li class="page-item" [class.disabled]="!hasNextPage()">
+          <a class="page-link" (click)="onNext()">Sau</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+}

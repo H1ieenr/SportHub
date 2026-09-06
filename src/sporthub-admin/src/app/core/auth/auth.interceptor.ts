@@ -1,7 +1,7 @@
 import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { AuthService } from './auth.service';
-import { catchError, throwError } from 'rxjs';
+import { catchError, throwError, switchMap } from 'rxjs';
 import { Router } from '@angular/router';
 import { AlertService } from '../common/alert/alert.service';
 
@@ -24,13 +24,34 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     return next(authRequest).pipe(
         catchError((err: HttpErrorResponse) => {
             const isLoginRequest = authRequest.url.includes('/admin/auth/login');
+            const isRefreshRequest = authRequest.url.includes('/auth/refresh-token');
 
-            if (err.status === 401 && !isLoginRequest) {
-                authService.logout();
-                alertService.warning(
-                    'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
+            if (err.status === 401 && !isLoginRequest && !isRefreshRequest) {
+                return authService.refreshToken().pipe(
+                    switchMap((refreshRes) => {
+                        if (!refreshRes.is_success) {
+                            authService.logout();
+                            router.navigate(['/login']);
+                            return throwError(() => err);
+                        }
+
+                        const retryRequest = req.clone({
+                            setHeaders: {
+                                Authorization: `Bearer ${refreshRes.data.access_token}`
+                            }
+                        });
+
+                        return next(retryRequest);
+                    }),
+                    catchError((refreshError) => {
+                        authService.logout();
+                        alertService.warning(
+                            'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.'
+                        );
+                        router.navigate(['/login']);
+                        return throwError(() => refreshError);
+                    })
                 );
-                router.navigate(['/login']);
             }
 
             return throwError(() => err);
