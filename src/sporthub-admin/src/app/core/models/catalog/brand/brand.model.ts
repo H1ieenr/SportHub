@@ -1,0 +1,19 @@
+export interface Brand {
+  id: number;
+  name: string;
+  slug: string;
+  logo_url: string;
+  description: string;
+  is_active: boolean;
+  created_date: string;
+  created_by: number;
+  updated_date: string;
+  updated_by: number;
+}
+
+export interface BrandPayload {
+  name: string;
+  slug: string;
+  logo_url: string;
+  description: string;
+}

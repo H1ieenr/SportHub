@@ -5,7 +5,7 @@ import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 import { AppRoutingModule } from './app/app-routing.module';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './app/core/auth/auth.interceptor';
+import { authInterceptor } from './app/core/services/identity/auth/auth.interceptor';
 
 if (environment.production) {
   enableProdMode();

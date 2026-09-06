@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { AlertService } from '../../../core/common/alert/alert.service';
+import { AlertService } from '../../service/alert.service';
 
 @Component({
   selector: 'app-alert',

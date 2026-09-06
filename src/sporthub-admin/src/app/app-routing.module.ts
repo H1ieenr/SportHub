@@ -1,7 +1,7 @@
 // angular import
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { authGuard } from './core/auth/auth.guard';
+import { authGuard } from './core/services/identity/auth/auth.guard';
 
 // Project import
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
