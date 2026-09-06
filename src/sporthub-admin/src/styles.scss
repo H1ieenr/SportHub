@@ -38,3 +38,44 @@ File: style.css
 @import 'scss/themes/layouts/footer/footer.scss';
 
 @import 'scss/themes/preset-style.scss';
+
+.app-offcanvas-half {
+  --bs-offcanvas-width: 32vw;
+}
+
+@media (max-width: 768px) {
+  .app-offcanvas-half {
+    --bs-offcanvas-width: 100vw;
+  }
+}
+
+//-----Custom styles-----
+.img-no-image-sm{
+    width: 40px;
+    border-radius: 50%;
+}
+
+.btn-icon {
+  border: none;
+  background: transparent;
+  padding: 4px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+}
+
+.btn-flat-secondary { color: #8c8c8c; }
+.btn-flat-primary   { color: #1890ff; }
+.btn-flat-danger    { color: #ff4d4f; }
+
+.app-row-clickable {
+
+  &:hover {
+    background-color: #fafafa;
+  }
+}
+//----------------------------------------
