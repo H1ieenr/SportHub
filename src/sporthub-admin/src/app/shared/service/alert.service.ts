@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { AppAlert, AlertType } from '../../models/common/alert.model';
+import { AppAlert, AlertType } from '../../core/models/common/alert.model';
 
 @Injectable({
   providedIn: 'root'

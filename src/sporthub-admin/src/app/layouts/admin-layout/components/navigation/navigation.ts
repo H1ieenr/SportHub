@@ -41,7 +41,7 @@ export const NavigationItems: NavigationItem[] = [
         classes: 'nav-item',
         url: '/brand',
         icon: 'menu',
-        breadcrumbs: false
+        breadcrumbs: true
       }
     ]
   },

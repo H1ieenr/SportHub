@@ -1,9 +1,9 @@
 // angular import
 import { Component, output, inject, input, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { AuthService } from '../../../../../core/auth/auth.service';
+import { AuthService } from '../../../../../core/services/identity/auth/auth.service';
 import { Router } from '@angular/router';
-import { AlertService } from '../../../../../core/common/alert/alert.service';
+import { AlertService } from '../../../../../shared/service/alert.service';
 
 // project import
 import { SharedModule } from '../../../../../shared/shared.module';

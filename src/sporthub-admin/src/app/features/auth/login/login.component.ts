@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../core/auth/auth.service';
-import { AlertService } from '../../../core/common/alert/alert.service';
+import { AuthService } from '../../../core/services/identity/auth/auth.service';
+import { AlertService } from '../../../shared/service/alert.service';
 
 @Component({
   selector: 'app-login',

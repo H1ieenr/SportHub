@@ -2,28 +2,9 @@ import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap, finalize } from 'rxjs';
-import { OperationResult } from '../models/api-response.model';
-import { environment } from '../../../environments/environment';
-
-export interface LoginRequest {
-    email: string;
-    password: string;
-}
-
-export interface LoginResponse {
-    access_token: string;
-    access_token_expires_at: string;
-    refresh_token: string;
-    user: {
-        id: number;
-        email: string;
-        name: string;
-        phone: string;
-        roles: string[];
-        avatar_url: string;
-        status: boolean;
-    };
-}
+import { OperationResult } from '../../../models/common/api-response.model';
+import { environment } from '../../../../../environments/environment';
+import { LoginRequest, LoginResponse } from '../../../models/identity/auth/auth.model';
 
 const ACCESS_TOKEN_KEY = 'sporthub_admin_access_token';
 const REFRESH_TOKEN_KEY = 'sporthub_admin_refresh_token';
