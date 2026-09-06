@@ -41,7 +41,10 @@ export class LoginComponent {
           this.alertService.success(
             res.message || 'Đăng nhập thành công.'
           );
-
+          this.authService.refreshToken().subscribe({
+            next: (res) => console.log(res),
+            error: (err) => console.error(err)
+          });
           this.router.navigate(['/dashboard']);
         } else {
           this.alertService.error(
@@ -56,5 +59,6 @@ export class LoginComponent {
         );
       },
     });
+
   }
 }

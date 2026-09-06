@@ -62,6 +62,21 @@ export class AuthService {
             );
     }
 
+    refreshToken(): Observable<OperationResult<LoginResponse>> {
+        return this.http
+            .post<OperationResult<LoginResponse>>(
+                `${this.apiUrl}/auth/refresh-token`,
+                { refresh_token: this.getRefreshToken() }
+            )
+            .pipe(
+                tap((res) => {
+                    if (res.is_success) {
+                        this.setSession(res.data);
+                    }
+                })
+            );
+    }
+
     getAccessToken(): string | null {
         return localStorage.getItem(ACCESS_TOKEN_KEY);
     }

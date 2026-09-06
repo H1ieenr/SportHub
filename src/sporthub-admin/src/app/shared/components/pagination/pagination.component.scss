@@ -1,0 +1,17 @@
+.app-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+
+  &__range {
+    color: #8c8c8c;
+    font-size: 13px;
+  }
+
+  .page-link {
+    cursor: pointer;
+  }
+}
