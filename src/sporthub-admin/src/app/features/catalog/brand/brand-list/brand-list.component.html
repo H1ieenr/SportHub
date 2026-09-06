@@ -1,84 +1,72 @@
 <app-page-header>
-  <button pageHeaderActions type="button" class="btn btn-primary" (click)="onAddClick()">
-     <i class="d-flex" antIcon type="plus-circle" theme="fill"></i> Thêm mới
+  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2"
+    (click)="onAddClick()">
+    <i antIcon type="plus-circle" theme="fill"></i>
+    <span>Thêm mới</span>
   </button>
 </app-page-header>
 
 <div class="card">
   <div class="card-body">
     @if (state().loading) {
-      <app-loading />
+    <app-loading />
     } @else if (state().errorMessage) {
-      <app-error-state [message]="state().errorMessage!" (retry)="onRetry()" />
+    <app-error-state [message]="state().errorMessage!" (retry)="onRetry()" />
     } @else if (state().items.length === 0) {
-      <app-empty-state message="Chưa có thương hiệu nào" />
+    <app-empty-state message="Chưa có thương hiệu nào" />
     } @else {
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Tên</th>
-            <th>Slug</th>
-            <th>Mô tả</th>
-            <th>Trạng thái</th>
-            <th class="text-end">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (brand of state().items; track brand.id; let i = $index) {
-            <tr>
-              <td>{{ (state().pageNumber - 1) * state().pageSize + i + 1 }}</td>
-              <td>{{ brand.name }}</td>
-              <td>{{ brand.slug }}</td>
-              <td>{{ brand.description }}</td>
-              <td>
-                <span
-                  class="badge"
-                  [class.bg-success]="brand.is_active"
-                  [class.bg-secondary]="!brand.is_active"
-                >
-                  {{ brand.is_active ? 'Hoạt động' : 'Ngừng' }}
-                </span>
-              </td>
-              <td class="text-end">
-                <div class="form-check form-switch mb-0">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    role="switch"
-                    [checked]="brand.is_active"
-                    (change)="onToggleActive(brand)"
-                  />
-                </div>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-primary me-1"
-                  (click)="onEditClick(brand)"
-                >
-                  <i class="d-flex" antIcon type="edit" theme="fill"></i>
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-sm btn-outline-danger"
-                  (click)="onDeleteClick(brand)"
-                >
-                  <i class="d-flex" antIcon type="delete" theme="fill"></i>
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Hình ảnh</th>
+          <th>Tên</th>
+          <th>Slug</th>
+          <th>Mô tả</th>
+          <th>Trạng thái</th>
+          <th class="text-end">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (brand of state().items; track brand.id; let i = $index) {
+        <tr class="app-row-clickable">
+          <td>{{ (state().pageNumber - 1) * state().pageSize + i + 1 }}</td>
+          <td>
+            <img [src]="brand.logo_url || 'assets/images/no-image.png'" [alt]="" class="img-no-image-sm" />
+          </td>
+          <td>{{ brand.name }}</td>
+          <td>{{ brand.slug }}</td>
+          <td>{{ brand.description }}</td>
+          <td>
+            <span class="badge" [class.bg-success]="brand.is_active" [class.bg-secondary]="!brand.is_active">
+              {{ brand.is_active ? 'Hoạt động' : 'Ngừng' }}
+            </span>
+          </td>
+          <td class="text-end">
+            <div class="d-flex align-items-center justify-content-end gap-2">
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" [checked]="brand.is_active"
+                  (change)="onToggleActive(brand)" />
+              </div>
+              <button type="button" class="btn btn-icon btn-flat-secondary" (click)="onViewClick(brand)">
+                <i antIcon type="eye" theme="fill"></i>
+              </button>
+              <button type="button" class="btn btn-icon btn-flat-primary" (click)="onEditClick(brand)">
+                <i antIcon type="edit" theme="fill"></i>
+              </button>
+              <button type="button" class="btn btn-icon btn-flat-danger" (click)="onDeleteClick(brand)">
+                <i antIcon type="delete" theme="fill"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
 
-      <app-pagination
-        [pageNumber]="state().pageNumber"
-        [pageSize]="state().pageSize"
-        [totalCount]="state().totalCount"
-        [totalPages]="state().totalPages"
-        [hasPreviousPage]="state().hasPreviousPage"
-        [hasNextPage]="state().hasNextPage"
-        (pageChange)="onPageChange($event)"
-      />
+    <app-pagination [pageNumber]="state().pageNumber" [pageSize]="state().pageSize" [totalCount]="state().totalCount"
+      [totalPages]="state().totalPages" [hasPreviousPage]="state().hasPreviousPage" [hasNextPage]="state().hasNextPage"
+      (pageChange)="onPageChange($event)" />
     }
   </div>
 </div>

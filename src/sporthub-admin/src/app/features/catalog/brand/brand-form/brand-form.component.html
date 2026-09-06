@@ -1,0 +1,51 @@
+<div class="offcanvas-header">
+  <h5 class="offcanvas-title d-flex align-items-center gap-2">
+    <i antIcon [type]="titleIcon" theme="fill"></i>
+    <span>{{ title }}</span>
+  </h5>
+  <button type="button" class="btn-close" (click)="onCancel()"></button>
+</div>
+
+<div class="offcanvas-body">
+  @if (loading()) {
+    <app-loading />
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="app-brand-logo-preview">
+        <img [src]="logoPreviewUrl()" alt="Logo thương hiệu" />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Tên thương hiệu <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên thương hiệu" />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <div class="text-danger small mt-1">Vui lòng nhập tên</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Slug <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" formControlName="slug" placeholder="vd: yonex, yonex-vn"/>
+        @if (form.controls.slug.invalid && form.controls.slug.touched) {
+          <div class="text-danger small mt-1">Vui lòng nhập slug</div>
+        }
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Mô tả</label>
+        <textarea class="form-control" rows="3" formControlName="description" placeholder="Mô tả ngắn về thương hiệu (không bắt buộc)"></textarea>
+      </div>
+
+      @if (!isViewMode()) {
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+            {{ mode === 'edit' ? 'Cập nhật' : 'Tạo mới' }}
+          </button>
+          <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Huỷ</button>
+        </div>
+      } @else {
+        <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Đóng</button>
+      }
+    </form>
+  }
+</div>

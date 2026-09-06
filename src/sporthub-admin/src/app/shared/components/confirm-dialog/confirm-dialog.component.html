@@ -8,10 +8,12 @@
 </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">
-    {{ cancelText }}
+  <button type="button" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2" (click)="onCancel()">
+    <i antIcon type="close-circle" theme="outline"></i>
+    <span>{{ cancelText }}</span>
   </button>
-  <button type="button" class="btn btn-danger" (click)="onConfirm()">
-    {{ confirmText }}
+  <button type="button" class="btn btn-danger d-inline-flex align-items-center gap-2" (click)="onConfirm()">
+    <i antIcon type="delete" theme="fill"></i>
+    <span>{{ confirmText }}</span>
   </button>
 </div>

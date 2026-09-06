@@ -13,10 +13,11 @@ import {
   ListPageState,
 } from '../../../../core/models/common/list-page-state.model';
 import { Brand } from '../../../../core/models/catalog/brand/brand.model';
-import { Router } from '@angular/router';
+import { BrandFormComponent, BrandFormMode } from '../brand-form/brand-form.component';
+import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap/offcanvas';
 // icon
-import { IconService } from '@ant-design/icons-angular';
-import { PlusCircleFill, EditFill, DeleteFill } from '@ant-design/icons-angular/icons';
+import { IconDirective, IconService } from '@ant-design/icons-angular';
+import { PlusCircleFill, EditFill, DeleteFill, EyeFill } from '@ant-design/icons-angular/icons';
 
 @Component({
   selector: 'app-brand-list',
@@ -27,6 +28,7 @@ import { PlusCircleFill, EditFill, DeleteFill } from '@ant-design/icons-angular/
     EmptyStateComponent,
     ErrorStateComponent,
     PaginationComponent,
+    IconDirective
   ],
   templateUrl: './brand-list.component.html',
   styleUrl: './brand-list.component.scss',
@@ -37,13 +39,13 @@ export class BrandListComponent {
   private brandService = inject(BrandService);
   private confirmDialogService = inject(ConfirmDialogService);
   private alertService = inject(AlertService);
-  private router = inject(Router);
-
+  private offcanvasService = inject(NgbOffcanvas);
+  
   readonly state = signal<ListPageState<Brand>>(initialListPageState<Brand>());
 
   constructor() {
     this.loadData();
-    this.iconService.addIcon(...[PlusCircleFill, EditFill, DeleteFill]);
+    this.iconService.addIcon(...[PlusCircleFill, EditFill, DeleteFill, EyeFill]);
   }
 
   loadData() {
@@ -81,12 +83,35 @@ export class BrandListComponent {
     this.loadData();
   }
 
-  onEditClick(brand: Brand) {
-    this.router.navigate(['/brand/edit', brand.id]);
+  private openForm(mode: BrandFormMode, brandId: number | null = null) {
+    const ref = this.offcanvasService.open(BrandFormComponent, {
+      position: 'end',
+      panelClass: 'app-offcanvas-half',
+      //backdrop: false
+    });
+
+    const instance = ref.componentInstance as BrandFormComponent;
+    instance.mode = mode;
+    instance.brandId = brandId;
+
+    ref.result.then(
+      (changed) => {
+        if (changed) this.loadData();
+      },
+      () => {} 
+    );
   }
 
   onAddClick() {
-    this.router.navigate(['/brand/create']);
+    this.openForm('create');
+  }
+
+  onEditClick(brand: Brand) {
+    this.openForm('edit', brand.id);
+  }
+
+  onViewClick(brand: Brand) {
+    this.openForm('view', brand.id);
   }
 
   async onDeleteClick(brand: Brand) {
