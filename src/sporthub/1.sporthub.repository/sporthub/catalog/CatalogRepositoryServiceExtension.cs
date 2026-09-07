@@ -9,6 +9,7 @@ namespace sporthub.repository
         public static IServiceCollection AddCatalogRepository(this IServiceCollection services)
         {
             services.AddScoped<IBrandRepository, BrandRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
             return services;
         }
     }

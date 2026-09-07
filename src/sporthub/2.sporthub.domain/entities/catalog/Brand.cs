@@ -16,7 +16,7 @@ public class Brand : AuditableEntity
 
     private Brand() { }
 
-    public static Brand Create(string name, string slug, string? description = null)
+    public static Brand Create(string name, string slug, string? description = null, bool isActive = false)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ValidationException("Tên thương hiệu không được để trống.");
@@ -27,11 +27,12 @@ public class Brand : AuditableEntity
         {
             name = name.Trim(),
             slug = slug.Trim().ToLowerInvariant(),
-            description = description
+            description = description,
+            is_active = isActive
         };
     }
 
-    public void Update(string name, string slug, string? description)
+    public void Update(string name, string slug, string? description, bool isActive = false)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ValidationException("Tên thương hiệu không được để trống.");
@@ -39,6 +40,7 @@ public class Brand : AuditableEntity
         this.name = name.Trim();
         this.slug = slug.Trim().ToLowerInvariant();
         this.description = description;
+        is_active = isActive;
     }
 
     public void UpdateLogo(string? logoUrl, string? logoPublicId)

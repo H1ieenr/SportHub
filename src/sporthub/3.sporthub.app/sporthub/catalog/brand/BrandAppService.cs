@@ -25,12 +25,12 @@ namespace sporthub.app
             if (await _brandRepository.ExistsBySlugAsync(model.slug, null, cancellationToken))
                 throw new ConflictException("Slug đã tồn tại.");
 
-            Brand brand = Brand.Create(model.name, model.slug, model.description);
+            Brand brand = Brand.Create(model.name, model.slug, model.description, model.is_active);
 
             await _brandRepository.CreateAsync(brand);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Brand/{brand.id}");
+            var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Catalog/Brand/{brand.id}");
             if (resultUpload.IsSuccess)
             {
                 brand.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
@@ -50,19 +50,16 @@ namespace sporthub.app
 
             if (model.file_logo != null)
             {
-                var resultDelete = await _cloudinaryService.DeleteImageAsync(brand.logo_public_id);
+                await _cloudinaryService.DeleteImageAsync(brand.logo_public_id);
 
-                if (resultDelete)
+                var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Catalog/Brand/{brand.id}");
+                if (resultUpload.IsSuccess)
                 {
-                    var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Brand/{brand.id}");
-                    if (resultUpload.IsSuccess)
-                    {
-                        brand.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
-                    }
+                    brand.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
                 }
             }
 
-            brand.Update(model.name, model.slug, model.description);
+            brand.Update(model.name, model.slug, model.description, model.is_active);
 
             _brandRepository.UpdateAsync(brand);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

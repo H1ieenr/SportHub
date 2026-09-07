@@ -3,30 +3,31 @@ using sporthub.domain;
 
 namespace sporthub.repository
 {
-    public class BrandRepository : SportHubGenericRepository<Brand>, IBrandRepository
+    public class CategoryRepository : SportHubGenericRepository<Category>, ICategoryRepository
     {
         private readonly SportHubDbContext _context;
-        public BrandRepository(SportHubDbContext context) : base(context)
+        public CategoryRepository(SportHubDbContext context) : base(context)
         {
             _context = context;
         }
-        public Task<Brand?> BrandGetByIdAsync(long id, CancellationToken cancellationToken = default)
+
+        public Task<Category?> CategoryGetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return GetByIdAsync(id, cancellationToken);
         }
-        public Task<Brand?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
+        public Task<Category?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
         {
-            return _context.Brands.FirstOrDefaultAsync(x => x.slug == slug, cancellationToken);
+            return _context.Categories.FirstOrDefaultAsync(x => x.slug == slug, cancellationToken);
         }
         public Task<bool> ExistsBySlugAsync(string slug, long? excludeId = null, CancellationToken cancellationToken = default)
         {
-            return _context.Brands.AnyAsync(x => x.slug == slug && (excludeId == null || x.id != excludeId), cancellationToken);
+            return _context.Categories.AnyAsync(x => x.slug == slug && (excludeId == null || x.id != excludeId), cancellationToken);
         }
-        public Task<List<Brand>> GetActiveAsync(CancellationToken cancellationToken = default)
+        public Task<List<Category>> GetActiveAsync(CancellationToken cancellationToken = default)
         {
-            return _context.Brands.AsNoTracking().Where(x => x.is_active).OrderBy(x => x.name).ToListAsync(cancellationToken);
+            return _context.Categories.AsNoTracking().Where(x => x.is_active).OrderBy(x => x.name).ToListAsync(cancellationToken);
         }
-        public async Task<(List<Brand> items, int total)> BrandGetPagedAsync(
+        public async Task<(List<Category> items, int total)> CategoryGetPagedAsync(
                 int pageNumber,
                 int pageSize,
                 string? searchtext,
@@ -34,7 +35,7 @@ namespace sporthub.repository
                 string? sortDir,
                 CancellationToken cancellationToken = default)
         {
-            var query = _context.Brands.AsNoTracking().AsQueryable();
+            var query = _context.Categories.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchtext))
                 query = query.Where(x => x.name.Contains(searchtext) || x.slug.Contains(searchtext));
@@ -54,18 +55,18 @@ namespace sporthub.repository
 
             return (items, total);
         }
-        public Task CreateAsync(Brand brand, CancellationToken cancellationToken = default)
+        public Task CreateAsync(Category category, CancellationToken cancellationToken = default)
         {
-            return AddAsync(brand);
+            return AddAsync(category);
         }
-        public Task UpdateAsync(Brand brand, CancellationToken cancellationToken = default)
+        public Task UpdateAsync(Category category, CancellationToken cancellationToken = default)
         {
-            Update(brand);
+            Update(category);
             return Task.CompletedTask;
         }
-        public Task DeleteAsync(Brand brand, CancellationToken cancellationToken = default)
+        public Task DeleteAsync(Category category, CancellationToken cancellationToken = default)
         {
-            Delete(brand);
+            Delete(category);
             return Task.CompletedTask;
         }
     }
