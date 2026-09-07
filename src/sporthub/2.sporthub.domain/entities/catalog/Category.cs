@@ -9,6 +9,7 @@ public class Category : AuditableEntity
     public string slug { get; private set; } = "";
     public string? description { get; private set; }
     public string? image_url { get; private set; }
+    public string? image_public_id { get; private set; }
     public long? parent_id { get; private set; }
     public int display_order { get; private set; }
     public bool is_active { get; private set; } = true;
@@ -22,7 +23,7 @@ public class Category : AuditableEntity
     private Category() { }
 
     public static Category Create(string name, string slug, long? parentId = null,
-        string? description = null, string? imageUrl = null, int displayOrder = 0)
+        string? description = null, int displayOrder = 0, bool isActive = false)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ValidationException("Tên danh mục không được để trống.");
@@ -33,13 +34,12 @@ public class Category : AuditableEntity
             slug = slug.Trim().ToLowerInvariant(),
             parent_id = parentId,
             description = description,
-            image_url = imageUrl,
-            display_order = displayOrder
+            display_order = displayOrder,
+            is_active = isActive
         };
     }
 
-    public void Update(string name, string slug, long? parentId, string? description,
-        string? imageUrl, int displayOrder)
+    public void Update(string name, string slug, long? parentId, string? description, int displayOrder, bool isActive = false   )
     {
         if (parentId == id)
             throw new ValidationException("Danh mục không thể là danh mục cha của chính nó.");
@@ -48,8 +48,14 @@ public class Category : AuditableEntity
         this.slug = slug.Trim().ToLowerInvariant();
         parent_id = parentId;
         this.description = description;
-        image_url = imageUrl;
         this.display_order = displayOrder;
+        this.is_active = isActive;
+    }
+
+    public void UpdateLogo(string? logoUrl, string? logoPublicId)
+    {
+        image_url = logoUrl;
+        image_public_id = logoPublicId;
     }
 
     public void Activate() => is_active = true;

@@ -28,6 +28,7 @@ namespace sporthub.app.contracts
         public string slug { get; set; } = "";
         public IFormFile? file_logo { get; set; } = null;
         public string? description { get; set; }
+        public bool is_active { get; set; }
     }
     #endregion
     #region Update

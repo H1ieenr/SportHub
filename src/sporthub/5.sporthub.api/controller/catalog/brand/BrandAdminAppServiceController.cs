@@ -21,22 +21,22 @@ namespace sporthub.api
             _brandAppService = brandAppService;
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateAsync(CreateBrandRequestDTO model, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAsync([FromForm] CreateBrandRequestDTO model, CancellationToken cancellationToken)
         {
             return await HandleAsync(model, _brandAppService.CreateAsync, cancellationToken);
         }
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateAsync(UpdateBrandRequestDTO model, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync([FromForm] UpdateBrandRequestDTO model, CancellationToken cancellationToken)
         {
             return await HandleAsync(model, _brandAppService.UpdateAsync, cancellationToken);
         }
         [HttpPost("delete")]
-        public async Task<IActionResult> DeleteAsync(DeleteBrandRequestDTO model, CancellationToken cancellationToken)
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteBrandRequestDTO model, CancellationToken cancellationToken)
         {
             return await HandleAsync(model, _brandAppService.DeleteAsync, cancellationToken);
         }
         [HttpPost("active")]
-        public async Task<IActionResult> UpdateActiveAsync(UpdateActiveBrandRequestDTO model, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateActiveAsync([FromBody] UpdateActiveBrandRequestDTO model, CancellationToken cancellationToken)
         {
             return await HandleAsync(model, _brandAppService.UpdateActiveAsync, cancellationToken);
         }

@@ -18,7 +18,7 @@ namespace sporthub.app
                 config["Cloudinary:ApiSecret"]
             );
             _cloudinary = new Cloudinary(acc);
-            _rootFolder = config["SettingConfig:Image:RootFolder"] ?? "webdev_uploads";
+            _rootFolder = config["Cloudinary:RootFolder"] ?? "webdev_uploads";
         }
 
         public async Task<CloudinaryResponse> UploadImageAsync(IFormFile file, string folderName)
