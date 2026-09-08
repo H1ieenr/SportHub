@@ -20,4 +20,6 @@ export interface PaginationParams {
   page_size: number;
   sort_by?: string | null;
   sort_dir?: string;
+  search_text?: string;
+  active?: boolean;
 }

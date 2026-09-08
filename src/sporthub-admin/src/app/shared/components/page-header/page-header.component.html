@@ -1,3 +1,8 @@
 <div class="app-page-header">
-  <ng-content select="[pageHeaderActions]" />
+  <div class="app-page-header__filters">
+    <ng-content select="[pageHeaderFilters]" />
+  </div>
+  <div class="app-page-header__actions">
+    <ng-content select="[pageHeaderActions]" />
+  </div>
 </div>

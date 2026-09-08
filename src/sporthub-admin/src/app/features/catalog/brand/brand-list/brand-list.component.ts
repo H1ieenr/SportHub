@@ -15,9 +15,16 @@ import {
 import { Brand } from '../../../../core/models/catalog/brand/brand.model';
 import { BrandFormComponent, BrandFormMode } from '../brand-form/brand-form.component';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap/offcanvas';
+
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { ViewChild } from '@angular/core';
+import { NgbDropdown, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 // icon
 import { IconDirective, IconService } from '@ant-design/icons-angular';
-import { PlusCircleFill, EditFill, DeleteFill, EyeFill } from '@ant-design/icons-angular/icons';
+import { PlusCircleFill, EditFill, DeleteFill, EyeFill, FilterOutline } from '@ant-design/icons-angular/icons';
+import { ImagePreviewService } from '../../../../shared/service/image-preview.service';
 
 @Component({
   selector: 'app-brand-list',
@@ -28,24 +35,64 @@ import { PlusCircleFill, EditFill, DeleteFill, EyeFill } from '@ant-design/icons
     EmptyStateComponent,
     ErrorStateComponent,
     PaginationComponent,
-    IconDirective
+    IconDirective,
+    NgbDropdownModule
   ],
   templateUrl: './brand-list.component.html',
   styleUrl: './brand-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BrandListComponent {
+  @ViewChild('filterDropdown') filterDropdown?: NgbDropdown;
+
   private iconService = inject(IconService);
   private brandService = inject(BrandService);
   private confirmDialogService = inject(ConfirmDialogService);
   private alertService = inject(AlertService);
   private offcanvasService = inject(NgbOffcanvas);
-  
+  private imagePreviewService = inject(ImagePreviewService);
+  private searchSubject = new Subject<string>();
+  private activeFilter: boolean | undefined = undefined;
+  draftActiveFilter: boolean | undefined = undefined;
+
   readonly state = signal<ListPageState<Brand>>(initialListPageState<Brand>());
 
   constructor() {
     this.loadData();
-    this.iconService.addIcon(...[PlusCircleFill, EditFill, DeleteFill, EyeFill]);
+    this.iconService.addIcon(...[PlusCircleFill, EditFill, DeleteFill, EyeFill, FilterOutline]);
+
+    this.searchSubject.pipe(debounceTime(400), distinctUntilChanged()).subscribe((text) => {
+      this.state.update((s) => ({ ...s, searchText: text, pageNumber: 1 }));
+      this.loadData();
+    });
+  }
+
+  onFilterDropdownOpen(isOpen: boolean) {
+    if (isOpen) {
+      this.draftActiveFilter = this.activeFilter;
+      console.log(this.draftActiveFilter)
+      console.log(this.activeFilter)
+    }
+  }
+
+  onFilterCancel() {
+    this.draftActiveFilter = this.activeFilter;
+    this.filterDropdown?.close();
+  }
+
+  onFilterApply() {
+    this.activeFilter = this.draftActiveFilter;
+    this.state.update((s) => ({ ...s, pageNumber: 1 }));
+    this.loadData();
+    this.filterDropdown?.close();
+  }
+
+  onSearchInput(value: string) {
+    this.searchSubject.next(value);
+  }
+
+  ngOnDestroy() {
+    this.searchSubject.complete();
   }
 
   loadData() {
@@ -56,6 +103,8 @@ export class BrandListComponent {
       .getList({
         page_number: current.pageNumber,
         page_size: current.pageSize,
+        search_text: current.searchText || undefined,
+        active: this.activeFilter
       })
       .subscribe({
         next: (result) => {
@@ -88,6 +137,10 @@ export class BrandListComponent {
       position: 'end',
       panelClass: 'app-offcanvas-half',
       //backdrop: false
+      beforeDismiss: () => {
+        const instance = ref.componentInstance as BrandFormComponent;
+        return !instance.submitting();
+      }
     });
 
     const instance = ref.componentInstance as BrandFormComponent;
@@ -98,7 +151,7 @@ export class BrandListComponent {
       (changed) => {
         if (changed) this.loadData();
       },
-      () => {} 
+      () => { }
     );
   }
 
@@ -112,6 +165,11 @@ export class BrandListComponent {
 
   onViewClick(brand: Brand) {
     this.openForm('view', brand.id);
+  }
+
+  onImageClick(brand: Brand) {
+    if (!brand.logo_url) return;
+    this.imagePreviewService.open(brand.logo_url, brand.name);
   }
 
   async onDeleteClick(brand: Brand) {

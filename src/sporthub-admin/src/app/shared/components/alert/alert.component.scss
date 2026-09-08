@@ -5,3 +5,7 @@
   z-index: 1080;
   width: min(360px, calc(100vw - 2rem));
 }
+.alert {
+  position: relative;
+  padding-right: 3rem; 
+}

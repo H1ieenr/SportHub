@@ -6,13 +6,15 @@ import { AlertService } from '../../../../shared/service/alert.service';
 import { BrandService } from '../../../../core/services/catalog/brand/brand.service';
 import { IconDirective, IconService } from '@ant-design/icons-angular';
 import { PlusCircleFill, EditFill, EyeFill } from '@ant-design/icons-angular/icons';
-
+import { ImagePreviewService } from '../../../../shared/service/image-preview.service';
+import { RichTextEditorComponent } from '../../../../shared/components/rich-text-editor/rich-text-editor.component';
+import { Brand } from '../../../../core/models/catalog/brand/brand.model';
 export type BrandFormMode = 'create' | 'edit' | 'view';
 
 @Component({
   selector: 'app-brand-form',
   standalone: true,
-  imports: [ReactiveFormsModule, LoadingComponent, IconDirective],
+  imports: [ReactiveFormsModule, LoadingComponent, IconDirective, RichTextEditorComponent],
   templateUrl: './brand-form.component.html',
   styleUrl: './brand-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -22,23 +24,27 @@ export class BrandFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private brandService = inject(BrandService);
   private alertService = inject(AlertService);
+  private imagePreviewService = inject(ImagePreviewService);
+
   readonly activeOffcanvas = inject(NgbActiveOffcanvas);
 
   mode: BrandFormMode = 'create';
   brandId: number | null = null;
+  brand: Brand | null = null;
 
   readonly isViewMode = computed(() => this.mode === 'view');
   readonly loading = signal(false);
   readonly submitting = signal(false);
 
-  // ảnh hiển thị ở đầu form, chưa cho sửa (upload sẽ làm sau)
+  readonly selectedFile = signal<File | null>(null);
   readonly logoPreviewUrl = signal<string>('assets/images/no-image.png');
+  private objectUrl: string | null = null;
 
   readonly form = this.fb.nonNullable.group({
     name: ['', Validators.required],
     slug: ['', Validators.required],
-    logo_url: [''], // vẫn giữ trong form để gửi lên API, chỉ ẩn input trên UI
-    description: ['']
+    description: [''],
+    active: [true]
   });
 
   constructor() {
@@ -58,7 +64,9 @@ export class BrandFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.brandId) {
+    if (this.brand) {
+      this.patchFromBrand(this.brand);
+    } else if (this.brandId) {
       this.loadDetail(this.brandId);
     }
     if (this.mode === 'view') {
@@ -66,17 +74,25 @@ export class BrandFormComponent implements OnInit {
     }
   }
 
+  ngOnDestroy() {
+    this.revokeObjectUrl();
+  }
+
+  private patchFromBrand(brand: Brand) {
+    this.form.patchValue({
+      name: brand.name,
+      slug: brand.slug,
+      description: brand.description,
+      active: brand.is_active
+    });
+    this.logoPreviewUrl.set(brand.logo_url || 'assets/images/no-image.png');
+  }
+
   loadDetail(id: number) {
     this.loading.set(true);
     this.brandService.getView(id).subscribe({
       next: (brand) => {
-        this.form.patchValue({
-          name: brand.name,
-          slug: brand.slug,
-          logo_url: brand.logo_url,
-          description: brand.description
-        });
-        this.logoPreviewUrl.set(brand.logo_url || 'assets/images/no-image.png');
+        this.patchFromBrand(brand);
         this.loading.set(false);
       },
       error: (err) => {
@@ -86,6 +102,33 @@ export class BrandFormComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      this.alertService.error('Vui lòng chọn file ảnh');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.alertService.error('Ảnh không được vượt quá 5MB');
+      return;
+    }
+
+    this.revokeObjectUrl();
+    this.objectUrl = URL.createObjectURL(file);
+    this.logoPreviewUrl.set(this.objectUrl);
+    this.selectedFile.set(file);
+  }
+
+  private revokeObjectUrl() {
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl);
+      this.objectUrl = null;
+    }
+  }
+
   onSubmit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -93,7 +136,14 @@ export class BrandFormComponent implements OnInit {
     }
 
     this.submitting.set(true);
-    const payload = this.form.getRawValue();
+    const raw = this.form.getRawValue();
+    const payload = {
+      name: raw.name,
+      slug: raw.slug,
+      description: raw.description,
+      is_active: raw.active,
+      file_logo: this.selectedFile()
+    };
 
     const request$ =
       this.mode === 'edit' ? this.brandService.update(this.brandId!, payload) : this.brandService.create(payload);
@@ -112,6 +162,12 @@ export class BrandFormComponent implements OnInit {
   }
 
   onCancel() {
+    if (this.submitting()) return;
     this.activeOffcanvas.dismiss();
+  }
+
+  onPreviewImageClick() {
+    if (this.mode !== 'view') return;
+    this.imagePreviewService.open(this.logoPreviewUrl(), this.form.controls.name.value);
   }
 }

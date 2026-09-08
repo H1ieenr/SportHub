@@ -1,7 +1,32 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
 .app-page-header {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  width: 100%;
+  gap: 12px;
+  margin-bottom: 1%;
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+  }
 }

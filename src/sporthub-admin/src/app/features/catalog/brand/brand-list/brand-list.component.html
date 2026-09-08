@@ -1,6 +1,74 @@
 <app-page-header>
-  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2"
-    (click)="onAddClick()">
+  <div pageHeaderFilters class="d-flex align-items-center gap-2">
+    <div ngbDropdown #filterDropdown="ngbDropdown" class="d-inline-block" autoClose="outside" (openChange)="onFilterDropdownOpen($event)">
+      <button
+        type="button"
+        class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
+        id="brandFilterDropdown"
+        ngbDropdownToggle
+      >
+        <i antIcon type="filter" theme="outline"></i>
+        <span>Bộ lọc</span>
+      </button>
+
+      <div ngbDropdownMenu aria-labelledby="brandFilterDropdown" class="app-filter-panel">
+        <div class="app-filter-panel__groups">
+          <div class="app-filter-panel__group">
+            <div class="app-filter-panel__group-title">Trạng thái</div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="activeFilter"
+                id="filterAll"
+                [checked]="draftActiveFilter === undefined"
+                (change)="draftActiveFilter = undefined"
+              />
+              <label class="form-check-label" for="filterAll">Tất cả</label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="activeFilter"
+                id="filterActive"
+                [checked]="draftActiveFilter === true"
+                (change)="draftActiveFilter = true"
+              />
+              <label class="form-check-label" for="filterActive">Hoạt động</label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="activeFilter"
+                id="filterInactive"
+                [checked]="draftActiveFilter === false"
+                (change)="draftActiveFilter = false"
+              />
+              <label class="form-check-label" for="filterInactive">Ngừng hoạt động</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-filter-panel__footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="onFilterCancel()">Huỷ</button>
+          <button type="button" class="btn btn-primary" (click)="onFilterApply()">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+
+    <input
+      type="text"
+      class="form-control"
+      style="max-width: 360px"
+      placeholder="Tìm theo tên, slug..."
+      (input)="onSearchInput($any($event.target).value)"
+    />
+  </div>
+
+  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onAddClick()">
     <i antIcon type="plus-circle" theme="fill"></i>
     <span>Thêm mới</span>
   </button>
@@ -32,11 +100,12 @@
         <tr class="app-row-clickable">
           <td>{{ (state().pageNumber - 1) * state().pageSize + i + 1 }}</td>
           <td>
-            <img [src]="brand.logo_url || 'assets/images/no-image.png'" [alt]="" class="img-no-image-sm" />
+            <img [src]="brand.logo_url || 'assets/images/no-image.png'" [alt]="brand.name" class="img-no-image-sm"
+              [class.app-image-clickable]="brand.logo_url" (click)="brand.logo_url && onImageClick(brand)" />
           </td>
           <td>{{ brand.name }}</td>
           <td>{{ brand.slug }}</td>
-          <td>{{ brand.description }}</td>
+          <td (click)="onViewClick(brand)"><span class="app-truncate" [innerHTML]="brand.description"></span></td>
           <td>
             <span class="badge" [class.bg-success]="brand.is_active" [class.bg-secondary]="!brand.is_active">
               {{ brand.is_active ? 'Hoạt động' : 'Ngừng' }}
