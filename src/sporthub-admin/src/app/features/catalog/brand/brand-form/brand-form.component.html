@@ -3,49 +3,69 @@
     <i antIcon [type]="titleIcon" theme="fill"></i>
     <span>{{ title }}</span>
   </h5>
-  <button type="button" class="btn-close" (click)="onCancel()"></button>
+  <button type="button" class="btn-close" [disabled]="submitting()" (click)="onCancel()"></button>
 </div>
 
 <div class="offcanvas-body">
   @if (loading()) {
-    <app-loading />
+  <app-loading />
   } @else {
-    <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <div class="app-brand-logo-preview">
-        <img [src]="logoPreviewUrl()" alt="Logo thương hiệu" />
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Tên thương hiệu <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên thương hiệu" />
-        @if (form.controls.name.invalid && form.controls.name.touched) {
-          <div class="text-danger small mt-1">Vui lòng nhập tên</div>
-        }
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Slug <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" formControlName="slug" placeholder="vd: yonex, yonex-vn"/>
-        @if (form.controls.slug.invalid && form.controls.slug.touched) {
-          <div class="text-danger small mt-1">Vui lòng nhập slug</div>
-        }
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Mô tả</label>
-        <textarea class="form-control" rows="3" formControlName="description" placeholder="Mô tả ngắn về thương hiệu (không bắt buộc)"></textarea>
-      </div>
-
-      @if (!isViewMode()) {
-        <div class="d-flex gap-2">
-          <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-            {{ mode === 'edit' ? 'Cập nhật' : 'Tạo mới' }}
-          </button>
-          <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Huỷ</button>
-        </div>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="app-upload-image-preview" [class.app-upload-image-preview--clickable]="!isViewMode()">
+      @if (isViewMode()) {
+      <img [src]="logoPreviewUrl()" alt="Logo thương hiệu" class="app-image-clickable"
+        (click)="onPreviewImageClick()" />
       } @else {
-        <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Đóng</button>
+      <label for="brandLogoInput">
+        <img [src]="logoPreviewUrl()" alt="Logo thương hiệu" />
+        <span class="app-upload-image-preview__overlay">Đổi ảnh</span>
+      </label>
+      <input id="brandLogoInput" type="file" accept="image/*" class="d-none" (change)="onFileSelected($event)" />
       }
-    </form>
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tên thương hiệu <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên thương hiệu" />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+      <div class="text-danger small mt-1">Vui lòng nhập tên</div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Slug <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="slug" placeholder="vd: yonex, yonex-vn" />
+      @if (form.controls.slug.invalid && form.controls.slug.touched) {
+      <div class="text-danger small mt-1">Vui lòng nhập slug</div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Mô tả</label>
+      <app-rich-text-editor formControlName="description" placeholder="Mô tả ngắn về thương hiệu (không bắt buộc)" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label d-block">Trạng thái</label>
+      <div class="form-check form-switch mb-0">
+        <input class="form-check-input" formControlName="active" type="checkbox" role="switch" id="brandActiveSwitch" />
+        <label class="form-check-label" for="brandActiveSwitch">
+          {{ form.controls.active.value ? 'Hoạt động' : 'Ngừng hoạt động' }}
+        </label>
+      </div>
+    </div>
+    
+    @if (!isViewMode()) {
+    <div class="d-flex gap-2">
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+        {{ mode === 'edit' ? 'Cập nhật' : 'Tạo mới' }}
+      </button>
+      <button type="button" class="btn btn-outline-secondary" [disabled]="submitting()" (click)="onCancel()">
+        Huỷ
+      </button>
+    </div>
+    } @else {
+    <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Đóng</button>
+    }
+  </form>
   }
 </div>

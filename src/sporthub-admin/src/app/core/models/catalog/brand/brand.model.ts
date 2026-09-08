@@ -14,6 +14,7 @@ export interface Brand {
 export interface BrandPayload {
   name: string;
   slug: string;
-  logo_url: string;
   description: string;
+  file_logo?: File | null;
+  is_active?: boolean | undefined;
 }

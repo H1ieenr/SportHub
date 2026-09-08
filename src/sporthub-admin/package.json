@@ -18,9 +18,11 @@
     "@angular/platform-browser": "^22.1.0",
     "@angular/router": "^22.1.0",
     "@ant-design/icons-angular": "^22.1.0",
+    "@ckeditor/ckeditor5-angular": "^11.2.0",
     "@ng-bootstrap/ng-bootstrap": "^21.0.0",
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
+    "ckeditor5": "^48.5.0",
     "ngx-scrollbar": "^19.1.5",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

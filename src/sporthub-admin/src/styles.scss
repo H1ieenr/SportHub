@@ -39,6 +39,8 @@ File: style.css
 
 @import 'scss/themes/preset-style.scss';
 
+@import '../node_modules/ckeditor5/dist/browser/ckeditor5.css';
+
 .app-offcanvas-half {
   --bs-offcanvas-width: 32vw;
 }
@@ -50,11 +52,15 @@ File: style.css
 }
 
 //-----Custom styles-----
+//-----No Image preview-----
 .img-no-image-sm{
-    width: 40px;
-    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    border-radius: 10%;
 }
+//--------------------------
 
+//-----Design btn----------
 .btn-icon {
   border: none;
   background: transparent;
@@ -72,10 +78,84 @@ File: style.css
 .btn-flat-primary   { color: #1890ff; }
 .btn-flat-danger    { color: #ff4d4f; }
 
+//--------------------------
+
 .app-row-clickable {
 
   &:hover {
     background-color: #fafafa;
+  }
+}
+
+//-----Upload image preview-----
+.app-upload-image-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+
+  label {
+    position: relative;
+    display: inline-block;
+    margin: 0;
+  }
+
+  img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    background-color: #fafafa;
+  }
+
+  &--clickable label {
+    cursor: pointer;
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 12px;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  &--clickable:hover &__overlay {
+    opacity: 1;
+  }
+}
+.app-image-clickable {
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+//----------------------------------------
+//-----Image preview dialog-----
+.app-image-preview-dialog {
+  .modal-content {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+}
+//-------truncate------------
+.app-truncate {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-width: 320px;
+  cursor: pointer;
+  p {
+    margin: 0;
   }
 }
 //----------------------------------------

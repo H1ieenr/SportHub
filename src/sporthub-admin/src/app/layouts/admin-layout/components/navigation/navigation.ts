@@ -27,7 +27,7 @@ export const NavigationItems: NavigationItem[] = [
     children: [
       {
         id: 'dashboard',
-        title: 'Thống Kê',
+        title: 'Dashboard',
         type: 'item',
         classes: 'nav-item',
         url: '/dashboard',
@@ -36,7 +36,7 @@ export const NavigationItems: NavigationItem[] = [
       },
       {
         id: 'brand',
-        title: 'Thương Hiệu',
+        title: 'Brand',
         type: 'item',
         classes: 'nav-item',
         url: '/brand',
