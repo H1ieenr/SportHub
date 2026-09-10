@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace sporthub.domain
 {
@@ -17,6 +13,7 @@ namespace sporthub.domain
          string? searchtext,
          string? sortBy,
          string? sortDir,
+         bool? active,
          CancellationToken cancellationToken = default);
         Task CreateAsync(Brand brand, CancellationToken cancellationToken = default);
         Task UpdateAsync(Brand brand, CancellationToken cancellationToken = default);
