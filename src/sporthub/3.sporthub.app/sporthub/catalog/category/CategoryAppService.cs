@@ -109,6 +109,8 @@ namespace sporthub.app
                 model.search_text,
                 model.sort_by,
                 model.sort_dir,
+                model.active,
+                model.parent_id,
                 cancellationToken);
 
             var pagedResult = new PagedResult<Category>(items, total, model.page_number, model.page_size);
@@ -117,5 +119,11 @@ namespace sporthub.app
             return OperationResult<PagedResult<CategoryDTO>>.Success(dtoResult);
         }
         #endregion
+        public async Task<OperationResult<List<CategoryDTO>>> CategoryGetNoPagingAsync(GetCategoriesNoPagingRequestDTO model, CancellationToken cancellationToken = default)
+        {
+            var items = await _categoryRepository.CategoryGetNoPagingAsync(model.search_text, model.active, model.parent_id, cancellationToken);
+            List<CategoryDTO> dto = _mapper.Map<List<CategoryDTO>>(items);
+            return OperationResult<List<CategoryDTO>>.Success(dto);
+        }
     }
 }

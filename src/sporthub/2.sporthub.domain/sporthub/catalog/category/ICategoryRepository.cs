@@ -13,6 +13,13 @@ namespace sporthub.domain
          string? searchtext,
          string? sortBy,
          string? sortDir,
+         bool? active,
+         long? parent_id,
+         CancellationToken cancellationToken = default);
+        Task<List<Category>> CategoryGetNoPagingAsync(
+         string? searchtext,
+         bool? active,
+         long? parent_id,
          CancellationToken cancellationToken = default);
         Task CreateAsync(Category category, CancellationToken cancellationToken = default);
         Task UpdateAsync(Category category, CancellationToken cancellationToken = default);

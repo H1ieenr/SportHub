@@ -13,6 +13,7 @@ namespace sporthub.domain
          string? searchtext,
          string? sortBy,
          string? sortDir,
+         bool? active,
          CancellationToken cancellationToken = default);
         Task CreateAsync(Brand brand, CancellationToken cancellationToken = default);
         Task UpdateAsync(Brand brand, CancellationToken cancellationToken = default);

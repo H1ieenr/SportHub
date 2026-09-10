@@ -109,6 +109,7 @@ namespace sporthub.app
                 model.search_text,
                 model.sort_by,
                 model.sort_dir,
+                model.active,
                 cancellationToken);
 
             var pagedResult = new PagedResult<Brand>(items, total, model.page_number, model.page_size);
