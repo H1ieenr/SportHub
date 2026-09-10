@@ -1,6 +1,0 @@
-@_6.sporthub.api.host_HostAddress = http://localhost:5088
-
-GET {{_6.sporthub.api.host_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
