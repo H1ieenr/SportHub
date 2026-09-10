@@ -72,7 +72,11 @@ public class ProductVariantConfiguration : IEntityTypeConfiguration<ProductVaria
 {
     private static readonly ValueConverter<JsonElement?, string?> JsonElementConverter = new(
         value => value.HasValue ? value.Value.GetRawText() : null,
+<<<<<<< HEAD
         value => string.IsNullOrWhiteSpace(value) ? null : JsonDocument.Parse(value, new JsonDocumentOptions()).RootElement.Clone());
+=======
+         value => string.IsNullOrWhiteSpace(value) ? null : JsonDocument.Parse(value, new JsonDocumentOptions()).RootElement.Clone());
+>>>>>>> feature/sport-hub-api
 
     public void Configure(EntityTypeBuilder<ProductVariant> builder)
     {

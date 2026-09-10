@@ -11,6 +11,7 @@ namespace sporthub.app
         public static IServiceCollection AddCatalogMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(BrandMapperProfile));
+            services.AddAutoMapper(typeof(CategoryMapperProfile));
             return services;
         }
 
@@ -20,6 +21,9 @@ namespace sporthub.app
 
             #region brand
             services.AddScoped<IBrandAppService, BrandAppService>();
+            #endregion
+            #region category
+            services.AddScoped<ICategoryAppService, CategoryAppService>();
             #endregion
 
             return services;

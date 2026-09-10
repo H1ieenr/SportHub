@@ -1,10 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.Persistence;
 using sporthub.domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 namespace sporthub.repository
 {
     public class BrandRepository : SportHubGenericRepository<Brand>, IBrandRepository
@@ -36,12 +32,16 @@ namespace sporthub.repository
                 string? searchtext,
                 string? sortBy,
                 string? sortDir,
+                bool? active,
                 CancellationToken cancellationToken = default)
         {
             var query = _context.Brands.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchtext))
                 query = query.Where(x => x.name.Contains(searchtext) || x.slug.Contains(searchtext));
+
+            if(active.HasValue)
+                query = query.Where(x => x.is_active == active.Value);
 
             query = sortBy switch
             {
