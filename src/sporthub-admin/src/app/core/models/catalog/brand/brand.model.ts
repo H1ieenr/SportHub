@@ -1,3 +1,5 @@
+import { PaginationParams } from "../../common/api-response.model";
+
 export interface Brand {
   id: number;
   name: string;
@@ -17,4 +19,8 @@ export interface BrandPayload {
   description: string;
   file_logo?: File | null;
   is_active?: boolean | undefined;
+}
+
+export interface BrandListParams extends PaginationParams {
+  active?: boolean;
 }

@@ -158,4 +158,37 @@ File: style.css
     margin: 0;
   }
 }
+//----------Custom Filter----------------
+.app-filter-panel {
+  padding: 16px;
+  min-width: 260px;
+  max-width: 90vw;
+
+  &__groups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 16px;
+  }
+
+  &__group {
+    min-width: 160px;
+  }
+
+  &__group-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+  }
+}
+//--------------Custom Form Detail-------------
+
 //----------------------------------------

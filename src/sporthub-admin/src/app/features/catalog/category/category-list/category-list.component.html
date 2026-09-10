@@ -1,0 +1,169 @@
+<app-page-header>
+  <div pageHeaderFilters class="d-flex align-items-center gap-2">
+    <div ngbDropdown #filterDropdown="ngbDropdown" class="d-inline-block" autoClose="outside" (openChange)="onFilterDropdownOpen($event)">
+      <button
+        type="button"
+        class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
+        id="brandFilterDropdown"
+        ngbDropdownToggle
+      >
+        <i antIcon type="filter" theme="outline"></i>
+        <span>Bộ lọc</span>
+      </button>
+
+      <div ngbDropdownMenu aria-labelledby="brandFilterDropdown" class="app-filter-panel">
+        <div class="app-filter-panel__groups">
+          <div class="app-filter-panel__group">
+            <div class="app-filter-panel__group-title">Trạng thái</div>
+
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="activeFilter"
+                id="filterAll"
+                [checked]="draftActiveFilter === undefined"
+                (change)="draftActiveFilter = undefined"
+              />
+              <label class="form-check-label" for="filterAll">Tất cả</label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="activeFilter"
+                id="filterActive"
+                [checked]="draftActiveFilter === true"
+                (change)="draftActiveFilter = true"
+              />
+              <label class="form-check-label" for="filterActive">Hoạt động</label>
+            </div>
+            <div class="form-check">
+              <input
+                class="form-check-input"
+                type="radio"
+                name="activeFilter"
+                id="filterInactive"
+                [checked]="draftActiveFilter === false"
+                (change)="draftActiveFilter = false"
+              />
+              <label class="form-check-label" for="filterInactive">Ngừng hoạt động</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-filter-panel__footer">
+          <button type="button" class="btn btn-outline-secondary" (click)="onFilterCancel()">Huỷ</button>
+          <button type="button" class="btn btn-primary" (click)="onFilterApply()">Áp dụng</button>
+        </div>
+      </div>
+    </div>
+
+    <input
+      type="text"
+      class="form-control"
+      style="max-width: 360px"
+      placeholder="Tìm theo tên, slug..."
+      (input)="onSearchInput($any($event.target).value)"
+    />
+  </div>
+
+  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onAddClick()">
+    <i antIcon type="plus-circle" theme="fill"></i>
+    <span>Thêm mới</span>
+  </button>
+</app-page-header>
+
+
+<div class="card">
+  <div class="card-body">
+    @if (state().loading) {
+    <app-loading />
+    } @else if (state().errorMessage) {
+    <app-error-state [message]="state().errorMessage!" (retry)="onRetry()" />
+    } @else if (state().items.length === 0) {
+    <app-empty-state message="Chưa có danh mục nào" />
+    } @else {
+    <table class="table table-hover app-category-table">
+      <thead>
+        <tr>
+          <th style="width: 40px">#</th>
+          <th>Hình ảnh</th>
+          <th>Tên danh mục</th>
+          <th>Slug</th>
+          <th>Thứ tự</th>
+          <th>Trạng thái</th>
+          <th class="text-end">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (category of state().items; track category.id; let i = $index) {
+        <tr class="app-row-clickable" [class.app-row-group-alt]="category.groupIndex % 2 === 1">
+          <td>@if (category.level === 0) {
+            {{ (state().pageNumber - 1) * state().pageSize + category.groupIndex + 1 }}
+            }</td>
+          <td>
+            <img [src]="category.image_url || 'assets/images/no-image.png'" [alt]="category.name"
+              class="img-no-image-sm" [class.app-image-clickable]="category.image_url"
+              (click)="category.image_url && onImageClick(category)" />
+          </td>
+
+          <!-- NEW: tên có thụt lề theo level + toggle expand nếu có con -->
+          <td>
+            <div class="app-category-name" [style.paddingLeft.px]="category.level * 20">
+              @if (category.has_children) {
+              <button type="button" class="app-category-name__toggle" (click)="onToggleExpand(category)"
+                [disabled]="isExpandLoading(category.id)">
+                @if (isExpandLoading(category.id)) {
+                <i antIcon type="loading" theme="outline" class="app-spin"></i>
+                } @else {
+                <i antIcon [type]="category.expanded ? 'minus-square' : 'plus-square'" theme="outline"></i>
+                }
+              </button>
+              }
+              <span>{{ category.name }}</span>
+
+              <!-- badge hiển thị danh mục cha khi cần xem nhanh, thay cho cột riêng -->
+              @if (category.parent_id) {
+              <span class="badge bg-light text-secondary app-category-name__parent-badge">
+                con của: {{ category.parent_name }}
+              </span>
+              }
+            </div>
+          </td>
+
+          <td>{{ category.slug }}</td>
+          <td>{{ category.display_order }}</td>
+          <td>
+            <span class="badge" [class.bg-success]="category.is_active" [class.bg-secondary]="!category.is_active">
+              {{ category.is_active ? 'Hoạt động' : 'Ngừng' }}
+            </span>
+          </td>
+          <td class="text-end">
+            <div class="d-flex align-items-center justify-content-end gap-2">
+              <div class="form-check form-switch mb-0">
+                <input class="form-check-input" type="checkbox" role="switch" [checked]="category.is_active"
+                  (change)="onToggleActive(category)" />
+              </div>
+              <button type="button" class="btn btn-icon btn-flat-secondary" (click)="onViewClick(category)">
+                <i antIcon type="eye" theme="fill"></i>
+              </button>
+              <button type="button" class="btn btn-icon btn-flat-primary" (click)="onEditClick(category)">
+                <i antIcon type="edit" theme="fill"></i>
+              </button>
+              <button type="button" class="btn btn-icon btn-flat-danger" (click)="onDeleteClick(category)">
+                <i antIcon type="delete" theme="fill"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <app-pagination [pageNumber]="state().pageNumber" [pageSize]="state().pageSize" [totalCount]="state().totalCount"
+      [totalPages]="state().totalPages" [hasPreviousPage]="state().hasPreviousPage" [hasNextPage]="state().hasNextPage"
+      (pageChange)="onPageChange($event)" />
+    }
+  </div>
+</div>

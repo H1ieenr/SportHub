@@ -32,6 +32,10 @@ const routes: Routes = [
         path: 'brand',
         loadComponent: () => import('./features/catalog/brand/brand-list/brand-list.component').then((c) => c.BrandListComponent)
       },
+       {
+        path: 'category',
+        loadComponent: () => import('./features/catalog/category/category-list/category-list.component').then((c) => c.CategoryListComponent)
+      },
       // {
       //   path: 'color',
       //   loadComponent: () => import('./demo/component/basic-component/color/color.component').then((c) => c.ColorComponent)
