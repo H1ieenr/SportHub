@@ -28,9 +28,9 @@ namespace sporthub.app.contracts
         public IFormFile? file_image { get; set; } = null;
         public string? description { get; set; }
 
-        public long? parent_id { get; private set; }
-        public int display_order { get; private set; }
-        public bool is_active { get; private set; } = false;
+        public long? parent_id { get; set; }
+        public int display_order { get; set; } = 0;
+        public bool is_active { get; set; } = false;
     }
     #endregion
     #region Update
@@ -48,7 +48,7 @@ namespace sporthub.app.contracts
     #region Update Active
     public class UpdateActiveCategoryRequestDTO : BaseRequestDTO
     {
-        public long id { get; set; } 
+        public long id { get; set; }
     }
     #endregion
     #region Get By Id
@@ -60,7 +60,17 @@ namespace sporthub.app.contracts
     #region GetPagedAsync
     public class GetCategoriesPagedRequestDTO : PaginationParams
     {
+        public long? parent_id { get; set; }
         public string? search_text { get; set; }
+        public bool? active { get; set; }
+    }
+    #endregion
+    #region CategoryGetNoPagingAsync
+    public class GetCategoriesNoPagingRequestDTO : BaseRequestDTO
+    {
+        public long? parent_id { get; set; }
+        public string? search_text { get; set; }
+        public bool? active { get; set; }
     }
     #endregion
 }

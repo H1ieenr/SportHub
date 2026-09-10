@@ -59,6 +59,7 @@ namespace sporthub.app.contracts
     public class GetBrandsPagedRequestDTO : PaginationParams
     {
         public string? search_text { get; set; }
+        public bool? active { get; set; }
     }
     #endregion
 }
