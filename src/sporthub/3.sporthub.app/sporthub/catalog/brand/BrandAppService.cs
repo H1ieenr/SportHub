@@ -12,6 +12,7 @@ namespace sporthub.app
         private readonly ISportHubUnitOfWork _unitOfWork;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
+        
         public BrandAppService(IBrandRepository brandRepository, ISportHubUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, IMapper mapper)
         {
             _brandRepository = brandRepository;
