@@ -1,0 +1,97 @@
+<div class="offcanvas-header">
+  <h5 class="offcanvas-title d-flex align-items-center gap-2">
+    <i antIcon [type]="titleIcon" theme="fill"></i>
+    <span>{{ title }}</span>
+  </h5>
+  <button type="button" class="btn-close" [disabled]="submitting()" (click)="onCancel()"></button>
+</div>
+
+<div class="offcanvas-body">
+  @if (loading()) {
+  <app-loading />
+  } @else {
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="app-upload-image-preview" [class.app-upload-image-preview--clickable]="!isViewMode()">
+      @if (isViewMode()) {
+      <img [src]="logoPreviewUrl()" alt="Ảnh danh mục" class="app-image-clickable"
+        (click)="onPreviewImageClick()" />
+      } @else {
+      <label for="categoryImageInput">
+        <img [src]="logoPreviewUrl()" alt="Ảnh danh mục" />
+        <span class="app-upload-image-preview__overlay">Đổi ảnh</span>
+      </label>
+      <input id="categoryImageInput" type="file" accept="image/*" class="d-none" (change)="onFileSelected($event)" />
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Tên danh mục <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="name" placeholder="Nhập tên danh mục" />
+      @if (form.controls.name.invalid && form.controls.name.touched) {
+      <div class="text-danger small mt-1">Vui lòng nhập tên</div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Slug <span class="text-danger">*</span></label>
+      <input type="text" class="form-control" formControlName="slug" placeholder="vd: vot-cau-long" />
+      @if (form.controls.slug.invalid && form.controls.slug.touched) {
+      <div class="text-danger small mt-1">Vui lòng nhập slug</div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Danh mục cha</label>
+      <select class="form-select" formControlName="parent_id">
+        <option [ngValue]="null">— Không có (danh mục gốc) —</option>
+        @for (parent of parentOptions; track parent.id) {
+        <option [ngValue]="parent.id">{{ parent.name }}</option>
+        }
+      </select>
+      <!-- NEW: gợi ý khi form được mở sẵn với parent set trước -->
+      @if (presetParentId && mode === 'create') {
+      <div class="form-text">Đang tạo danh mục con của mục đã chọn.</div>
+      }
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Thứ tự hiển thị</label>
+      <input type="number" class="form-control" formControlName="display_order" min="0" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Mô tả</label>
+      <app-rich-text-editor formControlName="description" placeholder="Mô tả ngắn về danh mục (không bắt buộc)" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label d-block">Trạng thái</label>
+      <div class="form-check form-switch mb-0">
+        <input class="form-check-input" formControlName="is_active" type="checkbox" role="switch" id="categoryActiveSwitch" />
+        <label class="form-check-label" for="categoryActiveSwitch">
+          {{ form.controls.is_active.value ? 'Hoạt động' : 'Ngừng hoạt động' }}
+        </label>
+      </div>
+    </div>
+
+    <div class="d-flex app-form-actions gap-2">
+      @if (!isViewMode()) {
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+        {{ mode === 'edit' ? 'Cập nhật' : 'Tạo mới' }}
+      </button>
+      }
+
+      @if (mode !== 'create' && categoryId) {
+      <button type="button" class="btn btn-outline-primary" [disabled]="submitting()" (click)="onAddChildClick()">
+        <i antIcon type="plus-circle" theme="outline"></i>
+        Thêm danh mục con
+      </button>
+      }
+
+      <button type="button" class="btn btn-outline-secondary" [disabled]="submitting()" (click)="onCancel()">
+        {{ isViewMode() ? 'Đóng' : 'Huỷ' }}
+      </button>
+    </div>
+  </form>
+  }
+</div>

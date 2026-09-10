@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { OperationResult, PagedResult, PaginationParams } from '../../../../core/models/common/api-response.model';
-import { Brand, BrandPayload } from '../../../models/catalog/brand/brand.model';
+import { Brand, BrandListParams, BrandPayload } from '../../../models/catalog/brand/brand.model';
 import { environment } from '../../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -11,7 +11,7 @@ export class BrandService {
     private http = inject(HttpClient);
     private readonly apiUrl = `${environment.apiUrl}/sporthub/admin/brand`;
 
-    getList(params: PaginationParams): Observable<PagedResult<Brand>> {
+    getList(params: BrandListParams): Observable<PagedResult<Brand>> {
         let httpParams = new HttpParams()
             .set('page_number', params.page_number.toString())
             .set('page_size', params.page_size.toString());

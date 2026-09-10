@@ -42,6 +42,15 @@ export const NavigationItems: NavigationItem[] = [
         url: '/brand',
         icon: 'menu',
         breadcrumbs: true
+      },
+      {
+        id: 'category',
+        title: 'Category',
+        type: 'item',
+        classes: 'nav-item',
+        url: '/category',
+        icon: 'menu',
+        breadcrumbs: true
       }
     ]
   },
