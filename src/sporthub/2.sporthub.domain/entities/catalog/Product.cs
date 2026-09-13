@@ -12,7 +12,7 @@ public class Product : AuditableEntity
     public string? description { get; private set; } = "";
     public decimal base_price { get; private set; }
     public ProductStatus status { get; private set; } = ProductStatus.Draft;
-    public bool is_featured { get; private set; }
+    public bool is_featured { get; private set; } = false;
 
     public Category category { get; private set; } = null!;
     public Brand? brand { get; private set; }
@@ -25,7 +25,7 @@ public class Product : AuditableEntity
     private Product() { }
 
     public static Product Create(long categoryId, string name, string slug, decimal basePrice,
-        long? brandId = null, string? description = null)
+        long? brandId = null, string? description = null, bool? isFeatured = false, ProductStatus? status = ProductStatus.Draft)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ValidationException("Tên sản phẩm không được để trống.");
@@ -40,12 +40,13 @@ public class Product : AuditableEntity
             slug = slug.Trim().ToLowerInvariant(),
             description = description,
             base_price = basePrice,
-            status = ProductStatus.Draft
+            status = (ProductStatus)status,
+            is_featured = (bool)isFeatured
         };
     }
 
     public void Update(long categoryId, string name, string slug, decimal basePrice,
-        long? brandId, string? description)
+        long? brandId, string? description, bool? isFeatured = false, ProductStatus? status = ProductStatus.Draft)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ValidationException("Tên sản phẩm không được để trống.");
@@ -58,28 +59,31 @@ public class Product : AuditableEntity
         this.slug = slug.Trim().ToLowerInvariant();
         this.description = description;
         base_price = basePrice;
+        this.status = (ProductStatus)status;
+        is_featured = (bool)isFeatured;
     }
 
     public void ChangeStatus(ProductStatus newStatus) => status = newStatus;
-    public void SetFeatured(bool featured) => is_featured = featured;
+    public void Feature() => is_featured = true;
+    public void Defeature() => is_featured = false;
 
-    public ProductVariant AddVariant(string sku, string name, decimal costPrice, decimal salePrice,
-        JsonElement? valueJson = null)
-    {
-        var variant = ProductVariant.Create(id, sku, name, costPrice, salePrice, valueJson);
-        _variants.Add(variant);
-        return variant;
-    }
+    // public ProductVariant AddVariant(string sku, string name, decimal costPrice, decimal salePrice,
+    //     JsonElement? valueJson = null)
+    // {
+    //     var variant = ProductVariant.Create(id, sku, name, costPrice, salePrice, valueJson);
+    //     _variants.Add(variant);
+    //     return variant;
+    // }
 
-    public void RemoveVariant(ProductVariant variant) => _variants.Remove(variant);
+    // public void RemoveVariant(ProductVariant variant) => _variants.Remove(variant);
 
-    public ProductImage AddImage(string imageUrl, int displayOrder = 0, bool isPrimary = false,
-        long? productVariantId = null)
-    {
-        var image = ProductImage.Create(id, imageUrl, displayOrder, isPrimary, productVariantId);
-        _images.Add(image);
-        return image;
-    }
+    // public ProductImage AddImage(string imageUrl, int displayOrder = 0, bool isPrimary = false,
+    //     long? productVariantId = null)
+    // {
+    //     var image = ProductImage.Create(id, imageUrl, displayOrder, isPrimary, productVariantId);
+    //     _images.Add(image);
+    //     return image;
+    // }
 
-    public void RemoveImage(ProductImage image) => _images.Remove(image);
+    // public void RemoveImage(ProductImage image) => _images.Remove(image);
 }

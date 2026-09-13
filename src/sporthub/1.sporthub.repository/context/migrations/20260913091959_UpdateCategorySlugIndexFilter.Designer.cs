@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sporthub.repository;
 
@@ -11,9 +12,11 @@ using sporthub.repository;
 namespace sporthub.repository.context.migrations
 {
     [DbContext(typeof(SportHubDbContext))]
-    partial class SportHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260913091959_UpdateCategorySlugIndexFilter")]
+    partial class UpdateCategorySlugIndexFilter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -693,8 +696,7 @@ namespace sporthub.repository.context.migrations
                     b.HasIndex("brand_id");
 
                     b.HasIndex("slug")
-                        .IsUnique()
-                        .HasFilter("[deleted_date] IS NULL");
+                        .IsUnique();
 
                     b.HasIndex("category_id", "status");
 

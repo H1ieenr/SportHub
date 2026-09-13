@@ -17,7 +17,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(x => x.slug).HasMaxLength(220).IsRequired();
         builder.Property(x => x.description).HasMaxLength(1000);
         builder.Property(x => x.image_url).HasMaxLength(500);
-        builder.HasIndex(x => x.slug).IsUnique();
+        builder.HasIndex(x => x.slug).IsUnique().HasFilter("[deleted_date] IS NULL");
 
         builder.HasOne(x => x.parent)
             .WithMany(x => x.children)
@@ -53,7 +53,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(x => x.description).HasColumnType("nvarchar(max)");
         builder.Property(x => x.base_price).HasPrecision(18, 2);
         builder.Property(x => x.status).HasConversion<int>().IsRequired();
-        builder.HasIndex(x => x.slug).IsUnique();
+        builder.HasIndex(x => x.slug).IsUnique().HasFilter("[deleted_date] IS NULL");
         builder.HasIndex(x => new { x.category_id, x.status });
 
         builder.HasOne(x => x.category)

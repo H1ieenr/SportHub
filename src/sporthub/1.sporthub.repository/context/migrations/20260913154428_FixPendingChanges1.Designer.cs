@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sporthub.repository;
 
@@ -11,9 +12,11 @@ using sporthub.repository;
 namespace sporthub.repository.context.migrations
 {
     [DbContext(typeof(SportHubDbContext))]
-    partial class SportHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260913154428_FixPendingChanges1")]
+    partial class FixPendingChanges1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

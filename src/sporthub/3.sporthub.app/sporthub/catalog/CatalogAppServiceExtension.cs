@@ -12,6 +12,7 @@ namespace sporthub.app
         {
             services.AddAutoMapper(typeof(BrandMapperProfile));
             services.AddAutoMapper(typeof(CategoryMapperProfile));
+            services.AddAutoMapper(typeof(ProductMapperProfile));
             return services;
         }
 
@@ -24,6 +25,9 @@ namespace sporthub.app
             #endregion
             #region category
             services.AddScoped<ICategoryAppService, CategoryAppService>();
+            #endregion
+            #region product
+            services.AddScoped<IProductAppService, ProductAppService>();
             #endregion
 
             return services;
