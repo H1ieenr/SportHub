@@ -23,11 +23,21 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbDropdown, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { IconDirective, IconService } from '@ant-design/icons-angular';
 import {
-  PlusCircleFill, EditFill, DeleteFill, EyeFill, FilterOutline,
-  MinusSquareOutline, PlusSquareOutline, LoadingOutline
+  PlusCircleFill,
+  EditFill,
+  DeleteFill,
+  EyeFill,
+  FilterOutline,
+  MinusSquareOutline,
+  PlusSquareOutline,
+  LoadingOutline,
 } from '@ant-design/icons-angular/icons';
 import { ImagePreviewService } from '../../../../shared/service/image-preview.service';
-import { CategoryFormComponent, CategoryFormMode, CategoryFormResult } from '../category-form/category-form.component';
+import {
+  CategoryFormComponent,
+  CategoryFormMode,
+  CategoryFormResult,
+} from '../category-form/category-form.component';
 
 @Component({
   selector: 'app-category-list',
@@ -39,7 +49,7 @@ import { CategoryFormComponent, CategoryFormMode, CategoryFormResult } from '../
     ErrorStateComponent,
     PaginationComponent,
     IconDirective,
-    NgbDropdownModule
+    NgbDropdownModule,
   ],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss',
@@ -59,11 +69,8 @@ export class CategoryListComponent {
   draftActiveFilter: boolean | undefined = undefined;
   parentOptions = signal<Category[]>([]);
 
-  // danh sách gốc (parent_id = null), có phân trang page_size = 50 như brand
   readonly state = signal<ListPageState<CategoryNode>>(initialListPageState<CategoryNode>());
 
-  // id các dòng con đang được hiển thị (do đã expand), key = parent id
-  // dùng để biết xoá dòng nào khỏi bảng khi collapse (kể cả collapse đệ quy)
   private expandedChildrenIds = new Map<number, number[]>();
 
   readonly loadingExpandIds = signal<Set<number>>(new Set());
@@ -71,7 +78,16 @@ export class CategoryListComponent {
   constructor() {
     this.loadData();
     this.iconService.addIcon(
-      ...[PlusCircleFill, EditFill, DeleteFill, EyeFill, FilterOutline, MinusSquareOutline, PlusSquareOutline, LoadingOutline]
+      ...[
+        PlusCircleFill,
+        EditFill,
+        DeleteFill,
+        EyeFill,
+        FilterOutline,
+        MinusSquareOutline,
+        PlusSquareOutline,
+        LoadingOutline,
+      ],
     );
 
     this.searchSubject.pipe(debounceTime(400), distinctUntilChanged()).subscribe((text) => {
@@ -82,7 +98,6 @@ export class CategoryListComponent {
 
   onParentFilterChange(event: Event) {
     const value = (event.target as HTMLSelectElement).value;
-
   }
 
   onFilterDropdownOpen(isOpen: boolean) {
@@ -112,6 +127,9 @@ export class CategoryListComponent {
   }
 
   loadData() {
+    this.loadDataInternal();
+  }
+  private loadDataInternal(onDone?: () => void) {
     const current = this.state();
     this.state.set({ ...current, loading: true, errorMessage: null });
     this.expandedChildrenIds.clear();
@@ -122,19 +140,20 @@ export class CategoryListComponent {
         page_size: current.pageSize,
         search_text: current.searchText || undefined,
         active: this.activeFilter,
-        parent_id: null // chỉ lấy danh mục gốc, con sẽ load lazy khi bấm expand
+        parent_id: null,
       })
       .subscribe({
         next: (result) => {
           const mapped: PagedResult<CategoryNode> = {
             ...result,
-            results: result.results.map((c, i) => this.toNode(c, 0, null, i))
+            results: result.results.map((c, i) => this.toNode(c, 0, null, i)),
           };
 
           this.state.update((s) => ({
             ...applyPagedResult(s, mapped),
             loading: false,
           }));
+          onDone?.();
         },
         error: (err) => {
           this.state.update((s) => ({
@@ -146,14 +165,54 @@ export class CategoryListComponent {
       });
   }
 
-  private toNode(c: Category, level: number, parentName: string | null, groupIndex: number): CategoryNode {
+  // NEW: reload nhưng cố mở lại đúng các node đang mở trước đó + node cha vừa bị tác động
+  private reloadPreservingExpand(affectedParentId?: number | null) {
+    const expandedSnapshot = this.state()
+      .items.filter((i) => i.expanded)
+      .map((i) => ({ id: i.id, level: i.level }))
+      .sort((a, b) => a.level - b.level); // mở từ cấp nông -> sâu, để cha có trước khi mở con
+
+    this.loadDataInternal(() => {
+      this.reExpandChain(expandedSnapshot, 0, affectedParentId);
+    });
+  }
+
+  private reExpandChain(
+    snapshot: { id: number; level: number }[],
+    index: number,
+    affectedParentId?: number | null,
+  ) {
+    if (index >= snapshot.length) {
+      // Trường hợp vừa tạo con đầu tiên trong 1 cha CHƯA từng mở trước đó -> mở luôn cha đó cho thấy con mới
+      if (affectedParentId) {
+        const node = this.state().items.find((i) => i.id === affectedParentId);
+        if (node && !node.expanded) this.expandNode(node);
+      }
+      return;
+    }
+
+    const target = snapshot[index];
+    const node = this.state().items.find((i) => i.id === target.id);
+    if (!node) {
+      this.reExpandChain(snapshot, index + 1, affectedParentId);
+      return;
+    }
+    this.expandNode(node, () => this.reExpandChain(snapshot, index + 1, affectedParentId));
+  }
+
+  private toNode(
+    c: Category,
+    level: number,
+    parentName: string | null,
+    groupIndex: number,
+  ): CategoryNode {
     return {
       ...c,
       level,
       has_children: true, // chưa biết chắc trước khi expand lần đầu — xem ghi chú bên dưới
       expanded: false,
       parent_name: parentName,
-      groupIndex
+      groupIndex,
     };
   }
 
@@ -170,40 +229,43 @@ export class CategoryListComponent {
     }
   }
 
-  private expandNode(node: CategoryNode) {
+  private expandNode(node: CategoryNode, onDone?: () => void) {
     this.loadingExpandIds.update((set) => new Set(set).add(node.id));
 
-    this.categoryService
-      .getAll({ parent_id: node.id })
-      .subscribe({
-        next: (children) => {
-          const childNodes = children.map((c, i) => this.toNode(c, node.level + 1, node.name, i));
-          this.expandedChildrenIds.set(node.id, childNodes.map((c) => c.id));
+    this.categoryService.getAll({ parent_id: node.id }).subscribe({
+      next: (children) => {
+        const childNodes = children.map((c, i) => this.toNode(c, node.level + 1, node.name, i));
+        this.expandedChildrenIds.set(
+          node.id,
+          childNodes.map((c) => c.id),
+        );
 
-          this.state.update((s) => {
-            const idx = s.items.findIndex((i) => i.id === node.id);
-            if (idx === -1) return s;
-            const items = [...s.items];
-            items[idx] = { ...items[idx], expanded: true, has_children: childNodes.length > 0 };
-            items.splice(idx + 1, 0, ...childNodes);
-            return { ...s, items };
-          });
+        this.state.update((s) => {
+          const idx = s.items.findIndex((i) => i.id === node.id);
+          if (idx === -1) return s;
+          const items = [...s.items];
+          items[idx] = { ...items[idx], expanded: true, has_children: childNodes.length > 0 };
+          items.splice(idx + 1, 0, ...childNodes);
+          return { ...s, items };
+        });
 
-          this.loadingExpandIds.update((set) => {
-            const next = new Set(set);
-            next.delete(node.id);
-            return next;
-          });
-        },
-        error: (err) => {
-          this.loadingExpandIds.update((set) => {
-            const next = new Set(set);
-            next.delete(node.id);
-            return next;
-          });
-          this.alertService.error(err?.error?.message || 'Không tải được danh mục con');
-        },
-      });
+        this.loadingExpandIds.update((set) => {
+          const next = new Set(set);
+          next.delete(node.id);
+          return next;
+        });
+        onDone?.();
+      },
+      error: (err) => {
+        this.loadingExpandIds.update((set) => {
+          const next = new Set(set);
+          next.delete(node.id);
+          return next;
+        });
+        this.alertService.error(err?.error?.message || 'Không tải được danh mục con');
+        onDone?.();
+      },
+    });
   }
 
   private collapseNode(node: CategoryNode) {
@@ -221,7 +283,6 @@ export class CategoryListComponent {
     this.expandedChildrenIds.delete(node.id);
   }
 
-  // duyệt xuống toàn bộ cháu-chắt đang hiển thị của 1 node để xoá khi collapse
   private collectDescendantIds(nodeId: number): Set<number> {
     const result = new Set<number>();
     const stack = [...(this.expandedChildrenIds.get(nodeId) ?? [])];
@@ -243,14 +304,38 @@ export class CategoryListComponent {
     this.loadData();
   }
 
-  private openForm(mode: CategoryFormMode, category: Category | null = null, presetParentId: number | null = null) {
+  private openForm(
+    mode: CategoryFormMode,
+    category: Category | null = null,
+    presetParentId: number | null = null,
+  ) {
+    this.categoryService.getAll({}).subscribe({
+      next: (all) => {
+        const excludedIds = category
+          ? this.collectSelfAndDescendantIds(all, category.id)
+          : new Set<number>();
+        const options = all.filter((c) => !excludedIds.has(c.id));
+        this.launchFormOffcanvas(mode, category, presetParentId, options);
+      },
+      error: () => {
+        this.launchFormOffcanvas(mode, category, presetParentId, []);
+      },
+    });
+  }
+
+  private launchFormOffcanvas(
+    mode: CategoryFormMode,
+    category: Category | null,
+    presetParentId: number | null,
+    parentOptions: Category[],
+  ) {
     const ref = this.offcanvasService.open(CategoryFormComponent, {
       position: 'end',
       panelClass: 'app-offcanvas-half',
       beforeDismiss: () => {
         const instance = ref.componentInstance as CategoryFormComponent;
         return !instance.submitting();
-      }
+      },
     });
 
     const instance = ref.componentInstance as CategoryFormComponent;
@@ -258,19 +343,36 @@ export class CategoryListComponent {
     instance.categoryId = category?.id ?? null;
     instance.category = category;
     instance.presetParentId = presetParentId;
+    instance.parentOptions = parentOptions; // FIX: giờ đã có dữ liệu thật
 
     ref.result.then(
       (result: CategoryFormResult | undefined) => {
-        console.log(result);
-        
-        if (result?.changed) this.loadData();
-
+        if (result?.changed) {
+          this.reloadPreservingExpand(result.affectedParentId ?? undefined); // FIX: dùng bản giữ trạng thái mở
+        }
         if (result?.createChildParentId) {
           setTimeout(() => this.openForm('create', null, result.createChildParentId!));
         }
       },
-      () => { }
+      () => {},
     );
+  }
+
+  private collectSelfAndDescendantIds(all: Category[], rootId: number): Set<number> {
+    const result = new Set<number>([rootId]);
+    const stack = [rootId];
+    while (stack.length) {
+      const id = stack.pop()!;
+      all
+        .filter((c) => c.parent_id === id)
+        .forEach((child) => {
+          if (!result.has(child.id)) {
+            result.add(child.id);
+            stack.push(child.id);
+          }
+        });
+    }
+    return result;
   }
 
   onAddClick() {
@@ -324,7 +426,9 @@ export class CategoryListComponent {
       error: (err) => {
         this.state.update((s) => ({
           ...s,
-          items: s.items.map((c) => (c.id === category.id ? { ...c, is_active: previousValue } : c)),
+          items: s.items.map((c) =>
+            c.id === category.id ? { ...c, is_active: previousValue } : c,
+          ),
         }));
         this.alertService.error(err?.error?.message || 'Cập nhật trạng thái thất bại');
       },

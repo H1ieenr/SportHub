@@ -14,6 +14,7 @@ export type CategoryFormMode = 'create' | 'edit' | 'view';
 export interface CategoryFormResult {
   changed: boolean;
   createChildParentId?: number;
+  affectedParentId?: number | null;
 }
 @Component({
   selector: 'app-category-form',
@@ -172,6 +173,11 @@ export class CategoryFormComponent implements OnInit {
       next: () => {
         this.submitting.set(false);
         this.alertService.success(this.mode === 'edit' ? 'Cập nhật thành công' : 'Tạo mới thành công');
+        const result: CategoryFormResult = {
+        changed: true,
+        affectedParentId: raw.parent_id ?? null // NEW
+        };
+        this.activeOffcanvas.close(result);
         this.activeOffcanvas.close(true);
       },
       error: (err) => {
