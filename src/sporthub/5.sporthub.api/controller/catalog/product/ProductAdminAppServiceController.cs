@@ -17,12 +17,12 @@ namespace sporthub.api
             _productAppService = productAppService;
         }
         [HttpPost("create")]
-        public async Task<IActionResult> CreateAsync([FromForm] CreateProductRequestDTO model, CancellationToken cancellationToken)
+        public async Task<IActionResult> CreateAsync([FromBody] CreateProductRequestDTO model, CancellationToken cancellationToken)
         {
             return await HandleAsync(model, _productAppService.CreateAsync, cancellationToken);
         }
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateAsync([FromForm] UpdateProductRequestDTO model, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateProductRequestDTO model, CancellationToken cancellationToken)
         {
             return await HandleAsync(model, _productAppService.UpdateAsync, cancellationToken);
         }

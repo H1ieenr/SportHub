@@ -11,7 +11,7 @@ public class ProductVariant : AuditableEntity
     public string name { get; private set; } = "";
     public decimal cost_price { get; private set; }
     public decimal sale_price { get; private set; }
-    public bool is_active { get; private set; } = true;
+    public bool is_active { get; private set; } = false;
     public JsonElement? value_json { get; private set; }
 
     public Product product { get; private set; } = null!;
@@ -23,7 +23,7 @@ public class ProductVariant : AuditableEntity
     private ProductVariant() { }
 
     public static ProductVariant Create(long productId, string sku, string name,
-        decimal costPrice, decimal salePrice, JsonElement? valueJson = null)
+        decimal costPrice, decimal salePrice, JsonElement? valueJson = null, bool? isActive = false)
     {
         if (string.IsNullOrWhiteSpace(sku))
             throw new ValidationException("SKU không được để trống.");
@@ -37,11 +37,12 @@ public class ProductVariant : AuditableEntity
             name = name.Trim(),
             cost_price = costPrice,
             sale_price = salePrice,
-            value_json = valueJson
+            value_json = valueJson,
+            is_active = (bool)isActive
         };
     }
 
-    public void Update(string name, decimal costPrice, decimal salePrice, JsonElement? valueJson)
+    public void Update(string name, decimal costPrice, decimal salePrice, JsonElement? valueJson, bool? isActive = false)
     {
         if (salePrice < 0 || costPrice < 0)
             throw new ValidationException("Giá không hợp lệ.");
@@ -50,6 +51,7 @@ public class ProductVariant : AuditableEntity
         cost_price = costPrice;
         sale_price = salePrice;
         value_json = valueJson;
+        is_active = (bool)isActive;
     }
 
     public void Activate() => is_active = true;

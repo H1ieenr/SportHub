@@ -3,7 +3,6 @@ using sporthub.domain;
 using Shared.Common;
 using AutoMapper;
 using Shared.Exceptions;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace sporthub.app
 {
@@ -11,13 +10,11 @@ namespace sporthub.app
     {
         private readonly IProductRepository _productRepository;
         private readonly ISportHubUnitOfWork _unitOfWork;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
-        public ProductAppService(IProductRepository productRepository, ISportHubUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, IMapper mapper)
+        public ProductAppService(IProductRepository productRepository, ISportHubUnitOfWork unitOfWork, IMapper mapper)
         {
             _productRepository = productRepository;
             _unitOfWork = unitOfWork;
-            _cloudinaryService = cloudinaryService;
             _mapper = mapper;
         }
         #region admin
@@ -39,7 +36,7 @@ namespace sporthub.app
         public async Task<OperationResult<ProductDTO>> UpdateAsync(UpdateProductRequestDTO model, CancellationToken cancellationToken = default)
         {
             Product product = await _productRepository.ProductGetByIdAsync(model.id, cancellationToken);
-            if (product == null) throw new NotFoundException("Không tìm thấy danh mục.");
+            if (product == null) throw new NotFoundException("Không tìm thấy product.");
 
             if (await _productRepository.ExistsBySlugAsync(model.slug, model.id, cancellationToken))
                 throw new ConflictException("Slug đã tồn tại.");
@@ -57,7 +54,7 @@ namespace sporthub.app
         public async Task<OperationResult<bool>> DeleteAsync(DeleteProductRequestDTO model, CancellationToken cancellationToken = default)
         {
             Product product = await _productRepository.ProductGetByIdAsync(model.id, cancellationToken);
-            if (product == null) throw new NotFoundException("Không tìm thấy danh mục.");
+            if (product == null) throw new NotFoundException("Không tìm thấy product.");
 
             if (product.variants.Any())
                 throw new ConflictException("Không thể xóa sản phẩm đang có biến thể");

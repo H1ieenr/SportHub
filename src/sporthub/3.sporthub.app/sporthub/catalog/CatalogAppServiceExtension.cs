@@ -1,8 +1,5 @@
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using sporthub.app.contracts;
-using sporthub.domain;
-using Microsoft.AspNetCore.Identity;
 
 namespace sporthub.app
 {
@@ -13,6 +10,7 @@ namespace sporthub.app
             services.AddAutoMapper(typeof(BrandMapperProfile));
             services.AddAutoMapper(typeof(CategoryMapperProfile));
             services.AddAutoMapper(typeof(ProductMapperProfile));
+            services.AddAutoMapper(typeof(ProductVariantMapperProfile));
             return services;
         }
 
@@ -28,6 +26,9 @@ namespace sporthub.app
             #endregion
             #region product
             services.AddScoped<IProductAppService, ProductAppService>();
+            #endregion
+            #region product variant
+            services.AddScoped<IProductVariantAppService, ProductVariantAppService>();
             #endregion
 
             return services;

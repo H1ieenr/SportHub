@@ -5,19 +5,35 @@ namespace sporthub.app.contracts
 {
     public class ProductDTO
     {
+        public long id { get; set; }
+        public long category_id { get; set; }
+        public long? brand_id { get; set; }
+        public string name { get; set; } = "";
+        public string slug { get; set; } = "";
+        public string? description { get; set; } = "";
+        public decimal base_price { get; set; }
+        public ProductStatus status { get; set; } = ProductStatus.Draft;
+        public bool is_featured { get; set; } = false;
 
+        public CategoryDTO category { get; set; } = null!;
+        public BrandDTO? brand { get; set; }
+        
+        public DateTime created_date { get; set; }
+        public long created_by { get; set; } = 0;
+        public DateTime? updated_date { get; set; }
+        public long updated_by { get; set; } = 0;
     }
     #region Create
     public class CreateProductRequestDTO : BaseRequestDTO
     {
-        public long category_id { get; private set; }
-        public long? brand_id { get; private set; }
-        public string name { get; private set; } = "";
-        public string slug { get; private set; } = "";
-        public string? description { get; private set; } = "";
-        public decimal base_price { get; private set; }
-        public ProductStatus status { get; private set; } = ProductStatus.Draft;
-        public bool is_featured { get; private set; } = false;
+        public long category_id { get; set; }
+        public long? brand_id { get; set; }
+        public string name { get; set; } = "";
+        public string slug { get; set; } = "";
+        public string? description { get; set; } = "";
+        public decimal base_price { get; set; }
+        public ProductStatus status { get; set; } = ProductStatus.Draft;
+        public bool is_featured { get; set; } = false;
     }
     #endregion
     #region Update

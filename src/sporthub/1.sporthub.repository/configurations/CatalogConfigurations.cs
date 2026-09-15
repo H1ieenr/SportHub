@@ -37,7 +37,7 @@ public class BrandConfiguration : IEntityTypeConfiguration<Brand>
         builder.Property(x => x.slug).HasMaxLength(170).IsRequired();
         builder.Property(x => x.logo_url).HasMaxLength(500);
         builder.Property(x => x.description).HasMaxLength(1000);
-        builder.HasIndex(x => x.slug).IsUnique();
+        builder.HasIndex(x => x.slug).IsUnique().HasFilter("[deleted_date] IS NULL");
     }
 }
 
@@ -87,7 +87,7 @@ public class ProductVariantConfiguration : IEntityTypeConfiguration<ProductVaria
         builder.Property(x => x.value_json)
             .HasColumnType("nvarchar(max)")
             .HasConversion(JsonElementConverter);
-        builder.HasIndex(x => x.sku).IsUnique();
+        builder.HasIndex(x => x.sku).IsUnique().HasFilter("[deleted_date] IS NULL");
         builder.HasIndex(x => new { x.product_id, x.is_active });
 
         builder.HasOne(x => x.product)
