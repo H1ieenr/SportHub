@@ -11,11 +11,19 @@
 # THÊM QUY TẮC CỦA BẠN VÀO ĐÂY:
 # ==========================================
 
-# 1. Bỏ qua tất cả các file .json trong dự án
-*.json
-
+# Ẩn các file config chứa secret thật
+appsettings.json
+**/appsettings.json
+appsettings.Development.json
 **/appsettings.Development.json
+appsettings.Local.json
 **/appsettings.Local.json
+appsettings.Production.json
+**/appsettings.Production.json
+
+# Nhưng vẫn cho phép commit file mẫu (không chứa secret thật)
+!appsettings.Example.json
+!**/appsettings.Example.json
 
 # User-specific files
 *.rsuser
