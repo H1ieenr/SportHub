@@ -46,5 +46,10 @@ namespace sporthub.api
         {
             return await HandleAsync(model, _brandAppService.BrandGetPagedAsync, cancellationToken);
         }
+        [HttpGet("list-nopaging")]
+        public async Task<IActionResult> BrandGetNoPagingAsync([FromQuery] GetBrandsNoPagingRequestDTO model, CancellationToken cancellationToken)
+        {
+            return await HandleAsync(model, _brandAppService.BrandGetNoPagingAsync, cancellationToken);
+        }
     }
 }

@@ -1,3 +1,5 @@
+using System.ComponentModel;
+
 namespace sporthub.domain;
 
 public enum UserStatus
@@ -9,9 +11,13 @@ public enum UserStatus
 
 public enum ProductStatus
 {
+    [Description("Nháp")]
     Draft = 1,
+    [Description("Đang bán")]
     Active = 2,
+    [Description("Ngừng bán")]
     Inactive = 3,
+    [Description("Đã ngừng kinh doanh")]
     Discontinued = 4
 }
 

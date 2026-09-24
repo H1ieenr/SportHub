@@ -12,6 +12,7 @@ namespace sporthub.app
         private readonly ISportHubUnitOfWork _unitOfWork;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
+        private readonly string _folderName = "Catalog/Category/";
         public CategoryAppService(ICategoryRepository categoryRepository, ISportHubUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
@@ -30,7 +31,7 @@ namespace sporthub.app
             await _categoryRepository.CreateAsync(category);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_image, $"Catalog/Category/{category.id}");
+            var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_image, $"{_folderName}{category.id}");
             if (resultUpload.IsSuccess)
             {
                 category.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
@@ -52,7 +53,7 @@ namespace sporthub.app
             {
                 await _cloudinaryService.DeleteImageAsync(category.image_public_id);
 
-                var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_image, $"Catalog/Category/{category.id}");
+                var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_image, $"{_folderName}{category.id}");
                 if (resultUpload.IsSuccess)
                 {
                     category.UpdateLogo(resultUpload.Url, resultUpload.PublicId);

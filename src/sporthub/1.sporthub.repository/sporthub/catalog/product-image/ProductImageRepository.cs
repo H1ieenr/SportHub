@@ -14,6 +14,10 @@ namespace sporthub.repository
         {
             return GetByIdAsync(id, cancellationToken);
         }
+        public Task<ProductImage?> ProductImageGetByPrimaryAsync(long? product_id, long? product_variant_id, CancellationToken cancellationToken = default)
+        {
+            return _context.ProductImages.FirstOrDefaultAsync(x => x.product_id == product_id && x.product_variant_id == product_variant_id, cancellationToken);
+        }
         public async Task<List<ProductImage>> ProductImageGetNoPagingAsync(
               long? product_id,
               long? product_variant_id,
@@ -24,7 +28,7 @@ namespace sporthub.repository
 
             if (product_id.HasValue)
                 query = query.Where(x => x.product.id == product_id.Value);
-                
+
             if (product_variant_id.HasValue)
                 query = query.Where(x => x.product_variant_id == product_variant_id.Value);
 
@@ -51,6 +55,11 @@ namespace sporthub.repository
         public Task DeleteAsync(ProductImage productImage, CancellationToken cancellationToken = default)
         {
             Delete(productImage);
+            return Task.CompletedTask;
+        }
+        public Task DeleteBatchAsycn(List<ProductImage> productImages, CancellationToken cancellationToken = default)
+        {
+            DeleteRange(productImages);
             return Task.CompletedTask;
         }
 

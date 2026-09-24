@@ -11,6 +11,7 @@ namespace sporthub.app.contracts
         Task<OperationResult<bool>> UpdateActiveAsync(UpdateActiveBrandRequestDTO model, CancellationToken cancellationToken = default);
         Task<OperationResult<BrandDTO>> BrandGetByIdAsync(BrandGetByIdRequestDTO model, CancellationToken cancellationToken = default);
         Task<OperationResult<PagedResult<BrandDTO>>> BrandGetPagedAsync(GetBrandsPagedRequestDTO model, CancellationToken cancellationToken = default);
+        Task<OperationResult<List<BrandDTO>>> BrandGetNoPagingAsync(GetBrandsNoPagingRequestDTO model, CancellationToken cancellationToken = default);
         #endregion
     }
 }

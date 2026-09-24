@@ -58,6 +58,22 @@ namespace sporthub.repository
 
             return (items, total);
         }
+        public async Task<List<Brand>> BrandGetNoPagingAsync(
+                string? searchtext,
+                bool? active,
+                CancellationToken cancellationToken = default)
+        {
+            var query = _context.Brands.AsNoTracking().AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(searchtext))
+                query = query.Where(x => x.name.Contains(searchtext) || x.slug.Contains(searchtext));
+
+            if(active.HasValue) query = query.Where(x => x.is_active == active.Value);
+
+            var items = await query.OrderBy(x => x.created_date).ToListAsync(cancellationToken);
+
+            return items;
+        }
         public Task CreateAsync(Brand brand, CancellationToken cancellationToken = default)
         {
             return AddAsync(brand);

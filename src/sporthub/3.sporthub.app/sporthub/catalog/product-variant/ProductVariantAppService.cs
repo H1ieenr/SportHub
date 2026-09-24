@@ -10,13 +10,11 @@ namespace sporthub.app
     {
         private readonly IProductVariantRepository _productVariantRepository;
         private readonly ISportHubUnitOfWork _unitOfWork;
-        private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
-        public ProductVariantAppService(IProductVariantRepository productVariantRepository, ISportHubUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, IMapper mapper)
+        public ProductVariantAppService(IProductVariantRepository productVariantRepository, ISportHubUnitOfWork unitOfWork, IMapper mapper)
         {
             _productVariantRepository = productVariantRepository;
             _unitOfWork = unitOfWork;
-            _cloudinaryService = cloudinaryService;
             _mapper = mapper;
         }
         #region admin
@@ -34,29 +32,37 @@ namespace sporthub.app
             ProductVariantDTO dto = _mapper.Map<ProductVariantDTO>(product_variant);
             return OperationResult<ProductVariantDTO>.Success(dto);
         }
-        public async Task<OperationResult<List<CreateBatchProductVariantResponseDTO>>> CreateBatchAsync(CreateBatchProductVariantRequestDTO model, CancellationToken cancellationToken = default)
+        public async Task<OperationResult<List<CreateBatchProductVariantResponseDTO>>> CreateBatchAsync(
+                 CreateBatchProductVariantRequestDTO model, CancellationToken cancellationToken = default)
         {
-            if (model.product_variants.Count == 0)
-                return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success([]);
+            var items = model.product_variants;
+            if (items.Count == 0) return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success([]);
 
-            var skus = model.product_variants.Select(x => x.sku).ToList();
-            var duplicatedInRequest = skus.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            var skus = items.Select(x => x.sku).ToList();
+            var duplicated = skus.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
+            var existing = (await _productVariantRepository.GetExistingSkusAsync(skus, cancellationToken)).ToHashSet();
 
-            if (duplicatedInRequest.Count > 0)
-                throw new ConflictException($"Sku bị trùng trong danh sách gửi lên: {string.Join(", ", duplicatedInRequest)}");
+            string? GetError(string sku) => duplicated.Contains(sku) ? "Sku bị trùng trong danh sách gửi lên" : existing.Contains(sku) ? "Sku đã tồn tại" : null;
 
-            var existingSkus = await _productVariantRepository.GetExistingSkusAsync(skus, cancellationToken);
-            if (existingSkus.Count > 0)
-                throw new ConflictException($"Sku đã tồn tại: {string.Join(", ", existingSkus)}");
+            var rows = items.Select(item =>
+            {
+                var error = GetError(item.sku);
+                var entity = error is null ? ProductVariant.Create(model.product_id, item.sku, item.name, item.cost_price, item.sale_price, item.value_json, item.is_active) : null;
+                var dto = error is null ? CreateBatchProductVariantResponseDTO.Ok(item.sku, item.name) : CreateBatchProductVariantResponseDTO.Fail(item.sku, item.name, error);
 
-            List<ProductVariant> product_variants = model.product_variants.Select(item => ProductVariant.Create( model.product_id, item.sku, item.name, 
-                                                        item.cost_price, item.sale_price, item.value_json, item.is_active)).ToList();
+                return (entity, dto);
+            }).ToList();
 
-            await _productVariantRepository.CreateBatchAsync(product_variants);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            var entities = rows.Where(x => x.entity is not null).Select(x => x.entity!).ToList();
+            if (entities.Count > 0)
+            {
+                await _productVariantRepository.CreateBatchAsync(entities);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+            }
 
-            var dto = _mapper.Map<List<CreateBatchProductVariantResponseDTO>>(product_variants);
-            return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success(dto);
+            foreach (var (entity, dto) in rows) if (entity is not null) dto.id = entity.id;
+
+            return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success(rows.Select(x => x.dto).ToList());
         }
         public async Task<OperationResult<ProductVariantDTO>> UpdateAsync(UpdateProductVariantRequestDTO model, CancellationToken cancellationToken = default)
         {
@@ -85,7 +91,7 @@ namespace sporthub.app
             _productVariantRepository.DeleteAsync(product_variant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return OperationResult<bool>.Success(true, "Xóa danh mục thành công");
+            return OperationResult<bool>.Success(true, "Xóa sản phẩm thành công");
         }
         public async Task<OperationResult<bool>> UpdateActiveProductVariantAsync(UpdateActiveProductVariantRequestDTO model, CancellationToken cancellationToken = default)
         {

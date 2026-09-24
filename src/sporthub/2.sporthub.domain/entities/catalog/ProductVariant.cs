@@ -14,6 +14,10 @@ public class ProductVariant : AuditableEntity
     public bool is_active { get; private set; } = false;
     public JsonElement? value_json { get; private set; }
 
+    public string? option1 { get; private set; }
+    public string? option2 { get; private set; }
+    public string? option3 { get; private set; }
+
     public Product product { get; private set; } = null!;
     public InventoryItem? inventory { get; private set; }
 

@@ -17,6 +17,8 @@ namespace sporthub.app.contracts
 
         public CategoryDTO category { get; set; } = null!;
         public BrandDTO? brand { get; set; }
+
+        public List<ProductVariant> _variants = new();
         
         public DateTime created_date { get; set; }
         public long created_by { get; set; } = 0;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using sporthub.repository;
 
@@ -11,9 +12,11 @@ using sporthub.repository;
 namespace sporthub.repository.context.migrations
 {
     [DbContext(typeof(SportHubDbContext))]
-    partial class SportHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260921032120_InitialCreate8")]
+    partial class InitialCreate8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -789,15 +792,6 @@ namespace sporthub.repository.context.migrations
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("option1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("option2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("option3")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("product_id")
                         .HasColumnType("bigint");

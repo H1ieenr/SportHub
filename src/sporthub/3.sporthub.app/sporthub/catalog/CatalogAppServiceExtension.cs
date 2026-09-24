@@ -11,6 +11,7 @@ namespace sporthub.app
             services.AddAutoMapper(typeof(CategoryMapperProfile));
             services.AddAutoMapper(typeof(ProductMapperProfile));
             services.AddAutoMapper(typeof(ProductVariantMapperProfile));
+            services.AddAutoMapper(typeof(ProductImageMapperProfile));
             return services;
         }
 
@@ -29,6 +30,9 @@ namespace sporthub.app
             #endregion
             #region product variant
             services.AddScoped<IProductVariantAppService, ProductVariantAppService>();
+            #endregion
+            #region product image
+            services.AddScoped<IProductImageAppService, ProductImageAppService>();
             #endregion
 
             return services;

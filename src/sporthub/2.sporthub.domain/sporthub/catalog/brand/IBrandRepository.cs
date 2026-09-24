@@ -15,6 +15,7 @@ namespace sporthub.domain
          string? sortDir,
          bool? active,
          CancellationToken cancellationToken = default);
+        Task<List<Brand>> BrandGetNoPagingAsync(string? searchtext, bool? active, CancellationToken cancellationToken = default);
         Task CreateAsync(Brand brand, CancellationToken cancellationToken = default);
         Task UpdateAsync(Brand brand, CancellationToken cancellationToken = default);
         Task DeleteAsync(Brand brand, CancellationToken cancellationToken = default);

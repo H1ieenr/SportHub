@@ -15,7 +15,7 @@ namespace sporthub.app.contracts
         public string? logo_url { get; set; }
         public string? description { get; set; }
         public bool is_active { get; set; }
-        
+
         public DateTime created_date { get; set; }
         public long created_by { get; set; } = 0;
         public DateTime? updated_date { get; set; }
@@ -57,6 +57,13 @@ namespace sporthub.app.contracts
     #endregion
     #region GetPagedAsync
     public class GetBrandsPagedRequestDTO : PaginationParams
+    {
+        public string? search_text { get; set; }
+        public bool? active { get; set; }
+    }
+    #endregion
+    #region BrandGetNoPagingAsync
+    public class GetBrandsNoPagingRequestDTO : BaseRequestDTO
     {
         public string? search_text { get; set; }
         public bool? active { get; set; }

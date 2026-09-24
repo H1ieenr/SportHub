@@ -10,10 +10,17 @@ namespace sporthub.repository
         {
             _context = context;
         }
-
         public Task<Product?> ProductGetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return GetByIdAsync(id, cancellationToken);
+            //return GetByIdAsync(id, cancellationToken);
+            return _context.Products.AsNoTracking()
+                     .Include(x => x.category)
+                     .Include(x => x.brand)
+                     .Include(x => x.images.Where(i => i.product_variant_id == null && i.is_primary))
+                     .Include(x => x.variants)
+                        .ThenInclude(v => v.Images.Where(i => i.is_primary))
+                     .AsSplitQuery()
+                     .FirstOrDefaultAsync(x => x.id == id, cancellationToken); ;
         }
         public Task<Product?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
         {

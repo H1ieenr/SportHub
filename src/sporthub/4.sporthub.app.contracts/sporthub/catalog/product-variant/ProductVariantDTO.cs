@@ -14,6 +14,10 @@ namespace sporthub.app.contracts
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
 
+        public string? option1 { get; set; }
+        public string? option2 { get; set; }
+        public string? option3 { get; set; }
+
         public ProductDTO product { get; set; } = null!;
         //public InventoryItem? inventory { get; set; }
     }
@@ -49,6 +53,14 @@ namespace sporthub.app.contracts
         public long id { get; set; }
         public string sku { get; set; } = "";
         public string name { get; set; } = "";
+        public bool success { get; set; }
+        public string? message { get; set; }
+
+        public static CreateBatchProductVariantResponseDTO Ok(string sku, string name) =>
+            new() { sku = sku, name = name, success = true, message = "Tạo thành công" };
+
+        public static CreateBatchProductVariantResponseDTO Fail(string sku, string name, string message) =>
+            new() { sku = sku, name = name, success = false, message = message };
     }
     #endregion
     #region Update

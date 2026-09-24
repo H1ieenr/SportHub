@@ -12,7 +12,7 @@ namespace sporthub.app
         private readonly ISportHubUnitOfWork _unitOfWork;
         private readonly ICloudinaryService _cloudinaryService;
         private readonly IMapper _mapper;
-        
+        private readonly string _folderName = "Catalog/Brand/";
         public BrandAppService(IBrandRepository brandRepository, ISportHubUnitOfWork unitOfWork, ICloudinaryService cloudinaryService, IMapper mapper)
         {
             _brandRepository = brandRepository;
@@ -31,7 +31,7 @@ namespace sporthub.app
             await _brandRepository.CreateAsync(brand);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Catalog/Brand/{brand.id}");
+            var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"{_folderName}{brand.id}");
             if (resultUpload.IsSuccess)
             {
                 brand.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
@@ -53,7 +53,7 @@ namespace sporthub.app
             {
                 await _cloudinaryService.DeleteImageAsync(brand.logo_public_id);
 
-                var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"Catalog/Brand/{brand.id}");
+                var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_logo, $"{_folderName}{brand.id}");
                 if (resultUpload.IsSuccess)
                 {
                     brand.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
@@ -119,5 +119,11 @@ namespace sporthub.app
             return OperationResult<PagedResult<BrandDTO>>.Success(dtoResult);
         }
         #endregion
+        public async Task<OperationResult<List<BrandDTO>>> BrandGetNoPagingAsync(GetBrandsNoPagingRequestDTO model, CancellationToken cancellationToken = default)
+        {
+            var items = await _brandRepository.BrandGetNoPagingAsync(model.search_text, model.active, cancellationToken);
+            List<BrandDTO> dto = _mapper.Map<List<BrandDTO>>(items);
+            return OperationResult<List<BrandDTO>>.Success(dto);
+        }
     }
 }
