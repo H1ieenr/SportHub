@@ -308,6 +308,52 @@ namespace sporthub.repository.context.migrations
                     b.ToTable("categories", (string)null);
                 });
 
+            modelBuilder.Entity("sporthub.domain.CategoryOption", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("id"));
+
+                    b.Property<long>("category_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("created_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("deleted_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("display_order")
+                        .HasColumnType("int");
+
+                    b.Property<long>("option_definition_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("updated_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("option_definition_id");
+
+                    b.HasIndex("category_id", "option_definition_id")
+                        .IsUnique()
+                        .HasFilter("[deleted_date] IS NULL");
+
+                    b.ToTable("category_option", (string)null);
+                });
+
             modelBuilder.Entity("sporthub.domain.InventoryItem", b =>
                 {
                     b.Property<long>("id")
@@ -412,6 +458,98 @@ namespace sporthub.repository.context.migrations
                     b.HasIndex("reference_type", "reference_id");
 
                     b.ToTable("inventory_transactions", (string)null);
+                });
+
+            modelBuilder.Entity("sporthub.domain.OptionDefinition", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("id"));
+
+                    b.Property<string>("code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<long>("created_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("deleted_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("is_active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("updated_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("code")
+                        .IsUnique()
+                        .HasFilter("[deleted_date] IS NULL");
+
+                    b.ToTable("option_definition", (string)null);
+                });
+
+            modelBuilder.Entity("sporthub.domain.OptionValue", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("id"));
+
+                    b.Property<long>("created_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("deleted_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("display_order")
+                        .HasColumnType("int");
+
+                    b.Property<long>("option_definition_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("updated_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("value")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("option_definition_id", "value")
+                        .IsUnique()
+                        .HasFilter("[deleted_date] IS NULL");
+
+                    b.ToTable("option_value", (string)null);
                 });
 
             modelBuilder.Entity("sporthub.domain.Order", b =>
@@ -790,15 +928,6 @@ namespace sporthub.repository.context.migrations
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
-                    b.Property<string>("option1")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("option2")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("option3")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<long>("product_id")
                         .HasColumnType("bigint");
 
@@ -832,6 +961,54 @@ namespace sporthub.repository.context.migrations
                         {
                             t.HasCheckConstraint("CK_product_variants_value_json", "[value_json] IS NULL OR ISJSON([value_json]) = 1");
                         });
+                });
+
+            modelBuilder.Entity("sporthub.domain.ProductVariantOptionValue", b =>
+                {
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("id"));
+
+                    b.Property<long>("created_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("created_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("deleted_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("deleted_date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long>("option_definition_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("option_value_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("product_variant_id")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("updated_by")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("updated_date")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("option_definition_id");
+
+                    b.HasIndex("option_value_id");
+
+                    b.HasIndex("product_variant_id", "option_definition_id")
+                        .IsUnique()
+                        .HasFilter("[deleted_date] IS NULL");
+
+                    b.ToTable("product_variant_option_value", (string)null);
                 });
 
             modelBuilder.Entity("sporthub.domain.RefreshTokens", b =>
@@ -1075,6 +1252,25 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("parent");
                 });
 
+            modelBuilder.Entity("sporthub.domain.CategoryOption", b =>
+                {
+                    b.HasOne("sporthub.domain.Category", "category")
+                        .WithMany("category_option")
+                        .HasForeignKey("category_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("sporthub.domain.OptionDefinition", "option_definition")
+                        .WithMany("category_options")
+                        .HasForeignKey("option_definition_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("category");
+
+                    b.Navigation("option_definition");
+                });
+
             modelBuilder.Entity("sporthub.domain.InventoryItem", b =>
                 {
                     b.HasOne("sporthub.domain.ProductVariant", "product_variant")
@@ -1100,6 +1296,17 @@ namespace sporthub.repository.context.migrations
                         .IsRequired();
 
                     b.Navigation("inventory_item");
+                });
+
+            modelBuilder.Entity("sporthub.domain.OptionValue", b =>
+                {
+                    b.HasOne("sporthub.domain.OptionDefinition", "option_definition")
+                        .WithMany("values")
+                        .HasForeignKey("option_definition_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("option_definition");
                 });
 
             modelBuilder.Entity("sporthub.domain.Order", b =>
@@ -1190,6 +1397,33 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("product");
                 });
 
+            modelBuilder.Entity("sporthub.domain.ProductVariantOptionValue", b =>
+                {
+                    b.HasOne("sporthub.domain.OptionDefinition", "option_definition")
+                        .WithMany()
+                        .HasForeignKey("option_definition_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("sporthub.domain.OptionValue", "option_value")
+                        .WithMany()
+                        .HasForeignKey("option_value_id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("sporthub.domain.ProductVariant", "product_variant")
+                        .WithMany("option_values")
+                        .HasForeignKey("product_variant_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("option_definition");
+
+                    b.Navigation("option_value");
+
+                    b.Navigation("product_variant");
+                });
+
             modelBuilder.Entity("sporthub.domain.RefreshTokens", b =>
                 {
                     b.HasOne("sporthub.domain.RefreshTokens", "replaced_by_token")
@@ -1239,6 +1473,8 @@ namespace sporthub.repository.context.migrations
 
             modelBuilder.Entity("sporthub.domain.Category", b =>
                 {
+                    b.Navigation("category_option");
+
                     b.Navigation("children");
 
                     b.Navigation("products");
@@ -1247,6 +1483,13 @@ namespace sporthub.repository.context.migrations
             modelBuilder.Entity("sporthub.domain.InventoryItem", b =>
                 {
                     b.Navigation("transactions");
+                });
+
+            modelBuilder.Entity("sporthub.domain.OptionDefinition", b =>
+                {
+                    b.Navigation("category_options");
+
+                    b.Navigation("values");
                 });
 
             modelBuilder.Entity("sporthub.domain.Order", b =>
@@ -1268,6 +1511,8 @@ namespace sporthub.repository.context.migrations
                     b.Navigation("Images");
 
                     b.Navigation("inventory");
+
+                    b.Navigation("option_values");
                 });
 
             modelBuilder.Entity("sporthub.domain.Roles", b =>

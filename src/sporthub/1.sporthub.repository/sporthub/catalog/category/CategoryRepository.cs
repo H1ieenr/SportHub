@@ -10,10 +10,9 @@ namespace sporthub.repository
         {
             _context = context;
         }
-
         public Task<Category?> CategoryGetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return GetByIdAsync(id, cancellationToken);
+            return _context.Categories.Include(x => x.category_option).FirstOrDefaultAsync(x => x.id == id, cancellationToken);
         }
         public Task<Category?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
         {

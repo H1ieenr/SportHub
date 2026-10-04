@@ -14,20 +14,24 @@ public class ProductVariant : AuditableEntity
     public bool is_active { get; private set; } = false;
     public JsonElement? value_json { get; private set; }
 
-    public string? option1 { get; private set; }
-    public string? option2 { get; private set; }
-    public string? option3 { get; private set; }
+    // public string? option1 { get; private set; }
+    // public string? option2 { get; private set; }
+    // public string? option3 { get; private set; }
 
     public Product product { get; private set; } = null!;
     public InventoryItem? inventory { get; private set; }
 
     private readonly List<ProductImage> _images = new();
     public IReadOnlyCollection<ProductImage> Images => _images;
-
+    
+    private readonly List<ProductVariantOptionValue> _option_values = new();
+    public IReadOnlyCollection<ProductVariantOptionValue> option_values => _option_values;
+    
     private ProductVariant() { }
 
     public static ProductVariant Create(long productId, string sku, string name,
-        decimal costPrice, decimal salePrice, JsonElement? valueJson = null, bool? isActive = false)
+        decimal costPrice, decimal salePrice,
+        JsonElement? valueJson = null, bool? isActive = false)
     {
         if (string.IsNullOrWhiteSpace(sku))
             throw new ValidationException("SKU không được để trống.");
@@ -42,11 +46,11 @@ public class ProductVariant : AuditableEntity
             cost_price = costPrice,
             sale_price = salePrice,
             value_json = valueJson,
-            is_active = (bool)isActive
+            is_active = (bool)isActive,
         };
     }
 
-    public void Update(string name, decimal costPrice, decimal salePrice, JsonElement? valueJson, bool? isActive = false)
+    public void Update(string name, decimal costPrice, decimal salePrice,JsonElement? valueJson, bool? isActive = false)
     {
         if (salePrice < 0 || costPrice < 0)
             throw new ValidationException("Giá không hợp lệ.");

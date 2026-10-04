@@ -13,6 +13,10 @@ public class SportHubDbContext(DbContextOptions<SportHubDbContext> options) : Db
     public DbSet<RefreshTokens> RefreshTokens => Set<RefreshTokens>();
 
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<CategoryOption> CategoryOptions => Set<CategoryOption>();
+    public DbSet<OptionValue> OptionValues => Set<OptionValue>();
+    public DbSet<OptionDefinition> OptionDefinitions => Set<OptionDefinition>();
+    public DbSet<ProductVariantOptionValue> ProductVariantOptionValues => Set<ProductVariantOptionValue>();
     public DbSet<Brand> Brands => Set<Brand>();
     public DbSet<Product> Products => Set<Product>();
     public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();

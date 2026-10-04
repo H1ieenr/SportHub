@@ -19,7 +19,10 @@ namespace sporthub.app.contracts
         public long created_by { get; set; } = 0;
         public DateTime? updated_date { get; set; }
         public long updated_by { get; set; } = 0;
+
+        public List<CategoryOptionDTO> category_option_maps {get; set;} = [];
     }
+
     #region Create
     public class CreateCategoryRequestDTO : BaseRequestDTO
     {
@@ -31,6 +34,8 @@ namespace sporthub.app.contracts
         public long? parent_id { get; set; }
         public int display_order { get; set; } = 0;
         public bool is_active { get; set; } = false;
+
+        public List<CategoryOptionItemDTO>? category_option_maps { get; set; } = [];
     }
     #endregion
     #region Update

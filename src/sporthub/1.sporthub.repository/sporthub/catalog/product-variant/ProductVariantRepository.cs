@@ -41,7 +41,7 @@ namespace sporthub.repository
                 string? sortBy,
                 string? sortDir,
                 long? product_id,
-                bool? is_active,
+                bool? is_active, 
                 CancellationToken cancellationToken = default)
         {
             var query = _context.ProductVariants.AsNoTracking().AsQueryable();

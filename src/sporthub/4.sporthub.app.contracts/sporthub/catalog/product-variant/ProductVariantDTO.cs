@@ -31,6 +31,9 @@ namespace sporthub.app.contracts
         public decimal sale_price { get; set; }
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
+        public string? option1 { get; set; }
+        public string? option2 { get; set; }
+        public string? option3 { get; set; }
     }
     #endregion
     #region CreateBatchProductVariant
@@ -47,6 +50,10 @@ namespace sporthub.app.contracts
         public decimal sale_price { get; set; }
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
+
+        // public string? option1 { get; set; }
+        // public string? option2 { get; set; }
+        // public string? option3 { get; set; }
     }
     public class CreateBatchProductVariantResponseDTO
     {

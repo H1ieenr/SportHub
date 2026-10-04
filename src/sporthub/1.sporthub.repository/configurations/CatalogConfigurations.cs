@@ -26,6 +26,77 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     }
 }
 
+public class CategoryOptionConfiguration : IEntityTypeConfiguration<CategoryOption>
+{
+    public void Configure(EntityTypeBuilder<CategoryOption> builder)
+    {
+        builder.ToTable("category_option");
+        builder.ConfigureAuditableEntity();
+        builder.HasIndex(x => new { x.category_id, x.option_definition_id }).IsUnique().HasFilter("[deleted_date] IS NULL");
+
+        builder.HasOne(x => x.category)
+            .WithMany(x => x.category_option)
+            .HasForeignKey(x => x.category_id)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.option_definition)
+            .WithMany(x => x.category_options)
+            .HasForeignKey(x => x.option_definition_id)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
+
+public class OptionDefinitionConfiguration : IEntityTypeConfiguration<OptionDefinition>
+{
+    public void Configure(EntityTypeBuilder<OptionDefinition> builder)
+    {
+        builder.ToTable("option_definition");
+        builder.ConfigureAuditableEntity();
+        builder.HasIndex(x => x.code).IsUnique().HasFilter("[deleted_date] IS NULL");
+    }
+}
+
+public class OptionValueConfiguration : IEntityTypeConfiguration<OptionValue>
+{
+    public void Configure(EntityTypeBuilder<OptionValue> builder)
+    {
+        builder.ToTable("option_value");
+        builder.ConfigureAuditableEntity();
+        builder.Property(x => x.value).HasMaxLength(150).IsRequired();
+        builder.HasIndex(x => new { x.option_definition_id, x.value }).IsUnique().HasFilter("[deleted_date] IS NULL");
+
+        builder.HasOne(x => x.option_definition)
+            .WithMany(x => x.values)
+            .HasForeignKey(x => x.option_definition_id)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
+
+public class ProductVariantOptionValueConfiguration : IEntityTypeConfiguration<ProductVariantOptionValue>
+{
+    public void Configure(EntityTypeBuilder<ProductVariantOptionValue> builder)
+    {
+        builder.ToTable("product_variant_option_value");
+        builder.ConfigureAuditableEntity();
+        builder.HasIndex(x => new { x.product_variant_id, x.option_definition_id }).IsUnique().HasFilter("[deleted_date] IS NULL");
+
+        builder.HasOne(x => x.product_variant)
+            .WithMany(x => x.option_values)
+            .HasForeignKey(x => x.product_variant_id)
+            .OnDelete(DeleteBehavior.Cascade); 
+
+        builder.HasOne(x => x.option_definition)
+            .WithMany()
+            .HasForeignKey(x => x.option_definition_id)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.option_value)
+            .WithMany()
+            .HasForeignKey(x => x.option_value_id)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
+}
+
 public class BrandConfiguration : IEntityTypeConfiguration<Brand>
 {
     public void Configure(EntityTypeBuilder<Brand> builder)

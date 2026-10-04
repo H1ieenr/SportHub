@@ -9,6 +9,9 @@ namespace sporthub.app
         {
             services.AddAutoMapper(typeof(BrandMapperProfile));
             services.AddAutoMapper(typeof(CategoryMapperProfile));
+            services.AddAutoMapper(typeof(CategoryOptionMapperProfile));
+            services.AddAutoMapper(typeof(OptionDefinitionMapperProfile));
+            services.AddAutoMapper(typeof(OptionValueMapperProfile));
             services.AddAutoMapper(typeof(ProductMapperProfile));
             services.AddAutoMapper(typeof(ProductVariantMapperProfile));
             services.AddAutoMapper(typeof(ProductImageMapperProfile));
@@ -24,6 +27,15 @@ namespace sporthub.app
             #endregion
             #region category
             services.AddScoped<ICategoryAppService, CategoryAppService>();
+            #endregion
+            #region category option 
+            services.AddScoped<ICategoryOptionAppService, CategoryOptionAppService>();
+            #endregion
+            #region option definition 
+            services.AddScoped<IOptionDefinitionAppService, OptionDefinitionAppService>();
+            #endregion
+             #region option value 
+            services.AddScoped<IOptionValueAppService, OptionValueAppService>();
             #endregion
             #region product
             services.AddScoped<IProductAppService, ProductAppService>();

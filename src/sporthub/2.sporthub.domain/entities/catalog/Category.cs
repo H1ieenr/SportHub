@@ -20,6 +20,9 @@ public class Category : AuditableEntity
     private readonly List<Product> _products = new();
     public IReadOnlyCollection<Product> products => _products;
 
+    private readonly List<CategoryOption> _category_option = new();
+    public IReadOnlyCollection<CategoryOption> category_option => _category_option;
+
     private Category() { }
 
     public static Category Create(string name, string slug, long? parentId = null,
@@ -39,7 +42,7 @@ public class Category : AuditableEntity
         };
     }
 
-    public void Update(string name, string slug, long? parentId, string? description, int displayOrder, bool isActive = false   )
+    public void Update(string name, string slug, long? parentId, string? description, int displayOrder, bool isActive = false)
     {
         if (parentId == id)
             throw new ValidationException("Danh mục không thể là danh mục cha của chính nó.");

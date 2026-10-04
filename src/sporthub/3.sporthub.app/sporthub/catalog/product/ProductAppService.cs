@@ -79,7 +79,7 @@ namespace sporthub.app
         public async Task<OperationResult<ProductDTO>> ProductGetByIdAsync(ProductGetByIdRequestDTO model, CancellationToken cancellationToken = default)
         {
             Product Product = await _productRepository.ProductGetByIdAsync(model.id, cancellationToken);
-            if (Product == null) throw new NotFoundException("Không tìm thấy danh mục.");
+            if (Product == null) throw new NotFoundException("Không tìm thấy sản phẩm.");
             ProductDTO dto = _mapper.Map<ProductDTO>(Product);
 
             return OperationResult<ProductDTO>.Success(dto);

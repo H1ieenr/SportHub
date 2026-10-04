@@ -24,7 +24,7 @@ namespace sporthub.app
                 throw new ConflictException("Sku đã tồn tại.");
 
             ProductVariant product_variant = ProductVariant.Create(model.product_id, model.sku, model.name, model.cost_price,
-                                        model.sale_price, model.value_json, model.is_active);
+                                model.sale_price, model.value_json, model.is_active);
 
             await _productVariantRepository.CreateAsync(product_variant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -72,8 +72,7 @@ namespace sporthub.app
             if (await _productVariantRepository.ExistsBySkuAsync(model.sku, model.id, cancellationToken))
                 throw new ConflictException("Sku đã tồn tại.");
 
-            product_variant.Update(model.name, model.cost_price,
-                                   model.sale_price, model.value_json, model.is_active);
+            product_variant.Update(model.name, model.cost_price, model.sale_price, model.value_json, model.is_active);
 
             _productVariantRepository.UpdateAsync(product_variant);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -122,7 +121,7 @@ namespace sporthub.app
                 model.sort_by,
                 model.sort_dir,
                 model.product_id,
-                model.is_active,
+                model.is_active, 
                 cancellationToken);
 
             var pagedResult = new PagedResult<ProductVariant>(items, total, model.page_number, model.page_size);

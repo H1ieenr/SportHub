@@ -12,6 +12,9 @@ namespace sporthub.repository
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
             services.AddScoped<IProductImageRepository, ProductImageRepository>();
+            services.AddScoped<ICategoryOptionRepository, CategoryOptionRepository>();
+            services.AddScoped<IOptionDefinitionRepository, OptionDefinitionRepository>();
+            services.AddScoped<IOptionValueRepository, OptionValueRepository>();
             return services;
         }
     }
