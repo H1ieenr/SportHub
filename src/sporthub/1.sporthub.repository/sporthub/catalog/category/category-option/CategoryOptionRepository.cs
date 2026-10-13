@@ -14,10 +14,6 @@ namespace sporthub.repository
         {
             return GetByIdAsync(id, cancellationToken);
         }
-        public Task<bool> ExistsByOptionColumnAsync(long categoryId, string optionColumn, CancellationToken cancellationToken = default)
-        {
-            return _context.CategoryOptions.AnyAsync(x => x.category_id == categoryId, cancellationToken);
-        }
         public async Task<List<CategoryOption>> CategoryOptionGetNoPagingAsync(
                 string? searchtext,
                 long? categoryId,
@@ -32,14 +28,15 @@ namespace sporthub.repository
 
             return items;
         }
-
+        public Task<List<CategoryOption>> CategoryOptionGetTrackedByCategoryIdAsync(long categoryId, CancellationToken cancellationToken = default)
+        {
+            return _context.CategoryOptions
+                .Where(x => x.category_id == categoryId)   // KHÔNG AsNoTracking
+                .ToListAsync(cancellationToken);
+        }
         public Task CreateAsync(CategoryOption CategoryOption, CancellationToken cancellationToken = default)
         {
             return AddAsync(CategoryOption);
-        }
-        public Task CreateBatchAsync(List<CategoryOption> CategoryOptions, CancellationToken cancellationToken = default)
-        {
-            return AddRangeAsync(CategoryOptions);
         }
         public Task UpdateAsync(CategoryOption CategoryOption, CancellationToken cancellationToken = default)
         {
@@ -49,11 +46,6 @@ namespace sporthub.repository
         public Task DeleteAsync(CategoryOption CategoryOption, CancellationToken cancellationToken = default)
         {
             Delete(CategoryOption);
-            return Task.CompletedTask;
-        }
-        public Task DeleteBatchAsync(List<CategoryOption> CategoryOptions, CancellationToken cancellationToken = default)
-        {
-            DeleteRange(CategoryOptions);
             return Task.CompletedTask;
         }
     }

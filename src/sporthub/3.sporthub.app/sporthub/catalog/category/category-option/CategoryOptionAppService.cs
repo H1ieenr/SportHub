@@ -10,6 +10,7 @@ namespace sporthub.app
     {
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICategoryOptionRepository _CategoryOptionRepository;
+        private readonly IOptionDefinitionRepository _optionDefinitionRepository;
         private readonly ISportHubUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
@@ -17,13 +18,15 @@ namespace sporthub.app
             ICategoryOptionRepository CategoryOptionRepository,
             ISportHubUnitOfWork unitOfWork,
             IMapper mapper,
-            ICategoryRepository categoryRepository
+            ICategoryRepository categoryRepository,
+            IOptionDefinitionRepository optionDefinitionRepository  
         )
         {
             _CategoryOptionRepository = CategoryOptionRepository;
             _categoryRepository = categoryRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _optionDefinitionRepository = optionDefinitionRepository;
         }
 
         public async Task<
@@ -62,50 +65,48 @@ namespace sporthub.app
             return OperationResult<CategoryOptionDTO>.Success(dto);
         }
 
-        public async Task<OperationResult<bool>> ReplaceAllAsync(
-            ReplaceAllAsyncRequestDTO model,
-            CancellationToken cancellationToken = default
-        )
+        public async Task<OperationResult<bool>> ReplaceAllAsync(ReplaceAllAsyncRequestDTO model, CancellationToken cancellationToken = default)
         {
             var category = await _categoryRepository.CategoryGetByIdAsync(model.category_id, cancellationToken)
-                 ?? throw new NotFoundException("Không tìm thấy danh mục.");
+                ?? throw new NotFoundException("Không tìm thấy danh mục.");
 
             if (category.parent_id is not null)
                 throw new BadRequestException("Danh mục con dùng option của danh mục cha, không khai báo riêng.");
 
+            var definitionIds = model.category_options.Select(x => x.option_definition_id).ToList();
 
-            var duplicated = model
-                .category_option_maps.GroupBy(x => x.option_column)
-                .Where(g => g.Count() > 1)
-                .Select(g => g.Key)
-                .ToList();
+            var duplicated = definitionIds.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
             if (duplicated.Count > 0)
-                throw new ConflictException(
-                    $"option_column bị trùng: {string.Join(", ", duplicated)}"
-                );
+                throw new ConflictException($"option_definition_id bị trùng: {string.Join(", ", duplicated)}");
 
-            foreach (var item in category.category_option)
+            if (definitionIds.Count > 0)
             {
-                var existing = await _CategoryOptionRepository.CategoryOptionGetByIdAsync(item.id, cancellationToken);
-                if (existing != null)
-                    await _CategoryOptionRepository.DeleteAsync(existing, cancellationToken);
+                var existingDefIds = await _optionDefinitionRepository.OptionDefinitionExistingIdsAsync(definitionIds, cancellationToken);
+                var missing = definitionIds.Except(existingDefIds).ToList();
+                if (missing.Count > 0)
+                    throw new NotFoundException($"option_definition_id không tồn tại: {string.Join(", ", missing)}");
             }
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var entities = model
-                .category_option_maps.Select(x =>
-                    CategoryOption.Create(
-                        model.category_id,
-                        0,
-                        x.display_order
-                    )
-                )
-                .ToList();
-            foreach (var item in model.category_option_maps)
+            var current = await _CategoryOptionRepository.CategoryOptionGetTrackedByCategoryIdAsync(category.id, cancellationToken);
+
+            foreach (var item in model.category_options)
             {
-                var categoryOption = CategoryOption.Create(model.category_id, 0, item.display_order);
-                await _CategoryOptionRepository.CreateAsync(categoryOption, cancellationToken);
+                var found = current.FirstOrDefault(x => x.option_definition_id == item.option_definition_id);
+                if (found != null)
+                {
+                    found.Update(category.id, item.display_order);
+                    await _CategoryOptionRepository.UpdateAsync(found, cancellationToken);
+                }
+                else
+                {
+                    var entity = CategoryOption.Create(category.id, item.option_definition_id, item.display_order);
+                    await _CategoryOptionRepository.CreateAsync(entity, cancellationToken);
+                }
             }
+
+            var toRemove = current.Where(x => !definitionIds.Contains(x.option_definition_id)).ToList();
+            foreach (var r in toRemove)
+                await _CategoryOptionRepository.DeleteAsync(r, cancellationToken);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return OperationResult<bool>.Success(true, "Cập nhật cấu hình option thành công");

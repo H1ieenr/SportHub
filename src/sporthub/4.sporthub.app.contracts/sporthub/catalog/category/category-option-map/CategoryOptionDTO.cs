@@ -1,21 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Shared.Common;
 
 namespace sporthub.app.contracts
 {
     public class CategoryOptionDTO
     {
-        private static readonly string[] AllowedColumns = ["option1", "option2", "option3"];
-
         public long id { get; set; }
         public long category_id { get; set; }
-        public string option_column { get; set; } = ""; // "option1" | "option2" | "option3"
-        public string label { get; set; } = "";
+        public long option_definition_id { get; set; }
         public int? display_order { get; set; }
-        //public CategoryDTO category { get; set; } = null!;
+        public OptionDefinitionDTO option_definition { get; set; } = null!;
     }
 
     #region CategoryOptionGetNoPagingAsync
@@ -35,16 +28,14 @@ namespace sporthub.app.contracts
     public class ReplaceAllAsyncRequestDTO : BaseRequestDTO
     {
         public long category_id { get; set; }
-        public List<CategoryOptionItemDTO> category_option_maps { get; set; } = [];
+        public List<CategoryOptionItemDTO> category_options { get; set; } = [];
     }
 
     public class CategoryOptionItemDTO
     {
-        public string option_column { get; set; } = ""; // "option1" | "option2" | "option3"
-        public string label { get; set; } = "";
+        public long option_definition_id { get; set; }
         public int? display_order { get; set; }
     }
-
     public class ReplaceAllAsyncResponseDTO
     {
         public long id { get; set; }

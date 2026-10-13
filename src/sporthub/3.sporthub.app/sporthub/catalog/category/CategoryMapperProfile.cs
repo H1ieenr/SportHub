@@ -8,7 +8,7 @@ namespace sporthub.app
     {
         public CategoryMapperProfile()
         {
-            CreateMap<Category, CategoryDTO>();
+            CreateMap<Category, CategoryDTO>().ForMember(d => d.category_options, o => o.MapFrom(s => s.category_option));
         }
 
     }

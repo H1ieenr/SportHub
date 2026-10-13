@@ -8,7 +8,8 @@ namespace sporthub.app
     {
         public OptionDefinitionMapperProfile()
         {
-            CreateMap<OptionDefinition, OptionDefinitionDTO>();
+            CreateMap<OptionDefinition, OptionDefinitionDTO>()
+                .ForMember(d => d.option_values, o => o.MapFrom(s => s.values));;
         }
 
     }

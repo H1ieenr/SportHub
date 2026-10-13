@@ -14,8 +14,8 @@ namespace sporthub.app.contracts
         public int display_order { get; set; } = 0;
     }
 
-    #region CreateAsync
-    public class CreateOptionValueRequestDTO
+    #region CreateAsync 
+    public class CreateOptionValueRequestDTO : BaseRequestDTO
     {
         public long option_definition_id { get; set; } = 0;
         public List<CreateOptionValueItem> create_option_values { get; set; } = [];
@@ -26,7 +26,7 @@ namespace sporthub.app.contracts
         public string value { get; set; } = "";
         public int display_order { get; set; } = 0;
     }
-    public class CreateOptionValueResponseDTO : BaseRequestDTO
+    public class CreateOptionValueResponseDTO 
     {
         public long id { get; set; } = 0;
         public string value { get; set; } = "";

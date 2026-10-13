@@ -13,12 +13,12 @@ namespace sporthub.repository
         }
         public Task<OptionValue?> OptionValueGetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return GetByIdAsync(id, cancellationToken);
+            return _context.OptionValues.Where(x => x.id == id && x.deleted_date == null).OrderBy(x => x.display_order).FirstOrDefaultAsync(cancellationToken);
         }
 
         public Task<List<OptionValue>> OptionValueGetByDefinitionIdAsync(long optionDefinitionId, CancellationToken cancellationToken = default)
         {
-            return _context.OptionValues.Where(x => x.option_definition_id == optionDefinitionId).OrderBy(x => x.display_order).ToListAsync(cancellationToken);
+            return _context.OptionValues.Where(x => x.option_definition_id == optionDefinitionId && x.deleted_date == null).OrderBy(x => x.display_order).ToListAsync(cancellationToken);
         }
 
         public Task<bool> OptionValueExistsAsync(long optionDefinitionId, string value, long? excludeId = null, CancellationToken cancellationToken = default)

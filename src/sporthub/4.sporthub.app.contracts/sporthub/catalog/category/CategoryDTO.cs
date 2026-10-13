@@ -20,7 +20,7 @@ namespace sporthub.app.contracts
         public DateTime? updated_date { get; set; }
         public long updated_by { get; set; } = 0;
 
-        public List<CategoryOptionDTO> category_option_maps {get; set;} = [];
+        public List<CategoryOptionDTO> category_options {get; set;} = [];
     }
 
     #region Create
@@ -35,7 +35,7 @@ namespace sporthub.app.contracts
         public int display_order { get; set; } = 0;
         public bool is_active { get; set; } = false;
 
-        public List<CategoryOptionItemDTO>? category_option_maps { get; set; } = [];
+        public List<CategoryOptionItemDTO>? category_options { get; set; } = [];
     }
     #endregion
     #region Update

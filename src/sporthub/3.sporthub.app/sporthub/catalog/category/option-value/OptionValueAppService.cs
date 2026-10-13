@@ -67,6 +67,10 @@ namespace sporthub.app
             var entity = await _optionValueRepository.OptionValueGetByIdAsync(model.id, cancellationToken)
                 ?? throw new NotFoundException("Không tìm thấy giá trị.");
 
+            var value = model.value.Trim();
+            if (await _optionValueRepository.OptionValueExistsAsync(entity.option_definition_id, value, entity.id, cancellationToken))
+                throw new ConflictException($"Giá trị '{value}' đã tồn tại trong option này.");
+
             entity.Update(model.value, model.display_order);
             _optionValueRepository.UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -36,7 +36,7 @@ namespace sporthub.repository
                 long? parent_id,
                 CancellationToken cancellationToken = default)
         {
-            var query = _context.Categories.AsNoTracking().AsQueryable();
+            var query = _context.Categories.Include(x => x.category_option).AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchtext))
                 query = query.Where(x => x.name.Contains(searchtext) || x.slug.Contains(searchtext));
@@ -71,7 +71,7 @@ namespace sporthub.repository
                 long? parent_id,
                 CancellationToken cancellationToken = default)
         {
-            var query = _context.Categories.AsNoTracking().AsQueryable();
+            var query = _context.Categories.Include(x => x.category_option).AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchtext))
                 query = query.Where(x => x.name.Contains(searchtext) || x.slug.Contains(searchtext));

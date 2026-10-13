@@ -38,25 +38,29 @@ namespace sporthub.app
         {
             if (await _categoryRepository.ExistsBySlugAsync(model.slug, null, cancellationToken))
                 throw new ConflictException("Slug đã tồn tại.");
-            if (model.parent_id is not null && model.category_option_maps.Count > 0)
+            if (model.parent_id is not null && model.category_options.Count > 0)
                 throw new BadRequestException("Danh mục con không được khai báo option riêng.");
 
-            var duplicated = model.category_option_maps.GroupBy(x => x.option_column).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            var duplicated = model.category_options
+                .GroupBy(x => x.option_definition_id)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
             if (duplicated.Count > 0)
-                throw new ConflictException($"option_column bị trùng: {string.Join(", ", duplicated)}");
+                throw new ConflictException($"option_definition_id bị trùng: {string.Join(", ", duplicated)}");
 
             Category category = Category.Create(model.name, model.slug, model.parent_id, model.description, model.display_order, model.is_active);
 
             await _categoryRepository.CreateAsync(category);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            if (model.category_option_maps.Count > 0)
+            if (model.category_options.Count > 0)
             {
                 await _categoryOptionAppService.ReplaceAllAsync(
                     new ReplaceAllAsyncRequestDTO
                     {
                         category_id = category.id,
-                        category_option_maps = model.category_option_maps,
+                        category_options = model.category_options
                     },
                     cancellationToken
                 );
@@ -64,10 +68,7 @@ namespace sporthub.app
 
             if (model.file_image != null)
             {
-                var resultUpload = await _cloudinaryService.UploadImageAsync(
-                    model.file_image,
-                    $"{_folderName}{category.id}"
-                );
+                var resultUpload = await _cloudinaryService.UploadImageAsync(model.file_image, $"{_folderName}{category.id}");
                 if (resultUpload.IsSuccess)
                 {
                     category.UpdateLogo(resultUpload.Url, resultUpload.PublicId);
@@ -79,11 +80,15 @@ namespace sporthub.app
 
         public async Task<OperationResult<CategoryDTO>> UpdateAsync(UpdateCategoryRequestDTO model, CancellationToken cancellationToken = default)
         {
-            Category category = await _categoryRepository.CategoryGetByIdAsync(model.id, cancellationToken);
-            if (category == null) throw new NotFoundException("Không tìm thấy danh mục.");
+            Category category = await _categoryRepository.CategoryGetByIdAsync(model.id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy danh mục.");
 
             if (await _categoryRepository.ExistsBySlugAsync(model.slug, model.id, cancellationToken))
                 throw new ConflictException("Slug đã tồn tại.");
+
+            if (model.parent_id is not null && model.category_options?.Count > 0)
+                throw new BadRequestException("Danh mục con không được khai báo option riêng.");
+
             if (model.parent_id is not null && category.parent_id is null)
             {
                 var hasOptions = (await _categoryOptionRepository.CategoryOptionGetNoPagingAsync(null, category.id, cancellationToken)).Count > 0;
@@ -91,16 +96,13 @@ namespace sporthub.app
                     throw new ConflictException("Danh mục đang có option, không thể chuyển thành danh mục con.");
             }
 
-            if (model.category_option_maps is not null)
+            if (model.category_options is not null)
             {
-                if (model.category_option_maps.Count > 0)
+                await _categoryOptionAppService.ReplaceAllAsync(new ReplaceAllAsyncRequestDTO
                 {
-                    await _categoryOptionAppService.ReplaceAllAsync(new ReplaceAllAsyncRequestDTO
-                    {
-                        category_id = category.id,
-                        category_option_maps = model.category_option_maps
-                    }, cancellationToken);
-                }
+                    category_id = category.id,
+                    category_options = model.category_options
+                }, cancellationToken);
             }
 
             if (model.file_image != null)
@@ -172,14 +174,17 @@ namespace sporthub.app
             CancellationToken cancellationToken = default
         )
         {
-            Category category = await _categoryRepository.CategoryGetByIdAsync(
-                model.id,
-                cancellationToken
-            );
-            if (category == null)
-                throw new NotFoundException("Không tìm thấy danh mục.");
+            Category category = await _categoryRepository.CategoryGetByIdAsync(model.id, cancellationToken)
+                    ?? throw new NotFoundException("Không tìm thấy danh mục.");
+
             CategoryDTO dto = _mapper.Map<CategoryDTO>(category);
-            dto.category_option_maps = _mapper.Map<List<CategoryOptionDTO>>(category.category_option);
+
+            var effectiveCategoryId = category.parent_id ?? category.id;
+            var options = effectiveCategoryId == category.id
+                ? category.category_option
+                : await _categoryOptionRepository.CategoryOptionGetNoPagingAsync(null, effectiveCategoryId, cancellationToken);
+
+            dto.category_options = _mapper.Map<List<CategoryOptionDTO>>(options);
             return OperationResult<CategoryDTO>.Success(dto);
         }
 

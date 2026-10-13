@@ -9,18 +9,21 @@ namespace sporthub.app
     public class OptionDefinitionAppService : IOptionDefinitionAppService
     {
         private readonly IOptionDefinitionRepository _optionDefinitionRepository;
+        private readonly IOptionValueAppService _optionValueAppService;
         private readonly ISportHubUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
         public OptionDefinitionAppService(
             ISportHubUnitOfWork unitOfWork,
             IMapper mapper,
-            IOptionDefinitionRepository optionDefinitionRepository
+            IOptionDefinitionRepository optionDefinitionRepository,
+            IOptionValueAppService optionValueAppService
         )
         {
             _optionDefinitionRepository = optionDefinitionRepository;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _optionValueAppService = optionValueAppService;
         }
 
         public async Task<OperationResult<OptionDefinitionDTO>> CreateAsync(CreateOptionDefinitionRequestDTO model, CancellationToken cancellationToken = default)
@@ -32,6 +35,15 @@ namespace sporthub.app
             var entity = OptionDefinition.Create(code, model.name);
             await _optionDefinitionRepository.CreateAsync(entity, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            if(_optionValueAppService is not null && model.create_option_values.Count > 0)
+            {
+                await _optionValueAppService.CreateValueAsync(new CreateOptionValueRequestDTO
+                {
+                    option_definition_id = entity.id,
+                    create_option_values = model.create_option_values
+                }, cancellationToken);
+            }
 
             return OperationResult<OptionDefinitionDTO>.Success(_mapper.Map<OptionDefinitionDTO>(entity));
         }
@@ -45,12 +57,21 @@ namespace sporthub.app
             _optionDefinitionRepository.UpdateAsync(entity);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            if(_optionValueAppService is not null && model.create_option_values.Count > 0)
+            {
+                await _optionValueAppService.CreateValueAsync(new CreateOptionValueRequestDTO
+                {
+                    option_definition_id = entity.id,
+                    create_option_values = model.create_option_values
+                }, cancellationToken);
+            }
+
             return OperationResult<OptionDefinitionDTO>.Success(_mapper.Map<OptionDefinitionDTO>(entity));
         }
 
-        public async Task<OperationResult<bool>> DeleteAsync(long id, CancellationToken cancellationToken = default)
+        public async Task<OperationResult<bool>> DeleteAsync(DeleteOptionDefinitionRequestDTO model, CancellationToken cancellationToken = default)
         {
-            var entity = await _optionDefinitionRepository.OptionDefinitionGetByIdAsync(id, cancellationToken)
+            var entity = await _optionDefinitionRepository.OptionDefinitionGetByIdAsync(model.id, cancellationToken)
                 ?? throw new NotFoundException("Không tìm thấy option.");
 
             // do OnDelete Restrict ở category_option và product_variant_option_value,
@@ -62,10 +83,11 @@ namespace sporthub.app
             return OperationResult<bool>.Success(true, "Xóa option thành công");
         }
 
-        public async Task<OperationResult<List<OptionDefinitionDTO>>> GetNoPagingAsync(CancellationToken cancellationToken = default)
+        public async Task<OperationResult<List<OptionDefinitionDTO>>> OptionDefinitionGetNoPagingAsync(GetOptionDefinitionsNoPagingRequestDTO model, CancellationToken cancellationToken = default)
         {
-            var entities = await _optionDefinitionRepository.OptionDefinitionGetNoPagingAsync(cancellationToken);
-            return OperationResult<List<OptionDefinitionDTO>>.Success(_mapper.Map<List<OptionDefinitionDTO>>(entities));
+            var entities = await _optionDefinitionRepository.OptionDefinitionGetNoPagingAsync(model.search_text, model.code, model.ids, cancellationToken);
+            List<OptionDefinitionDTO> dto = _mapper.Map<List<OptionDefinitionDTO>>(entities);
+            return OperationResult<List<OptionDefinitionDTO>>.Success(dto);
         }
     }
 }

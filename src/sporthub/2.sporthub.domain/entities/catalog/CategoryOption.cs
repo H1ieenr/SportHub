@@ -27,11 +27,8 @@ namespace sporthub.domain
             };
         }
 
-        public void Update(long categoryId, string optionColumn, string label, int? displayOrder = null)
+        public void Update(long categoryId, int? displayOrder = null)
         {
-            if (string.IsNullOrWhiteSpace(label))
-                throw new BadRequestException("label không được để trống");
-
             category_id = categoryId;
             display_order = displayOrder;
         }
