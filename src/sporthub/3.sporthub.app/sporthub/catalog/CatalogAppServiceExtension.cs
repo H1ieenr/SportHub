@@ -34,7 +34,7 @@ namespace sporthub.app
             #region option definition 
             services.AddScoped<IOptionDefinitionAppService, OptionDefinitionAppService>();
             #endregion
-             #region option value 
+            #region option value 
             services.AddScoped<IOptionValueAppService, OptionValueAppService>();
             #endregion
             #region product
@@ -42,6 +42,9 @@ namespace sporthub.app
             #endregion
             #region product variant
             services.AddScoped<IProductVariantAppService, ProductVariantAppService>();
+            #endregion
+            #region product variant option value
+            services.AddScoped<IProductVariantOptionValueAppService, ProductVariantOptionValueAppService>();
             #endregion
             #region product image
             services.AddScoped<IProductImageAppService, ProductImageAppService>();

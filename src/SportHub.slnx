@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/shared_kernel_lib/" />
+  <Folder Name="/shared_kernel_lib/src/">
+    <Project Path="shared_kernel_lib/src/Shared.Auth/Shared.Auth.csproj" />
+    <Project Path="shared_kernel_lib/src/Shared.Common/Shared.Common.csproj" />
+    <Project Path="shared_kernel_lib/src/Shared.Exceptions/Shared.Exceptions.csproj" />
+    <Project Path="shared_kernel_lib/src/Shared.Logging/Shared.Logging.csproj" />
+    <Project Path="shared_kernel_lib/src/Shared.Persistence/Shared.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/sporthub/">
+    <Project Path="sporthub/0.sporthub.shared/0.sporthub.shared.csproj" />
+    <Project Path="sporthub/1.sporthub.repository/1.sporthub.repository.csproj" />
+    <Project Path="sporthub/2.sporthub.domain/2.sporthub.domain.csproj" />
+    <Project Path="sporthub/3.sporthub.app/3.sporthub.app.csproj" />
+    <Project Path="sporthub/4.sporthub.app.contracts/4.sporthub.app.contracts.csproj" />
+    <Project Path="sporthub/5.sporthub.api/5.sporthub.api.csproj" />
+    <Project Path="sporthub/6.sporthub.api.host/6.sporthub.api.host.csproj" />
+  </Folder>
+</Solution>

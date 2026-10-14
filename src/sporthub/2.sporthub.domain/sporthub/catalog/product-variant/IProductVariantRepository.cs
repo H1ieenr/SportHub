@@ -7,7 +7,7 @@ namespace sporthub.domain
         Task<ProductVariant?> GetBySkuAsync(string sku, CancellationToken cancellationToken = default);
         Task<bool> ExistsBySkuAsync(string sku, long? excludeId = null, CancellationToken cancellationToken = default);
         Task<List<string>> GetExistingSkusAsync(List<string> skus, CancellationToken cancellationToken = default);
-
+        Task<List<ProductVariant>> ProductVariantGetByProductIdWithOptionsAsync(long productId, CancellationToken ct = default);
         Task<List<ProductVariant>> GetActiveByProductIdAsync(long product_id, CancellationToken cancellationToken = default);
         Task<(List<ProductVariant> items, int total)> ProductVariantGetPagedAsync(
                 int pageNumber,

@@ -18,7 +18,7 @@ namespace sporthub.app.contracts
         public CategoryDTO category { get; set; } = null!;
         public BrandDTO? brand { get; set; }
 
-        public List<ProductVariant> _variants = new();
+        public List<ProductVariantDTO> variants { get; set; } = new();
         
         public DateTime created_date { get; set; }
         public long created_by { get; set; } = 0;
@@ -66,6 +66,22 @@ namespace sporthub.app.contracts
     public class ProductGetByIdRequestDTO : BaseRequestDTO
     {
         public long id { get; set; }
+    }
+    public class ProductGetByIdResponseDTO : ProductDTO
+    {
+        public List<ProductOptionGroupDTO> options { get; set; } = new();
+    }
+    public class ProductOptionGroupDTO
+    {
+        public long option_definition_id { get; set; }
+        public string name { get; set; } = "";
+        public List<ProductOptionValueItemDTO> values { get; set; } = new();
+    }
+
+    public class ProductOptionValueItemDTO
+    {
+        public long option_value_id { get; set; }
+        public string value { get; set; } = "";
     }
     #endregion
     #region GetPagedAsync

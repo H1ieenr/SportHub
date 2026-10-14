@@ -13,12 +13,8 @@ namespace sporthub.app.contracts
         public decimal sale_price { get; set; }
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
-
-        public string? option1 { get; set; }
-        public string? option2 { get; set; }
-        public string? option3 { get; set; }
-
-        public ProductDTO product { get; set; } = null!;
+        public List<ProductVariantOptionValueDTO> option_values { get; set; } = new();
+        //public ProductDTO product { get; set; } = null!;
         //public InventoryItem? inventory { get; set; }
     }
     #region Create
@@ -31,10 +27,9 @@ namespace sporthub.app.contracts
         public decimal sale_price { get; set; }
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
-        public string? option1 { get; set; }
-        public string? option2 { get; set; }
-        public string? option3 { get; set; }
+        public List<CreateProductVariantOptionValueDTO> option_values { get; set; } = new();
     }
+    
     #endregion
     #region CreateBatchProductVariant
     public class CreateBatchProductVariantRequestDTO : BaseRequestDTO

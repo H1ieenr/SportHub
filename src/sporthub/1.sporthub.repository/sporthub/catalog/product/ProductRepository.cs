@@ -12,15 +12,21 @@ namespace sporthub.repository
         }
         public Task<Product?> ProductGetByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            //return GetByIdAsync(id, cancellationToken);
             return _context.Products.AsNoTracking()
+                     .AsNoTracking()
+                     .AsSplitQuery()
                      .Include(x => x.category)
                      .Include(x => x.brand)
-                     .Include(x => x.images.Where(i => i.product_variant_id == null && i.is_primary))
-                     .Include(x => x.variants)
-                        .ThenInclude(v => v.Images.Where(i => i.is_primary))
-                     .AsSplitQuery()
-                     .FirstOrDefaultAsync(x => x.id == id, cancellationToken); ;
+                     .Include(x => x.images)
+                     .Include(x => x.variants.Where(v => v.deleted_date == null))
+                         .ThenInclude(v => v.option_values)
+                             .ThenInclude(o => o.option_definition)
+                     .Include(x => x.variants.Where(v => v.deleted_date == null))
+                         .ThenInclude(v => v.option_values)
+                             .ThenInclude(o => o.option_value)
+                     .Include(x => x.variants.Where(v => v.deleted_date == null))
+                         .ThenInclude(v => v.inventory)
+                     .FirstOrDefaultAsync(x => x.id == id, cancellationToken);
         }
         public Task<Product?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
         {
@@ -44,7 +50,7 @@ namespace sporthub.repository
                 ProductStatus? status,
                 CancellationToken cancellationToken = default)
         {
-            var query = _context.Products.AsNoTracking().AsQueryable();
+            var query = _context.Products.AsNoTracking().Include(x => x.category).Include(x => x.brand).Include(x => x.images).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchtext))
                 query = query.Where(x => x.name.Contains(searchtext) || x.slug.Contains(searchtext));
@@ -76,7 +82,7 @@ namespace sporthub.repository
               ProductStatus? status,
               CancellationToken cancellationToken = default)
         {
-            var query = _context.Products.AsNoTracking().AsQueryable();
+            var query = _context.Products.Include(x => x.category).Include(x => x.brand).Include(x => x.images).AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchtext))
                 query = query.Where(x => x.name.Contains(searchtext) || x.slug.Contains(searchtext));

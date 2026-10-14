@@ -9,28 +9,95 @@ namespace sporthub.app
     public class ProductVariantAppService : IProductVariantAppService
     {
         private readonly IProductVariantRepository _productVariantRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly ICategoryOptionRepository _categoryOptionRepository;
+        private readonly ICategoryRepository _categoryRepository;
+        private readonly IOptionValueRepository _optionValueRepository;
+        private readonly IProductVariantOptionValueRepository _productVariantOptionValueRepository;
         private readonly ISportHubUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ProductVariantAppService(IProductVariantRepository productVariantRepository, ISportHubUnitOfWork unitOfWork, IMapper mapper)
+        public ProductVariantAppService(IProductVariantRepository productVariantRepository, IProductRepository productRepository, ICategoryOptionRepository categoryOptionRepository,
+                ICategoryRepository categoryRepository, IOptionValueRepository optionValueRepository, IProductVariantOptionValueRepository productVariantOptionValueRepository, 
+                ISportHubUnitOfWork unitOfWork, IMapper mapper)
         {
             _productVariantRepository = productVariantRepository;
+            _productRepository = productRepository;
             _unitOfWork = unitOfWork;
+            _categoryOptionRepository = categoryOptionRepository;
+            _categoryRepository = categoryRepository;
+            _optionValueRepository = optionValueRepository;
+            _productVariantOptionValueRepository = productVariantOptionValueRepository;
             _mapper = mapper;
         }
         #region admin
         public async Task<OperationResult<ProductVariantDTO>> CreateAsync(CreateProductVariantRequestDTO model, CancellationToken cancellationToken = default)
         {
-            if (await _productVariantRepository.ExistsBySkuAsync(model.sku, null, cancellationToken))
-                throw new ConflictException("Sku đã tồn tại.");
+            var product = await _productRepository.ProductGetByIdAsync(model.product_id, cancellationToken)
+                        ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
 
-            ProductVariant product_variant = ProductVariant.Create(model.product_id, model.sku, model.name, model.cost_price,
-                                model.sale_price, model.value_json, model.is_active);
+            var category = await _categoryRepository.CategoryGetByIdAsync(product.category_id, cancellationToken)
+                        ?? throw new NotFoundException("Không tìm thấy danh mục.");
 
-            await _productVariantRepository.CreateAsync(product_variant);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            var effectiveCategoryId = category.parent_id ?? category.id;
 
-            ProductVariantDTO dto = _mapper.Map<ProductVariantDTO>(product_variant);
-            return OperationResult<ProductVariantDTO>.Success(dto);
+            var allowedOptions = await _categoryOptionRepository.CategoryOptionGetTrackedByCategoryIdAsync(effectiveCategoryId, cancellationToken);
+            var allowedDefIds = allowedOptions.Select(x => x.option_definition_id).ToHashSet();
+
+            var submittedDefIds = model.option_values.Select(x => x.option_definition_id).ToList();
+
+            var dup = submittedDefIds.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+            if (dup.Count > 0)
+                throw new ConflictException($"option_definition_id bị trùng: {string.Join(", ", dup)}");
+
+            var missing = allowedDefIds.Except(submittedDefIds).ToList();
+            if (missing.Count > 0)
+                throw new BadRequestException("Thiếu giá trị cho một hoặc nhiều option của danh mục.");
+
+            var extra = submittedDefIds.Except(allowedDefIds).ToList();
+            if (extra.Count > 0)
+                throw new BadRequestException("Có option không thuộc danh mục này.");
+
+            var valueIds = model.option_values.Select(x => x.option_value_id).ToList();
+            var values = await _optionValueRepository.OptionValueGetByIdsAsync(valueIds, cancellationToken);
+            foreach (var ov in model.option_values)
+            {
+                var val = values.FirstOrDefault(v => v.id == ov.option_value_id)
+                    ?? throw new NotFoundException($"option_value_id {ov.option_value_id} không tồn tại.");
+                if (val.option_definition_id != ov.option_definition_id)
+                    throw new BadRequestException($"option_value_id {ov.option_value_id} không thuộc option_definition_id {ov.option_definition_id}.");
+            }
+
+            var sku = model.sku.Trim().ToUpperInvariant();
+            if (await _productVariantRepository.ExistsBySkuAsync(sku, null, cancellationToken))
+                throw new ConflictException($"SKU '{sku}' đã tồn tại.");
+
+            var existingVariants = await _productVariantRepository.ProductVariantGetByProductIdWithOptionsAsync(product.id, cancellationToken);
+            var newCombo = valueIds.ToHashSet();
+            var isDuplicateCombo = existingVariants.Any(v =>
+                v.option_values.Select(x => x.option_value_id).ToHashSet().SetEquals(newCombo));
+            if (isDuplicateCombo)
+                throw new ConflictException("Đã tồn tại biến thể với tổ hợp option này.");
+            try
+            {
+                var variant = ProductVariant.Create(product.id, sku, model.name, model.cost_price, model.sale_price, null, model.is_active);
+                await _productVariantRepository.CreateAsync(variant, cancellationToken);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                foreach (var ov in model.option_values)
+                {
+                    var entity = ProductVariantOptionValue.Create(variant.id, ov.option_definition_id, ov.option_value_id);
+                    await _productVariantOptionValueRepository.CreateAsync(entity, cancellationToken);
+                }
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                await _unitOfWork.CommitTransactionAsync(cancellationToken);
+                return OperationResult<ProductVariantDTO>.Success(_mapper.Map<ProductVariantDTO>(variant));
+            }
+            catch
+            {
+                await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+                throw;
+            }
         }
         public async Task<OperationResult<List<CreateBatchProductVariantResponseDTO>>> CreateBatchAsync(
                  CreateBatchProductVariantRequestDTO model, CancellationToken cancellationToken = default)

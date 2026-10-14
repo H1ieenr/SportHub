@@ -26,6 +26,15 @@ namespace sporthub.repository
                 .Select(x => x.sku)
                 .ToListAsync(cancellationToken);
         }
+        public Task<List<ProductVariant>> ProductVariantGetByProductIdWithOptionsAsync(long productId, CancellationToken ct = default)
+        {
+            return _context.ProductVariants
+                .AsNoTracking()
+                .Include(x => x.option_values).ThenInclude(x => x.option_value)
+                .Where(x => x.product_id == productId)
+                .ToListAsync(ct);
+        }
+   
         public Task<bool> ExistsBySkuAsync(string sku, long? excludeId = null, CancellationToken cancellationToken = default)
         {
             return _context.ProductVariants.AnyAsync(x => x.sku == sku && (excludeId == null || x.id != excludeId), cancellationToken);

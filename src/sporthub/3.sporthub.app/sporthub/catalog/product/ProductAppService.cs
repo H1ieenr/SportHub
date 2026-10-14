@@ -76,13 +76,29 @@ namespace sporthub.app
 
             return OperationResult<bool>.Success(true, "Cập nhật trạng thái thành công");
         }
-        public async Task<OperationResult<ProductDTO>> ProductGetByIdAsync(ProductGetByIdRequestDTO model, CancellationToken cancellationToken = default)
+        public async Task<OperationResult<ProductGetByIdResponseDTO>> ProductGetByIdAsync(ProductGetByIdRequestDTO model, CancellationToken cancellationToken = default)
         {
-            Product Product = await _productRepository.ProductGetByIdAsync(model.id, cancellationToken);
-            if (Product == null) throw new NotFoundException("Không tìm thấy sản phẩm.");
-            ProductDTO dto = _mapper.Map<ProductDTO>(Product);
-
-            return OperationResult<ProductDTO>.Success(dto);
+            Product product = await _productRepository.ProductGetByIdAsync(model.id, cancellationToken);
+            if (product == null) throw new NotFoundException("Không tìm thấy sản phẩm.");
+            ProductGetByIdResponseDTO dto = _mapper.Map<ProductGetByIdResponseDTO>(product);
+            dto.variants = _mapper.Map<List<ProductVariantDTO>>(product.variants);
+            dto.options = dto.variants
+                        .SelectMany(v => v.option_values)
+                        .GroupBy(o => new { o.option_definition_id, o.option_definition_name })
+                        .Select(g => new ProductOptionGroupDTO
+                        {
+                            option_definition_id = g.Key.option_definition_id,
+                            name = g.Key.option_definition_name,
+                            values = g.Select(x => new ProductOptionValueItemDTO
+                            {
+                                option_value_id = x.option_value_id,
+                                value = x.option_value
+                            })
+                                .DistinctBy(x => x.option_value_id)
+                                .ToList()
+                        })
+                        .ToList();
+            return OperationResult<ProductGetByIdResponseDTO>.Success(dto);
         }
         public async Task<OperationResult<PagedResult<ProductDTO>>> ProductGetPagedAsync(GetProductPagedRequestDTO model, CancellationToken cancellationToken = default)
         {

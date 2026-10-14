@@ -9,6 +9,7 @@ namespace sporthub.app
         public ProductMapperProfile()
         {
             CreateMap<Product, ProductDTO>();
+            CreateMap<Product, ProductGetByIdResponseDTO>();
         }
     }
 }

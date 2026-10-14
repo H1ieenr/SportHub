@@ -8,6 +8,7 @@ namespace sporthub.domain
     public interface IOptionValueRepository
     {
         Task<OptionValue?> OptionValueGetByIdAsync(long id, CancellationToken cancellationToken = default);
+        Task<List<OptionValue>> OptionValueGetByIdsAsync(List<long> ids, CancellationToken ct = default);
         Task<List<OptionValue>> OptionValueGetByDefinitionIdAsync(long optionDefinitionId, CancellationToken cancellationToken = default);
         Task<bool> OptionValueExistsAsync(long optionDefinitionId, string value, long? excludeId = null, CancellationToken cancellationToken = default);
         Task<List<string>> OptionValuesExistsAsync(long optionDefinitionId, List<string> values, CancellationToken cancellationToken = default);
