@@ -15,11 +15,15 @@ namespace sporthub.app.contracts
         public ProductStatus status { get; set; } = ProductStatus.Draft;
         public bool is_featured { get; set; } = false;
 
-        public CategoryDTO category { get; set; } = null!;
-        public BrandDTO? brand { get; set; }
+        public string? category_name { get; set; }
+        public string? category_slug { get; set; }
+        public string? brand_name { get; set; }
+        //public CategoryDTO category { get; set; } = null!;
+        //public BrandDTO? brand { get; set; }
 
         public List<ProductVariantDTO> variants { get; set; } = new();
-        
+        public List<ProductImageDTO> images { get; set; } = new(); 
+
         public DateTime created_date { get; set; }
         public long created_by { get; set; } = 0;
         public DateTime? updated_date { get; set; }

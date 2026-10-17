@@ -14,6 +14,7 @@ namespace sporthub.app.contracts
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
         public List<ProductVariantOptionValueDTO> option_values { get; set; } = new();
+        public List<ProductImageDTO> images { get; set; } = new();
         //public ProductDTO product { get; set; } = null!;
         //public InventoryItem? inventory { get; set; }
     }
