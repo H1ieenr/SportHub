@@ -5,17 +5,17 @@
     <nav>
       <ul class="pagination pagination-sm mb-0">
         <li class="page-item" [class.disabled]="!hasPreviousPage()">
-          <a class="page-link" (click)="onPrevious()">Trước</a>
+          <button class="page-link" type="button" [disabled]="!hasPreviousPage()" aria-label="Trang trước" (click)="onPrevious()">‹</button>
         </li>
 
         @for (page of pages(); track page) {
           <li class="page-item" [class.active]="page === pageNumber()">
-            <a class="page-link" (click)="onGoTo(page)">{{ page }}</a>
+            <button class="page-link" type="button" [attr.aria-current]="page === pageNumber() ? 'page' : null" (click)="onGoTo(page)">{{ page }}</button>
           </li>
         }
 
         <li class="page-item" [class.disabled]="!hasNextPage()">
-          <a class="page-link" (click)="onNext()">Sau</a>
+          <button class="page-link" type="button" [disabled]="!hasNextPage()" aria-label="Trang sau" (click)="onNext()">›</button>
         </li>
       </ul>
     </nav>

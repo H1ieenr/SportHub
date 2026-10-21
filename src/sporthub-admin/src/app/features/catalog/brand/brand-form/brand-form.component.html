@@ -1,12 +1,12 @@
-<div class="offcanvas-header">
-  <h5 class="offcanvas-title d-flex align-items-center gap-2">
+<div class="modal-header">
+  <h5 class="modal-title d-flex align-items-center gap-2">
     <i antIcon [type]="titleIcon" theme="fill"></i>
     <span>{{ title }}</span>
   </h5>
   <button type="button" class="btn-close" [disabled]="submitting()" (click)="onCancel()"></button>
 </div>
 
-<div class="offcanvas-body">
+<div class="modal-body">
   @if (loading()) {
   <app-loading />
   } @else {
@@ -55,16 +55,18 @@
     </div>
     
     @if (!isViewMode()) {
-    <div class="d-flex gap-2">
-      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
-        {{ mode === 'edit' ? 'Cập nhật' : 'Tạo mới' }}
-      </button>
+    <div class="app-modal-actions d-flex gap-2">
       <button type="button" class="btn btn-outline-secondary" [disabled]="submitting()" (click)="onCancel()">
         Huỷ
       </button>
+      <button type="submit" class="btn btn-primary" [disabled]="submitting()">
+        {{ mode === 'edit' ? 'Cập nhật' : 'Tạo mới' }}
+      </button>
     </div>
     } @else {
-    <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Đóng</button>
+    <div class="app-modal-actions d-flex gap-2">
+      <button type="button" class="btn btn-outline-secondary" (click)="onCancel()">Đóng</button>
+    </div>
     }
   </form>
   }

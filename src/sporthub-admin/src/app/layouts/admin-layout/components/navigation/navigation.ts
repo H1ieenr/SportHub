@@ -20,36 +20,44 @@ export interface NavigationItem {
 
 export const NavigationItems: NavigationItem[] = [
   {
-    id: 'category',
-    title: 'Danh Mục',
+    id: 'workspace',
+    title: 'WORKSPACE',
     type: 'group',
     icon: 'icon-navigation',
     children: [
       {
         id: 'dashboard',
-        title: 'Dashboard',
+        title: 'Tổng quan',
         type: 'item',
         classes: 'nav-item',
         url: '/dashboard',
         icon: 'dashboard',
         breadcrumbs: false
-      },
+      }
+    ]
+  },
+  {
+    id: 'catalog',
+    title: 'CATALOG',
+    type: 'group',
+    icon: 'icon-navigation',
+    children: [
       {
         id: 'brand',
-        title: 'Brand',
+        title: 'Thương hiệu',
         type: 'item',
         classes: 'nav-item',
         url: '/brand',
-        icon: 'menu',
+        icon: 'tags',
         breadcrumbs: true
       },
       {
         id: 'category',
-        title: 'Category',
+        title: 'Danh mục',
         type: 'item',
         classes: 'nav-item',
         url: '/category',
-        icon: 'menu',
+        icon: 'appstore',
         breadcrumbs: true
       }
     ]

@@ -15,7 +15,7 @@ import {
 import { PagedResult } from '../../../../core/models/common/api-response.model';
 import { Category, CategoryNode } from '../../../../core/models/catalog/category/category.model';
 //import { CategoryFormComponent, CategoryFormMode } from '../category-form/category-form.component';
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap/offcanvas';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -33,6 +33,7 @@ import {
   LoadingOutline,
 } from '@ant-design/icons-angular/icons';
 import { ImagePreviewService } from '../../../../shared/service/image-preview.service';
+import { forkJoin } from 'rxjs';
 import {
   CategoryFormComponent,
   CategoryFormMode,
@@ -62,7 +63,7 @@ export class CategoryListComponent {
   private categoryService = inject(CategoryService);
   private confirmDialogService = inject(ConfirmDialogService);
   private alertService = inject(AlertService);
-  private offcanvasService = inject(NgbOffcanvas);
+  private modalService = inject(NgbModal);
   private imagePreviewService = inject(ImagePreviewService);
   private searchSubject = new Subject<string>();
   private activeFilter: boolean | undefined = undefined;
@@ -70,6 +71,9 @@ export class CategoryListComponent {
   parentOptions = signal<Category[]>([]);
 
   readonly state = signal<ListPageState<CategoryNode>>(initialListPageState<CategoryNode>());
+  readonly totalCategoryCount = signal<number | null>(null);
+  readonly activeCategoryCount = signal<number | null>(null);
+  readonly latestUpdate = signal('—');
 
   private expandedChildrenIds = new Map<number, number[]>();
 
@@ -77,6 +81,7 @@ export class CategoryListComponent {
 
   constructor() {
     this.loadData();
+    this.loadStats();
     this.iconService.addIcon(
       ...[
         PlusCircleFill,
@@ -144,6 +149,7 @@ export class CategoryListComponent {
       })
       .subscribe({
         next: (result) => {
+          this.latestUpdate.set(formatLatestUpdate(result.results.map((category) => category.updated_date || category.created_date)));
           const mapped: PagedResult<CategoryNode> = {
             ...result,
             results: result.results.map((c, i) => this.toNode(c, 0, null, i)),
@@ -163,6 +169,19 @@ export class CategoryListComponent {
           }));
         },
       });
+  }
+
+  private loadStats() {
+    forkJoin({
+      all: this.categoryService.getAll({}),
+      active: this.categoryService.getAll({ active: true }),
+    }).subscribe({
+      next: ({ all, active }) => {
+        this.totalCategoryCount.set(all.length);
+        this.activeCategoryCount.set(active.length);
+        this.latestUpdate.set(formatLatestUpdate(all.map((category) => category.updated_date || category.created_date)));
+      },
+    });
   }
 
   // NEW: reload nhưng cố mở lại đúng các node đang mở trước đó + node cha vừa bị tác động
@@ -315,23 +334,25 @@ export class CategoryListComponent {
           ? this.collectSelfAndDescendantIds(all, category.id)
           : new Set<number>();
         const options = all.filter((c) => !excludedIds.has(c.id));
-        this.launchFormOffcanvas(mode, category, presetParentId, options);
+        this.launchFormModal(mode, category, presetParentId, options);
       },
       error: () => {
-        this.launchFormOffcanvas(mode, category, presetParentId, []);
+        this.launchFormModal(mode, category, presetParentId, []);
       },
     });
   }
 
-  private launchFormOffcanvas(
+  private launchFormModal(
     mode: CategoryFormMode,
     category: Category | null,
     presetParentId: number | null,
     parentOptions: Category[],
   ) {
-    const ref = this.offcanvasService.open(CategoryFormComponent, {
-      position: 'end',
-      panelClass: 'app-offcanvas-half',
+    const ref = this.modalService.open(CategoryFormComponent, {
+      centered: true,
+      size: 'lg',
+      scrollable: true,
+      windowClass: 'app-centered-form-modal',
       beforeDismiss: () => {
         const instance = ref.componentInstance as CategoryFormComponent;
         return !instance.submitting();
@@ -349,6 +370,7 @@ export class CategoryListComponent {
       (result: CategoryFormResult | undefined) => {
         if (result?.changed) {
           this.reloadPreservingExpand(result.affectedParentId ?? undefined); // FIX: dùng bản giữ trạng thái mở
+          this.loadStats();
         }
         if (result?.createChildParentId) {
           setTimeout(() => this.openForm('create', null, result.createChildParentId!));
@@ -402,6 +424,7 @@ export class CategoryListComponent {
       next: () => {
         this.alertService.success('Xoá thành công');
         this.loadData();
+        this.loadStats();
       },
       error: (err) => {
         this.alertService.error(err?.error?.message || 'Xoá thất bại');
@@ -419,6 +442,7 @@ export class CategoryListComponent {
 
     this.categoryService.toggleActive(category.id).subscribe({
       next: (res) => {
+        this.loadStats();
         if (res.is_success) {
           this.alertService.success(res.message || 'Cập nhật trạng thái thành công');
         }
@@ -434,4 +458,12 @@ export class CategoryListComponent {
       },
     });
   }
+}
+
+function formatLatestUpdate(dates: Array<string | null | undefined>): string {
+  const latest = dates.filter((value): value is string => !!value).map((value) => Date.parse(value)).filter(Number.isFinite).sort((a, b) => b - a)[0];
+  if (!latest) return '—';
+  const date = new Date(latest);
+  if (date.toDateString() === new Date().toDateString()) return 'Hôm nay';
+  return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: 'short' }).format(date);
 }

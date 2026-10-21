@@ -1,5 +1,34 @@
 <app-page-header>
-  <div pageHeaderFilters class="d-flex align-items-center gap-2">
+  <div pageHeaderTitle>
+    <p class="app-page-eyebrow">QUẢN LÝ CỬA HÀNG</p>
+    <h1 class="app-page-title">Danh mục</h1>
+    <p class="app-page-description">Sắp xếp sản phẩm theo cấu trúc danh mục rõ ràng.</p>
+  </div>
+  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onAddClick()">
+    <i antIcon type="plus-circle" theme="fill"></i>
+    <span>Thêm danh mục</span>
+  </button>
+</app-page-header>
+
+<section class="app-list-stats" aria-label="Thống kê danh mục">
+  <article class="app-list-stat">
+    <span class="app-list-stat__icon app-list-stat__icon--green">▤</span>
+    <div><span>Tổng danh mục</span><strong>{{ totalCategoryCount() ?? '—' }}</strong></div>
+  </article>
+  <article class="app-list-stat">
+    <span class="app-list-stat__icon app-list-stat__icon--orange">↗</span>
+    <div><span>Đang hoạt động</span><strong>{{ activeCategoryCount() ?? '—' }}</strong></div>
+  </article>
+  <article class="app-list-stat">
+    <span class="app-list-stat__icon app-list-stat__icon--blue">◷</span>
+    <div><span>Cập nhật gần đây</span><strong>{{ latestUpdate() }}</strong></div>
+  </article>
+</section>
+
+<div class="card">
+  <div class="app-list-card-head">
+    <div><h2>Cây danh mục</h2><p>Quản lý danh mục cha, danh mục con và thứ tự hiển thị.</p></div>
+      <div class="app-list-toolbar">
     <div ngbDropdown #filterDropdown="ngbDropdown" class="d-inline-block" autoClose="outside" (openChange)="onFilterDropdownOpen($event)">
       <button
         type="button"
@@ -68,14 +97,8 @@
     />
   </div>
 
-  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onAddClick()">
-    <i antIcon type="plus-circle" theme="fill"></i>
-    <span>Thêm mới</span>
-  </button>
-</app-page-header>
 
-
-<div class="card">
+  </div>
   <div class="card-body">
     @if (state().loading) {
     <app-loading />
@@ -84,13 +107,14 @@
     } @else if (state().items.length === 0) {
     <app-empty-state message="Chưa có danh mục nào" />
     } @else {
+    <div class="app-table-wrap">
     <table class="table table-hover app-category-table">
       <thead>
         <tr>
-          <th style="width: 40px">#</th>
-          <th>Hình ảnh</th>
+          <th class="text-center" style="width: 64px">STT</th>
           <th>Tên danh mục</th>
           <th>Slug</th>
+          <th>Danh mục cha</th>
           <th>Thứ tự</th>
           <th>Trạng thái</th>
           <th class="text-end">Thao tác</th>
@@ -99,16 +123,8 @@
       <tbody>
         @for (category of state().items; track category.id; let i = $index) {
         <tr class="app-row-clickable" [class.app-row-group-alt]="category.groupIndex % 2 === 1">
-          <td>@if (category.level === 0) {
-            {{ (state().pageNumber - 1) * state().pageSize + category.groupIndex + 1 }}
-            }</td>
-          <td>
-            <img [src]="category.image_url || 'assets/images/no-image.png'" [alt]="category.name"
-              class="img-no-image-sm" [class.app-image-clickable]="category.image_url"
-              (click)="category.image_url && onImageClick(category)" />
-          </td>
+          <td class="text-center text-muted">{{ (state().pageNumber - 1) * state().pageSize + i + 1 }}</td>
 
-          <!-- NEW: tên có thụt lề theo level + toggle expand nếu có con -->
           <td>
             <div class="app-category-name" [style.paddingLeft.px]="category.level * 20">
               @if (category.has_children) {
@@ -121,18 +137,15 @@
                 }
               </button>
               }
-              <span>{{ category.name }}</span>
-
-              <!-- badge hiển thị danh mục cha khi cần xem nhanh, thay cho cột riêng -->
-              @if (category.parent_id) {
-              <span class="badge bg-light text-secondary app-category-name__parent-badge">
-                con của: {{ category.parent_name }}
-              </span>
-              }
+              <img [src]="category.image_url || 'assets/images/no-image.png'" [alt]="category.name"
+                class="img-no-image-sm" [class.app-image-clickable]="category.image_url"
+                (click)="category.image_url && onImageClick(category)" />
+              <span class="app-category-name__text">{{ category.name }}</span>
             </div>
           </td>
 
           <td>{{ category.slug }}</td>
+          <td>{{ category.parent_name || 'Danh mục gốc' }}</td>
           <td>{{ category.display_order }}</td>
           <td>
             <span class="badge" [class.bg-success]="category.is_active" [class.bg-secondary]="!category.is_active">
@@ -145,13 +158,13 @@
                 <input class="form-check-input" type="checkbox" role="switch" [checked]="category.is_active"
                   (change)="onToggleActive(category)" />
               </div>
-              <button type="button" class="btn btn-icon btn-flat-secondary" (click)="onViewClick(category)">
+              <button type="button" class="btn btn-icon btn-flat-secondary" aria-label="Xem chi tiết" title="Xem chi tiết" (click)="onViewClick(category)">
                 <i antIcon type="eye" theme="fill"></i>
               </button>
-              <button type="button" class="btn btn-icon btn-flat-primary" (click)="onEditClick(category)">
+              <button type="button" class="btn btn-icon btn-flat-primary" aria-label="Chỉnh sửa" title="Chỉnh sửa" (click)="onEditClick(category)">
                 <i antIcon type="edit" theme="fill"></i>
               </button>
-              <button type="button" class="btn btn-icon btn-flat-danger" (click)="onDeleteClick(category)">
+              <button type="button" class="btn btn-icon btn-flat-danger" aria-label="Xoá" title="Xoá" (click)="onDeleteClick(category)">
                 <i antIcon type="delete" theme="fill"></i>
               </button>
             </div>
@@ -160,6 +173,7 @@
         }
       </tbody>
     </table>
+    </div>
 
     <app-pagination [pageNumber]="state().pageNumber" [pageSize]="state().pageSize" [totalCount]="state().totalCount"
       [totalPages]="state().totalPages" [hasPreviousPage]="state().hasPreviousPage" [hasNextPage]="state().hasNextPage"

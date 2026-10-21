@@ -5,10 +5,11 @@ import { Component, HostListener, output } from '@angular/core';
 import { SharedModule } from '../../../../shared/shared.module';
 import { NavLeftComponent } from './nav-left/nav-left.component';
 import { NavRightComponent } from './nav-right/nav-right.component';
+import { BreadcrumbComponent } from '../../../../shared/components/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-nav-bar',
-  imports: [NavLeftComponent, SharedModule, NavRightComponent],
+  imports: [NavLeftComponent, SharedModule, NavRightComponent, BreadcrumbComponent],
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.scss']
 })

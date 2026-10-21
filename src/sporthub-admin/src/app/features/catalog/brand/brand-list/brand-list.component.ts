@@ -14,7 +14,7 @@ import {
 } from '../../../../core/models/common/list-page-state.model';
 import { Brand } from '../../../../core/models/catalog/brand/brand.model';
 import { BrandFormComponent, BrandFormMode } from '../brand-form/brand-form.component';
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap/offcanvas';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
@@ -25,6 +25,7 @@ import { NgbDropdown, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { IconDirective, IconService } from '@ant-design/icons-angular';
 import { PlusCircleFill, EditFill, DeleteFill, EyeFill, FilterOutline } from '@ant-design/icons-angular/icons';
 import { ImagePreviewService } from '../../../../shared/service/image-preview.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-brand-list',
@@ -49,16 +50,20 @@ export class BrandListComponent {
   private brandService = inject(BrandService);
   private confirmDialogService = inject(ConfirmDialogService);
   private alertService = inject(AlertService);
-  private offcanvasService = inject(NgbOffcanvas);
+  private modalService = inject(NgbModal);
   private imagePreviewService = inject(ImagePreviewService);
   private searchSubject = new Subject<string>();
   private activeFilter: boolean | undefined = undefined;
   draftActiveFilter: boolean | undefined = undefined;
 
   readonly state = signal<ListPageState<Brand>>(initialListPageState<Brand>());
+  readonly totalBrandCount = signal<number | null>(null);
+  readonly activeBrandCount = signal<number | null>(null);
+  readonly latestUpdate = signal('—');
 
   constructor() {
     this.loadData();
+    this.loadStats();
     this.iconService.addIcon(...[PlusCircleFill, EditFill, DeleteFill, EyeFill, FilterOutline]);
 
     this.searchSubject.pipe(debounceTime(400), distinctUntilChanged()).subscribe((text) => {
@@ -108,6 +113,7 @@ export class BrandListComponent {
       })
       .subscribe({
         next: (result) => {
+          this.latestUpdate.set(formatLatestUpdate(result.results.map((brand) => brand.updated_date || brand.created_date)));
           this.state.update((s) => ({
             ...applyPagedResult(s, result),
             loading: false,
@@ -132,11 +138,25 @@ export class BrandListComponent {
     this.loadData();
   }
 
+  private loadStats() {
+    forkJoin({
+      all: this.brandService.getList({ page_number: 1, page_size: 50 }),
+      active: this.brandService.getList({ page_number: 1, page_size: 1, active: true }),
+    }).subscribe({
+      next: ({ all, active }) => {
+        this.totalBrandCount.set(all.total_count);
+        this.activeBrandCount.set(active.total_count);
+        this.latestUpdate.set(formatLatestUpdate(all.results.map((brand) => brand.updated_date || brand.created_date)));
+      },
+    });
+  }
+
   private openForm(mode: BrandFormMode, brandId: number | null = null) {
-    const ref = this.offcanvasService.open(BrandFormComponent, {
-      position: 'end',
-      panelClass: 'app-offcanvas-half',
-      //backdrop: false
+    const ref = this.modalService.open(BrandFormComponent, {
+      centered: true,
+      size: 'lg',
+      scrollable: true,
+      windowClass: 'app-centered-form-modal',
       beforeDismiss: () => {
         const instance = ref.componentInstance as BrandFormComponent;
         return !instance.submitting();
@@ -149,7 +169,10 @@ export class BrandListComponent {
 
     ref.result.then(
       (changed) => {
-        if (changed) this.loadData();
+        if (changed) {
+          this.loadData();
+          this.loadStats();
+        }
       },
       () => { }
     );
@@ -182,6 +205,7 @@ export class BrandListComponent {
       next: () => {
         this.alertService.success('Xoá thành công');
         this.loadData();
+        this.loadStats();
       },
       error: (err) => {
         this.alertService.error(err?.error?.message || 'Xoá thất bại');
@@ -199,6 +223,7 @@ export class BrandListComponent {
 
     this.brandService.toggleActive(brand.id).subscribe({
       next: (res) => {
+        this.loadStats();
         if (res.is_success) {
           this.alertService.success(res.message || 'Cập nhật trạng thái thành công');
         }
@@ -212,4 +237,12 @@ export class BrandListComponent {
       },
     });
   }
+}
+
+function formatLatestUpdate(dates: string[]): string {
+  const latest = dates.map((value) => Date.parse(value)).filter(Number.isFinite).sort((a, b) => b - a)[0];
+  if (!latest) return '—';
+  const date = new Date(latest);
+  if (date.toDateString() === new Date().toDateString()) return 'Hôm nay';
+  return new Intl.DateTimeFormat('vi-VN', { day: '2-digit', month: 'short' }).format(date);
 }

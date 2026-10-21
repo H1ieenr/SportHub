@@ -11,12 +11,10 @@ import { SharedModule } from '../../shared/shared.module';
 import { LayoutStateService } from '../../shared/service/layout-state.service';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
-import { BreadcrumbComponent } from '../../shared/components/breadcrumb/breadcrumb.component';
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterModule, NavigationComponent, 
-    NavBarComponent, BreadcrumbComponent, SharedModule,],
+  imports: [CommonModule, RouterOutlet, RouterModule, NavigationComponent, NavBarComponent, SharedModule],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
 })

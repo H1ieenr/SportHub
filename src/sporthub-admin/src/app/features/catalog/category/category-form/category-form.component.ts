@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { NgbActiveOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { AlertService } from '../../../../shared/service/alert.service';
 import { CategoryService } from '../../../../core/services/catalog/category/category.service';
@@ -31,7 +31,7 @@ export class CategoryFormComponent implements OnInit {
   private alertService = inject(AlertService);
   private imagePreviewService = inject(ImagePreviewService);
 
-  readonly activeOffcanvas = inject(NgbActiveOffcanvas);
+  readonly activeModal = inject(NgbActiveModal);
 
   mode: CategoryFormMode = 'create';
   categoryId: number | null = null;
@@ -177,8 +177,7 @@ export class CategoryFormComponent implements OnInit {
         changed: true,
         affectedParentId: raw.parent_id ?? null // NEW
         };
-        this.activeOffcanvas.close(result);
-        this.activeOffcanvas.close(true);
+        this.activeModal.close(result);
       },
       error: (err) => {
         this.submitting.set(false);
@@ -189,7 +188,7 @@ export class CategoryFormComponent implements OnInit {
 
   onCancel() {
     if (this.submitting()) return;
-    this.activeOffcanvas.dismiss();
+    this.activeModal.dismiss();
   }
 
   onPreviewImageClick() {
@@ -200,6 +199,6 @@ export class CategoryFormComponent implements OnInit {
   onAddChildClick() {
     const parentId = this.categoryId ?? this.category?.id;
     if (!parentId) return;
-    this.activeOffcanvas.close({ changed: false, createChildParentId: parentId } as CategoryFormResult);
+    this.activeModal.close({ changed: false, createChildParentId: parentId } as CategoryFormResult);
   }
 }

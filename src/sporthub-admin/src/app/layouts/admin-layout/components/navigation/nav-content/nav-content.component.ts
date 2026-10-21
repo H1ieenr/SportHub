@@ -14,7 +14,9 @@ import { IconService } from '@ant-design/icons-angular';
 import {
   DashboardOutline,
   CreditCardOutline,
-  MenuOutline
+  MenuOutline,
+  TagsOutline,
+  AppstoreOutline
 } from '@ant-design/icons-angular/icons';
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
@@ -47,7 +49,9 @@ export class NavContentComponent implements OnInit {
       ...[
         DashboardOutline,
         CreditCardOutline,
-        MenuOutline
+        MenuOutline,
+        TagsOutline,
+        AppstoreOutline
       ]
     );
     this.navigations = NavigationItems;

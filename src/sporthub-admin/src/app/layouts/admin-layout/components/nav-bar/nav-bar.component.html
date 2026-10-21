@@ -3,7 +3,8 @@
     <div class="pc-mob-drp">
       <app-nav-left [navCollapsed]="navCollapsed" (NavCollapse)="navCollapse()" (NavCollapsedMob)="navCollapseMob()" />
     </div>
-    <div>
+    <app-breadcrumb class="app-header-breadcrumb" />
+    <div class="app-header-actions">
       <app-nav-right />
     </div>
   </div>

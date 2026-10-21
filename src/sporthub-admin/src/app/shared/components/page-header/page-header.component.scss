@@ -5,28 +5,42 @@
 
 .app-page-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   width: 100%;
-  gap: 12px;
-  margin-bottom: 1%;
+  gap: 16px 20px;
+  margin-bottom: 22px;
+
+  &__title {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
 
   &__filters {
     display: flex;
     align-items: center;
-    gap: 8px;
+    flex-wrap: wrap;
+    gap: 9px;
     min-width: 0;
   }
 
   &__actions {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
     flex-shrink: 0;
   }
 
   @media (max-width: 768px) {
-    flex-wrap: wrap;
+    align-items: stretch;
+
+    &__title {
+      flex-basis: 100%;
+    }
+
+    &__filters {
+      flex: 1 1 100%;
+    }
   }
 }

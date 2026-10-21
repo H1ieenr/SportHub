@@ -1,5 +1,34 @@
 <app-page-header>
-  <div pageHeaderFilters class="d-flex align-items-center gap-2">
+  <div pageHeaderTitle>
+    <p class="app-page-eyebrow">QUẢN LÝ CỬA HÀNG</p>
+    <h1 class="app-page-title">Thương hiệu</h1>
+    <p class="app-page-description">Quản lý các thương hiệu thể thao trong cửa hàng của bạn.</p>
+  </div>
+  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onAddClick()">
+    <i antIcon type="plus-circle" theme="fill"></i>
+    <span>Thêm thương hiệu</span>
+  </button>
+</app-page-header>
+
+<section class="app-list-stats" aria-label="Thống kê thương hiệu">
+  <article class="app-list-stat">
+    <span class="app-list-stat__icon app-list-stat__icon--green">◈</span>
+    <div><span>Tổng thương hiệu</span><strong>{{ totalBrandCount() ?? '—' }}</strong></div>
+  </article>
+  <article class="app-list-stat">
+    <span class="app-list-stat__icon app-list-stat__icon--orange">↗</span>
+    <div><span>Đang hoạt động</span><strong>{{ activeBrandCount() ?? '—' }}</strong></div>
+  </article>
+  <article class="app-list-stat">
+    <span class="app-list-stat__icon app-list-stat__icon--blue">◷</span>
+    <div><span>Cập nhật gần đây</span><strong>{{ latestUpdate() }}</strong></div>
+  </article>
+</section>
+
+<div class="card">
+  <div class="app-list-card-head">
+    <div><h2>Danh sách thương hiệu</h2><p>Quản lý thương hiệu và trạng thái hiển thị.</p></div>
+      <div class="app-list-toolbar">
     <div ngbDropdown #filterDropdown="ngbDropdown" class="d-inline-block" autoClose="outside" (openChange)="onFilterDropdownOpen($event)">
       <button
         type="button"
@@ -68,13 +97,8 @@
     />
   </div>
 
-  <button pageHeaderActions type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" (click)="onAddClick()">
-    <i antIcon type="plus-circle" theme="fill"></i>
-    <span>Thêm mới</span>
-  </button>
-</app-page-header>
 
-<div class="card">
+  </div>
   <div class="card-body">
     @if (state().loading) {
     <app-loading />
@@ -83,12 +107,12 @@
     } @else if (state().items.length === 0) {
     <app-empty-state message="Chưa có thương hiệu nào" />
     } @else {
+    <div class="app-table-wrap">
     <table class="table table-hover">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Hình ảnh</th>
-          <th>Tên</th>
+          <th class="text-center" style="width: 64px">STT</th>
+          <th>Thương hiệu</th>
           <th>Slug</th>
           <th>Mô tả</th>
           <th>Trạng thái</th>
@@ -98,12 +122,14 @@
       <tbody>
         @for (brand of state().items; track brand.id; let i = $index) {
         <tr class="app-row-clickable">
-          <td>{{ (state().pageNumber - 1) * state().pageSize + i + 1 }}</td>
+          <td class="text-center text-muted">{{ (state().pageNumber - 1) * state().pageSize + i + 1 }}</td>
           <td>
-            <img [src]="brand.logo_url || 'assets/images/no-image.png'" [alt]="brand.name" class="img-no-image-sm"
-              [class.app-image-clickable]="brand.logo_url" (click)="brand.logo_url && onImageClick(brand)" />
+            <div class="app-brand-cell">
+              <img [src]="brand.logo_url || 'assets/images/no-image.png'" [alt]="brand.name" class="img-no-image-sm"
+                [class.app-image-clickable]="brand.logo_url" (click)="brand.logo_url && onImageClick(brand)" />
+              <div><strong>{{ brand.name }}</strong><small>Thương hiệu</small></div>
+            </div>
           </td>
-          <td>{{ brand.name }}</td>
           <td>{{ brand.slug }}</td>
           <td (click)="onViewClick(brand)"><span class="app-truncate" [innerHTML]="brand.description"></span></td>
           <td>
@@ -117,13 +143,13 @@
                 <input class="form-check-input" type="checkbox" role="switch" [checked]="brand.is_active"
                   (change)="onToggleActive(brand)" />
               </div>
-              <button type="button" class="btn btn-icon btn-flat-secondary" (click)="onViewClick(brand)">
+              <button type="button" class="btn btn-icon btn-flat-secondary" aria-label="Xem chi tiết" title="Xem chi tiết" (click)="onViewClick(brand)">
                 <i antIcon type="eye" theme="fill"></i>
               </button>
-              <button type="button" class="btn btn-icon btn-flat-primary" (click)="onEditClick(brand)">
+              <button type="button" class="btn btn-icon btn-flat-primary" aria-label="Chỉnh sửa" title="Chỉnh sửa" (click)="onEditClick(brand)">
                 <i antIcon type="edit" theme="fill"></i>
               </button>
-              <button type="button" class="btn btn-icon btn-flat-danger" (click)="onDeleteClick(brand)">
+              <button type="button" class="btn btn-icon btn-flat-danger" aria-label="Xoá" title="Xoá" (click)="onDeleteClick(brand)">
                 <i antIcon type="delete" theme="fill"></i>
               </button>
             </div>
@@ -132,6 +158,7 @@
         }
       </tbody>
     </table>
+    </div>
 
     <app-pagination [pageNumber]="state().pageNumber" [pageSize]="state().pageSize" [totalCount]="state().totalCount"
       [totalPages]="state().totalPages" [hasPreviousPage]="state().hasPreviousPage" [hasNextPage]="state().hasNextPage"

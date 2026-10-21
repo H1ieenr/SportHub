@@ -21,10 +21,10 @@ export class PaginationComponent {
   // ví dụ: 21–50 / 120
   readonly rangeText = computed(() => {
     const total = this.totalCount();
-    if (total === 0) return '0 / 0';
+    if (total === 0) return 'Hiển thị 0–0 trong tổng số 0 mục';
     const start = (this.pageNumber() - 1) * this.pageSize() + 1;
     const end = Math.min(this.pageNumber() * this.pageSize(), total);
-    return `${start}–${end} / ${total}`;
+    return `Hiển thị ${start}–${end} trong tổng số ${total} mục`;
   });
 
   // danh sách số trang hiển thị, tối đa 5 nút quanh trang hiện tại
