@@ -14,6 +14,7 @@ namespace sporthub.domain
               long? product_variant_id,
               bool? is_primary,
               CancellationToken cancellationToken = default);
+        Task<List<ProductImage>> GetTrackedByScopeAsync(long productId, long? productVariantId, CancellationToken cancellationToken = default);
         Task CreateAsync(ProductImage productImage, CancellationToken cancellationToken = default);
         Task CreateBatchAsync(List<ProductImage> productImages, CancellationToken cancellationToken = default);
         Task UpdateAsync(ProductImage productImage, CancellationToken cancellationToken = default);

@@ -39,6 +39,12 @@ namespace sporthub.repository
 
             return items;
         }
+        public Task<List<ProductImage>> GetTrackedByScopeAsync(long productId, long? productVariantId, CancellationToken cancellationToken = default)
+        {
+            return _context.ProductImages
+                .Where(x => x.product_id == productId && x.product_variant_id == productVariantId)
+                .ToListAsync(cancellationToken);  
+        }
         public Task CreateAsync(ProductImage productImage, CancellationToken cancellationToken = default)
         {
             return AddAsync(productImage);

@@ -27,7 +27,7 @@ public class ProductImage : AuditableEntity
             is_primary = isPrimary
         };
     }
-
+    public void SetPrimary(bool isPrimary) => is_primary = isPrimary;
     public void Primary() => is_primary = true;
     public void Deprimary() => is_primary = false;
     public void UpdateOrder(int displayOrder) => this.display_order = displayOrder;

@@ -15,7 +15,9 @@ namespace sporthub.app
             CreateMap<Product, ProductGetByIdResponseDTO>()
                 .ForMember(d => d.category_name, o => o.MapFrom(s => s.category.name))
                 .ForMember(d => d.category_slug, o => o.MapFrom(s => s.category.slug))
-                .ForMember(d => d.brand_name, o => o.MapFrom(s => s.brand.name)); ;
+                .ForMember(d => d.brand_name, o => o.MapFrom(s => s.brand.name))
+                .ForMember(d => d.images, o => o.MapFrom(s => s.images
+                    .Where(i => i.product_variant_id == null).OrderByDescending(i => i.is_primary).ThenBy(i => i.display_order)));
         }
     }
 }
