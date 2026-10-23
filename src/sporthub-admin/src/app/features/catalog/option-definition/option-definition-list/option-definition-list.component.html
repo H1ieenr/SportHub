@@ -1,0 +1,173 @@
+<app-page-header>
+  <div pageHeaderTitle>
+    <p class="app-page-eyebrow">QUẢN LÝ CỬA HÀNG</p>
+    <h1 class="app-page-title">Thuộc tính sản phẩm</h1>
+    <p class="app-page-description">
+      Quản lý Option Definition và các giá trị có thể chọn cho sản phẩm.
+    </p>
+  </div>
+  <button
+    pageHeaderActions
+    type="button"
+    class="btn btn-primary d-inline-flex align-items-center gap-2"
+    (click)="onCreateClick()"
+  >
+    <i antIcon type="plus-circle" theme="fill"></i>
+    <span>Tạo thuộc tính</span>
+  </button>
+</app-page-header>
+
+<section class="app-option-stats" aria-label="Thống kê thuộc tính">
+  <article class="app-option-stat">
+    <span class="app-option-stat__icon">◇</span>
+    <div>
+      <span>Tổng thuộc tính</span>
+      <strong>{{ totalCount() }}</strong>
+    </div>
+  </article>
+
+  <article class="app-option-stat">
+    <span class="app-option-stat__icon app-option-stat__icon--orange">↗</span>
+    <div>
+      <span>Đang hoạt động</span>
+      <strong>{{ activeCount() }}</strong>
+    </div>
+  </article>
+
+  <article class="app-option-stat">
+    <span class="app-option-stat__icon app-option-stat__icon--blue">▦</span>
+    <div>
+      <span>Tổng giá trị lựa chọn</span>
+      <strong>{{ totalValueCount() }}</strong>
+    </div>
+  </article>
+</section>
+
+<section class="card app-option-card">
+  <div class="app-option-card__head">
+    <div>
+      <h2>Danh sách thuộc tính</h2>
+      <p>Ví dụ: Kích cỡ, Màu sắc, Chất liệu.</p>
+    </div>
+
+    <input
+      type="search"
+      class="form-control app-option-search"
+      placeholder="Tìm theo tên hoặc code..."
+      [value]="searchText()"
+      (input)="onSearchInput($any($event.target).value)"
+    />
+  </div>
+
+  <div class="card-body p-0">
+    @if (isLoading()) {
+      <app-loading />
+    } @else if (errorMessage()) {
+      <app-error-state [message]="errorMessage()!" (retry)="onRetry()" />
+    } @else if (items().length === 0) {
+      <app-empty-state message="Chưa có Option Definition nào" />
+    } @else {
+      <div class="table-responsive">
+        <table class="table table-hover app-option-table">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 64px">STT</th>
+              <th>Tên thuộc tính</th>
+              <th>Code</th>
+              <th>Option Value</th>
+              <th>Trạng thái</th>
+              <th class="text-end">Thao tác</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (item of items(); track item.id; let i = $index) {
+              <tr>
+                <td class="text-center text-muted">{{ i + 1 }}</td>
+
+                <td>
+                  <div class="app-option-name">
+                    <span class="app-option-name__icon">
+                      {{ item.name.charAt(0).toUpperCase() }}
+                    </span>
+                    <strong>{{ item.name }}</strong>
+                  </div>
+                </td>
+
+                <td>
+                  <code class="app-option-code">{{ item.code }}</code>
+                </td>
+
+                <td>
+                  <div class="app-option-values">
+                    @for (value of item.option_values.slice(0, 3); track value.id) {
+                      <span class="app-option-value">{{ value.value }}</span>
+                    }
+
+                    @if (item.option_values.length > 3) {
+                      <span class="app-option-value app-option-value--more">
+                        +{{ item.option_values.length - 3 }}
+                      </span>
+                    }
+
+                    @if (item.option_values.length === 0) {
+                      <span class="text-muted">Chưa có giá trị</span>
+                    }
+                  </div>
+                </td>
+
+                <td>
+                  <span
+                    class="badge"
+                    [class.bg-success]="item.is_active"
+                    [class.bg-secondary]="!item.is_active"
+                  >
+                    {{ item.is_active ? 'Hoạt động' : 'Ngừng hoạt động' }}
+                  </span>
+                </td>
+
+                <td class="text-end">
+                  <div class="app-option-actions">
+                    <button
+                      type="button"
+                      class="btn btn-icon btn-flat-secondary"
+                      title="Xem chi tiết"
+                      aria-label="Xem chi tiết"
+                      (click)="onViewClick(item)"
+                    >
+                      <i antIcon type="eye" theme="fill"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn btn-icon btn-flat-primary"
+                      title="Chỉnh sửa"
+                      aria-label="Chỉnh sửa"
+                      (click)="onEditClick(item)"
+                    >
+                      <i antIcon type="edit" theme="fill"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn btn-icon btn-flat-danger"
+                      title="Xoá"
+                      aria-label="Xoá"
+                      (click)="onDeleteClick(item)"
+                    >
+                      <i antIcon type="delete" theme="fill"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  @if (!isLoading() && !errorMessage() && items().length > 0) {
+    <div class="app-option-card__foot">Hiển thị {{ items().length }} thuộc tính</div>
+  }
+</section>

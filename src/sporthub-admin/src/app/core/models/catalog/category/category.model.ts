@@ -1,4 +1,5 @@
 import { PaginationParams } from "../../common/api-response.model";
+import { CategoryOption, CategoryOptionItem } from "./category-option/category-option.model";
 
 export interface Category {
   id: number;
@@ -14,6 +15,8 @@ export interface Category {
   created_by: number;
   updated_date: string | null;
   updated_by: number;
+
+  category_options?: CategoryOption[];
 }
 
 export interface CategoryPayload {
@@ -24,6 +27,8 @@ export interface CategoryPayload {
   display_order: number;
   is_active?: boolean;
   file_image?: File | null;
+
+  category_options: CategoryOptionItem[];
 }
 
 export interface CategoryNode extends Category {

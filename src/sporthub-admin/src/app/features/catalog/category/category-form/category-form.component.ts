@@ -10,6 +10,11 @@ import { ImagePreviewService } from '../../../../shared/service/image-preview.se
 import { RichTextEditorComponent } from '../../../../shared/components/rich-text-editor/rich-text-editor.component';
 import { Category } from '../../../../core/models/catalog/category/category.model';
 
+import { OptionDefinitionService } from '../../../../core/services/catalog/category/option-definition/option-definition.service';
+import { OptionDefinition } from '../../../../core/models/catalog/category/option-definition/option-definition.model';
+import { CategoryOptionItem } from '../../../../core/models/catalog/category/category-option/category-option.model';
+import { Subscription } from 'rxjs';
+
 export type CategoryFormMode = 'create' | 'edit' | 'view';
 export interface CategoryFormResult {
   changed: boolean;
@@ -163,7 +168,12 @@ export class CategoryFormComponent implements OnInit {
       is_active: raw.is_active,        
       display_order: raw.display_order, 
       parent_id: raw.parent_id,         
-      file_image: this.selectedFile()
+      file_image: this.selectedFile(),
+
+      category_options: this.category?.category_options?.map(co => ({
+        option_definition_id: co.option_definition_id,
+        display_order: co.display_order
+      })) || []
     };
 
     const request$ =
