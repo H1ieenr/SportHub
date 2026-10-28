@@ -8,14 +8,25 @@ public class InventoryItemConfiguration : IEntityTypeConfiguration<InventoryItem
 {
     public void Configure(EntityTypeBuilder<InventoryItem> builder)
     {
-        builder.ToTable("inventory_items");
+        builder.ToTable("inventory_items", t =>
+        {
+            t.HasCheckConstraint("CK_inventory_items_on_hand", "[quantity_on_hand] >= 0");
+            t.HasCheckConstraint("CK_inventory_items_reserved", "[reserved_quantity] >= 0 AND [reserved_quantity] <= [quantity_on_hand]");
+        });
         builder.ConfigureAuditableEntity();
 
-        builder.HasIndex(x => x.product_variant_id).IsUnique();
+        builder.Property(x => x.row_version).IsRowVersion();
+
+        builder.HasIndex(x => x.product_variant_id).IsUnique().HasFilter("[deleted_date] IS NULL");
 
         builder.HasOne(x => x.product_variant)
             .WithOne(x => x.inventory)
             .HasForeignKey<InventoryItem>(x => x.product_variant_id)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(x => x.transactions)
+            .WithOne(x => x.inventory_item)   
+            .HasForeignKey(x => x.inventory_item_id)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

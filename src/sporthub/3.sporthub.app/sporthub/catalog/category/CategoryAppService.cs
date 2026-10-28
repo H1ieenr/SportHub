@@ -184,7 +184,7 @@ namespace sporthub.app
                 ? category.category_option
                 : await _categoryOptionRepository.CategoryOptionGetNoPagingAsync(null, effectiveCategoryId, cancellationToken);
 
-            dto.category_options = _mapper.Map<List<CategoryOptionDTO>>(options);
+            dto.category_options = _mapper.Map<List<CategoryOptionDTO>>(options.OrderBy(x => x.display_order));
             return OperationResult<CategoryDTO>.Success(dto);
         }
 

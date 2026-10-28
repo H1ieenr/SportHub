@@ -58,9 +58,11 @@ public enum PaymentMethod
 
 public enum InventoryTransactionType
 {
-    Import = 1,
-    Sale = 2,
-    Return = 3,
-    Adjustment = 4,
-    CancelOrder = 5
+    Receive = 1,          // nhập hàng
+    AdjustIncrease = 2,   // kiểm kê thấy dư
+    AdjustDecrease = 3,   // kiểm kê thấy thiếu, hỏng
+    Reserve = 4,          // giữ hàng khi đặt đơn (làm sau)
+    Release = 5,          // nhả hàng khi hủy đơn (làm sau)
+    Ship = 6,             // xuất kho khi giao (làm sau)
+    Return = 7            // khách trả (làm sau)
 }

@@ -29,6 +29,9 @@ namespace sporthub.app.contracts
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
         public List<CreateProductVariantOptionValueDTO> option_values { get; set; } = new();
+
+        public int initial_quantity { get; set; } = 0;   
+        public int reorder_level { get; set; } = 0;
     }
     
     #endregion
@@ -47,9 +50,9 @@ namespace sporthub.app.contracts
         public bool is_active { get; set; } = false;
         public JsonElement? value_json { get; set; }
 
-        // public string? option1 { get; set; }
-        // public string? option2 { get; set; }
-        // public string? option3 { get; set; }
+        public List<CreateProductVariantOptionValueDTO> option_values { get; set; } = new();
+        public int initial_quantity { get; set; } = 0;
+        public int reorder_level { get; set; } = 0;
     }
     public class CreateBatchProductVariantResponseDTO
     {

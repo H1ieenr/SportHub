@@ -386,6 +386,12 @@ namespace sporthub.repository.context.migrations
                     b.Property<int>("reserved_quantity")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("row_version")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<long>("updated_by")
                         .HasColumnType("bigint");
 
@@ -395,9 +401,15 @@ namespace sporthub.repository.context.migrations
                     b.HasKey("id");
 
                     b.HasIndex("product_variant_id")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[deleted_date] IS NULL");
 
-                    b.ToTable("inventory_items", (string)null);
+                    b.ToTable("inventory_items", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_inventory_items_on_hand", "[quantity_on_hand] >= 0");
+
+                            t.HasCheckConstraint("CK_inventory_items_reserved", "[reserved_quantity] >= 0 AND [reserved_quantity] <= [quantity_on_hand]");
+                        });
                 });
 
             modelBuilder.Entity("sporthub.domain.InventoryTransaction", b =>

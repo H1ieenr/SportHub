@@ -22,6 +22,7 @@ namespace sporthub.repository
 
             services.AddIdentityRepository();
             services.AddCatalogRepository();
+            services.AddInventoryRepository();
             return services;
         }
     }

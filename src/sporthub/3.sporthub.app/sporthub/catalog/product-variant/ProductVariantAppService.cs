@@ -14,11 +14,13 @@ namespace sporthub.app
         private readonly ICategoryRepository _categoryRepository;
         private readonly IOptionValueRepository _optionValueRepository;
         private readonly IProductVariantOptionValueRepository _productVariantOptionValueRepository;
+        private readonly IInventoryItemRepository _inventoryItemRepository;
+        private readonly IInventoryTransactionRepository _inventoryTransactionRepository;
         private readonly ISportHubUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         public ProductVariantAppService(IProductVariantRepository productVariantRepository, IProductRepository productRepository, ICategoryOptionRepository categoryOptionRepository,
-                ICategoryRepository categoryRepository, IOptionValueRepository optionValueRepository, IProductVariantOptionValueRepository productVariantOptionValueRepository, 
-                ISportHubUnitOfWork unitOfWork, IMapper mapper)
+                ICategoryRepository categoryRepository, IOptionValueRepository optionValueRepository, IProductVariantOptionValueRepository productVariantOptionValueRepository,
+                IInventoryItemRepository inventoryItemRepository, IInventoryTransactionRepository inventoryTransactionRepository, ISportHubUnitOfWork unitOfWork, IMapper mapper)
         {
             _productVariantRepository = productVariantRepository;
             _productRepository = productRepository;
@@ -27,6 +29,8 @@ namespace sporthub.app
             _categoryRepository = categoryRepository;
             _optionValueRepository = optionValueRepository;
             _productVariantOptionValueRepository = productVariantOptionValueRepository;
+            _inventoryItemRepository = inventoryItemRepository;
+            _inventoryTransactionRepository = inventoryTransactionRepository;
             _mapper = mapper;
         }
         #region admin
@@ -77,6 +81,8 @@ namespace sporthub.app
                 v.option_values.Select(x => x.option_value_id).ToHashSet().SetEquals(newCombo));
             if (isDuplicateCombo)
                 throw new ConflictException("Đã tồn tại biến thể với tổ hợp option này.");
+
+            await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
                 var variant = ProductVariant.Create(product.id, sku, model.name, model.cost_price, model.sale_price, null, model.is_active);
@@ -89,7 +95,7 @@ namespace sporthub.app
                     await _productVariantOptionValueRepository.CreateAsync(entity, cancellationToken);
                 }
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-
+                await CreateInventoryAsync(variant, model.initial_quantity, model.reorder_level, cancellationToken);
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
                 return OperationResult<ProductVariantDTO>.Success(_mapper.Map<ProductVariantDTO>(variant));
             }
@@ -99,37 +105,120 @@ namespace sporthub.app
                 throw;
             }
         }
-        public async Task<OperationResult<List<CreateBatchProductVariantResponseDTO>>> CreateBatchAsync(
-                 CreateBatchProductVariantRequestDTO model, CancellationToken cancellationToken = default)
+        public async Task<OperationResult<List<CreateBatchProductVariantResponseDTO>>> CreateBatchAsync(CreateBatchProductVariantRequestDTO model, CancellationToken cancellationToken = default)
         {
             var items = model.product_variants;
-            if (items.Count == 0) return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success([]);
+            if (items.Count == 0)
+                return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success([]);
+            if (items.Count > 100)
+                throw new BadRequestException("Tối đa 100 biến thể mỗi lần.");
 
-            var skus = items.Select(x => x.sku).ToList();
-            var duplicated = skus.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
-            var existing = (await _productVariantRepository.GetExistingSkusAsync(skus, cancellationToken)).ToHashSet();
+            var product = await _productRepository.ProductGetByIdAsync(model.product_id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy sản phẩm.");
+            var category = await _categoryRepository.CategoryGetByIdAsync(product.category_id, cancellationToken)
+                ?? throw new NotFoundException("Không tìm thấy danh mục.");
+            var effectiveCategoryId = category.parent_id ?? category.id;
 
-            string? GetError(string sku) => duplicated.Contains(sku) ? "Sku bị trùng trong danh sách gửi lên" : existing.Contains(sku) ? "Sku đã tồn tại" : null;
+            var allowedOptions = await _categoryOptionRepository.CategoryOptionGetTrackedByCategoryIdAsync(effectiveCategoryId, cancellationToken);
+            var allowedDefIds = allowedOptions.Select(x => x.option_definition_id).ToHashSet();
 
-            var rows = items.Select(item =>
+            var normalized = items.Select(x => (item: x, sku: x.sku.Trim().ToUpperInvariant())).ToList();
+            var skus = normalized.Select(x => x.sku).ToList();
+            var duplicatedSkus = skus.GroupBy(x => x).Where(g => g.Count() > 1).Select(g => g.Key).ToHashSet();
+            var existingSkus = (await _productVariantRepository.GetExistingSkusAsync(skus, cancellationToken)).ToHashSet();
+
+            var allValueIds = items.SelectMany(i => i.option_values.Select(o => o.option_value_id)).Distinct().ToList();
+            var valueMap = (await _optionValueRepository.OptionValueGetByIdsAsync(allValueIds, cancellationToken))
+                .ToDictionary(v => v.id);
+
+            var existingVariants = await _productVariantRepository
+                .ProductVariantGetByProductIdWithOptionsAsync(product.id, cancellationToken);
+            var seenCombos = existingVariants
+                .Select(v => v.option_values.Select(x => x.option_value_id).ToHashSet())
+                .ToList();
+
+            string? Validate(CreateBatchProductVariantItem item, string sku)
             {
-                var error = GetError(item.sku);
-                var entity = error is null ? ProductVariant.Create(model.product_id, item.sku, item.name, item.cost_price, item.sale_price, item.value_json, item.is_active) : null;
-                var dto = error is null ? CreateBatchProductVariantResponseDTO.Ok(item.sku, item.name) : CreateBatchProductVariantResponseDTO.Fail(item.sku, item.name, error);
+                if (string.IsNullOrWhiteSpace(sku)) return "SKU không được để trống";
+                if (string.IsNullOrWhiteSpace(item.name)) return "Tên không được để trống";
+                if (item.cost_price < 0 || item.sale_price < 0) return "Giá không hợp lệ";
+                if (item.initial_quantity < 0 || item.initial_quantity > 1_000_000) return "Tồn đầu kỳ không hợp lệ";
+                if (item.reorder_level < 0) return "Mức đặt hàng lại không hợp lệ";
+                if (duplicatedSkus.Contains(sku)) return "SKU bị trùng trong danh sách gửi lên";
+                if (existingSkus.Contains(sku)) return "SKU đã tồn tại";
 
-                return (entity, dto);
-            }).ToList();
+                var defIds = item.option_values.Select(o => o.option_definition_id).ToList();
+                if (defIds.Distinct().Count() != defIds.Count) return "option_definition_id bị trùng";
+                if (allowedDefIds.Except(defIds).Any()) return "Thiếu giá trị cho option của danh mục";
+                if (defIds.Except(allowedDefIds).Any()) return "Có option không thuộc danh mục";
 
-            var entities = rows.Where(x => x.entity is not null).Select(x => x.entity!).ToList();
-            if (entities.Count > 0)
-            {
-                await _productVariantRepository.CreateBatchAsync(entities);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                foreach (var o in item.option_values)
+                {
+                    if (!valueMap.TryGetValue(o.option_value_id, out var val))
+                        return $"option_value_id {o.option_value_id} không tồn tại";
+                    if (val.option_definition_id != o.option_definition_id)
+                        return $"option_value_id {o.option_value_id} không thuộc option_definition_id {o.option_definition_id}";
+                }
+                return null;
             }
 
-            foreach (var (entity, dto) in rows) if (entity is not null) dto.id = entity.id;
+            var rows = new List<(ProductVariant? variant, CreateBatchProductVariantItem item, CreateBatchProductVariantResponseDTO dto)>();
+            foreach (var (item, sku) in normalized)
+            {
+                var error = Validate(item, sku);
 
-            return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success(rows.Select(x => x.dto).ToList());
+                if (error is null)
+                {
+                    var combo = item.option_values.Select(o => o.option_value_id).ToHashSet();
+                    if (seenCombos.Any(c => c.SetEquals(combo)))
+                        error = "Tổ hợp option bị trùng";
+                    else
+                        seenCombos.Add(combo);   
+                }
+
+                if (error is not null)
+                {
+                    rows.Add((null, item, CreateBatchProductVariantResponseDTO.Fail(sku, item.name, error)));
+                    continue;
+                }
+
+                var variant = ProductVariant.Create(product.id, sku, item.name, item.cost_price,
+                    item.sale_price, item.value_json, item.is_active);
+                rows.Add((variant, item, CreateBatchProductVariantResponseDTO.Ok(sku, item.name)));
+            }
+
+            var valid = rows.Where(r => r.variant is not null).ToList();
+            if (valid.Count > 0)
+            {
+                await _unitOfWork.BeginTransactionAsync(cancellationToken);
+                try
+                {
+                    await _productVariantRepository.CreateBatchAsync(valid.Select(r => r.variant!).ToList(), cancellationToken);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);   // có id cho từng variant
+
+                    foreach (var r in valid)
+                        foreach (var o in r.item.option_values)
+                            await _productVariantOptionValueRepository.CreateAsync(
+                                ProductVariantOptionValue.Create(r.variant!.id, o.option_definition_id, o.option_value_id),
+                                cancellationToken);
+                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                    foreach (var r in valid)
+                        await CreateInventoryAsync(r.variant!, r.item.initial_quantity, r.item.reorder_level, cancellationToken);
+
+                    await _unitOfWork.CommitTransactionAsync(cancellationToken);
+                }
+                catch
+                {
+                    await _unitOfWork.RollbackTransactionAsync(cancellationToken);
+                    throw;
+                }
+            }
+
+            foreach (var r in rows)
+                if (r.variant is not null) r.dto.id = r.variant.id;
+
+            return OperationResult<List<CreateBatchProductVariantResponseDTO>>.Success(rows.Select(r => r.dto).ToList());
         }
         public async Task<OperationResult<ProductVariantDTO>> UpdateAsync(UpdateProductVariantRequestDTO model, CancellationToken cancellationToken = default)
         {
@@ -202,6 +291,25 @@ namespace sporthub.app
             var items = await _productVariantRepository.ProductVariantGetNoPagingAsync(model.search_text, model.product_id, model.is_active, cancellationToken);
             List<ProductVariantDTO> dto = _mapper.Map<List<ProductVariantDTO>>(items);
             return OperationResult<List<ProductVariantDTO>>.Success(dto);
+        }
+
+        private async Task CreateInventoryAsync(ProductVariant variant, int initialQuantity, int reorderLevel, CancellationToken ct)
+        {
+            if (initialQuantity < 0 || initialQuantity > 1_000_000)
+                throw new BadRequestException("Tồn đầu kỳ không hợp lệ.");
+
+            var inventory = InventoryItem.Create(variant.id, reorderLevel);
+            await _inventoryItemRepository.CreateAsync(inventory, ct);
+            await _unitOfWork.SaveChangesAsync(ct);   
+
+            if (initialQuantity > 0)
+            {
+                inventory.Increase(initialQuantity);
+                await _inventoryTransactionRepository.CreateAsync(
+                    InventoryTransaction.Create(inventory.id, InventoryTransactionType.Receive,
+                        initialQuantity, "VariantCreate", variant.id, "Tồn đầu kỳ"), ct);
+                await _unitOfWork.SaveChangesAsync(ct);
+            }
         }
     }
 }

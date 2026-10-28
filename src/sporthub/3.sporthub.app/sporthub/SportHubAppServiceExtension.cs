@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using sporthub.app.contracts;
+using sporthub.app.sporthub;
 
 namespace sporthub.app
 {
@@ -14,6 +15,7 @@ namespace sporthub.app
             //services.AddAutoMapper(typeof(BaseMapperProfile));
             services.AddIdentityAppService(configuration);
             services.AddCatalogAppService();
+            services.AddInventoryAppService();
             return services;
         }
     }
